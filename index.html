@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Carnet</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root{
+    --paper: #EFEAE0;
+    --paper-raised: #F7F3EA;
+    --ink: #2B2A28;
+    --ink-soft: #6B655C;
+    --line: #DAD2C2;
+    --teal: #3F6259;
+    --teal-deep: #2C4842;
+    --amber: #C97B3D;
+    --danger: #A2503B;
+    --radius: 14px;
+    font-size: 16px;
+  }
+  *{ box-sizing: border-box; }
+  html, body{
+    margin:0; padding:0; height:100%;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, "Avenir Next", "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: contain;
+  }
+  #app{
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  h1, h2, h3{
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-weight: 600;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  /* ---------- LOCK SCREEN ---------- */
+  .lock-screen{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    gap: 28px;
+  }
+  .lock-mark{
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--teal);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .lock-mark svg{ width: 26px; height: 26px; }
+  .lock-title{ font-size: 1.5rem; text-align:center; }
+  .lock-sub{ color: var(--ink-soft); font-size: 0.9rem; text-align:center; margin-top: -16px; max-width: 280px; line-height:1.5; }
+  .pin-dots{ display:flex; gap: 16px; margin: 4px 0; }
+  .pin-dot{
+    width: 14px; height:14px; border-radius:50%;
+    border: 1.5px solid var(--ink-soft);
+    background: transparent;
+    transition: background .15s, border-color .15s, transform .15s;
+  }
+  .pin-dot.filled{ background: var(--teal); border-color: var(--teal); transform: scale(1.1); }
+  .pin-dot.error{ background: var(--danger); border-color: var(--danger); }
+  .keypad{
+    display:grid;
+    grid-template-columns: repeat(3, 64px);
+    gap: 14px;
+    justify-content: center;
+  }
+  .key{
+    width:64px; height:64px; border-radius:50%;
+    border: none;
+    background: var(--paper-raised);
+    box-shadow: 0 1px 0 rgba(0,0,0,.06);
+    font-size: 1.3rem;
+    color: var(--ink);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .key:active{ background: var(--line); }
+  .key.ghost{ background: transparent; box-shadow:none; color: var(--ink-soft); font-size: 0.95rem; }
+  .lock-error{ color: var(--danger); font-size: 0.85rem; min-height: 1.2em; }
+  .lock-lang-switch{ display:flex; gap: 8px; margin-top: 4px; }
+  .lock-lang-switch button{
+    background: var(--paper-raised); border: 1px solid var(--line); color: var(--ink-soft);
+    border-radius: 20px; padding: 5px 12px; font-size: 0.75rem;
+  }
+  .lock-lang-switch button.active{ background: var(--teal); color: white; border-color: var(--teal); }
+
+  /* ---------- HEADER ---------- */
+  .top-bar{
+    padding: 20px 20px 14px;
+    display:flex; align-items:baseline; justify-content: space-between;
+  }
+  .top-bar h1{ font-size: 1.6rem; }
+  .top-bar .count{ color: var(--ink-soft); font-size: 0.85rem; }
+  .top-bar-right{ display:flex; align-items:center; gap: 12px; }
+  .settings-btn{
+    background:none; border:none; color: var(--ink-soft); padding: 4px; display:flex;
+  }
+  .settings-btn svg{ width: 20px; height: 20px; }
+  .settings-section{ padding-top: 8px; margin-bottom: 26px; }
+  .settings-title{ font-family: Georgia, serif; font-size: 1.05rem; margin-bottom: 8px; }
+  .settings-desc{ color: var(--ink-soft); font-size: 0.85rem; line-height: 1.55; margin: 0 0 16px; }
+  .settings-btn-full{
+    width: 100%; display:flex; align-items:center; gap: 10px; justify-content:center;
+    background: var(--teal); color: white; border:none; border-radius: var(--radius);
+    padding: 13px; font-size: 0.92rem; margin-bottom: 10px;
+  }
+  .settings-btn-full svg{ width: 18px; height: 18px; }
+  .settings-btn-full.secondary{ background: var(--paper-raised); color: var(--teal-deep); border: 1px solid var(--line); }
+  .cloud-field-label{ display:block; font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 6px; }
+  .cloud-client-input{
+    width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--paper-raised);
+    color: var(--ink); padding: 10px 12px; font-size: 0.85rem; margin-bottom: 12px;
+  }
+  .cloud-status{ color: var(--teal-deep); font-weight: 600; font-size: 0.88rem; margin-bottom: 4px; }
+  .cloud-sync-time{ color: var(--ink-soft); font-size: 0.78rem; margin-bottom: 12px; }
+  .lang-options{ display:flex; gap: 8px; flex-wrap: wrap; }
+  .lang-option{
+    flex: 1; min-width: 90px;
+    background: var(--paper-raised); border: 1.5px solid var(--line); color: var(--ink);
+    border-radius: var(--radius); padding: 12px 8px; font-size: 0.88rem;
+  }
+  .lang-option.active{ border-color: var(--teal); background: #E3EFEC; color: var(--teal-deep); font-weight: 600; }
+
+  /* ---------- CONTENT ---------- */
+  .content{
+    flex:1;
+    overflow-y: auto;
+    padding: 0 16px 100px;
+  }
+  .empty-state{
+    margin-top: 60px;
+    text-align:center;
+    color: var(--ink-soft);
+    padding: 0 30px;
+    line-height: 1.6;
+  }
+  .empty-state strong{ display:block; color: var(--ink); font-size: 1.1rem; margin-bottom: 6px; font-family: Georgia, serif; }
+
+  .note-card{
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .note-card h3{ font-size: 1.05rem; margin-bottom: 4px; }
+  .note-card p{
+    margin:0; color: var(--ink-soft); font-size: 0.88rem;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    line-height: 1.4;
+  }
+  .note-card .meta{ margin-top: 8px; font-size: 0.72rem; color: var(--ink-soft); }
+
+  .fab{
+    position: absolute;
+    right: 20px; bottom: 92px;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    line-height: 0;
+    box-shadow: 0 4px 14px rgba(44,72,66,.35);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .fab:active{ background: var(--teal-deep); }
+
+  /* ---------- NOTE EDITOR ---------- */
+  .editor{
+    flex:1; display:flex; flex-direction:column;
+  }
+  .editor-bar{
+    display:flex; align-items:center; justify-content: space-between;
+    padding: 16px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .icon-btn{
+    background:none; border:none; color: var(--teal-deep);
+    font-size: 0.95rem; padding: 8px 10px; display:flex; align-items:center; gap:4px;
+  }
+  .icon-btn.delete{ color: var(--danger); }
+  .editor-body{ flex:1; display:flex; flex-direction:column; padding: 10px 20px 30px; overflow-y:auto; }
+  .editor-title{
+    border:none; background:transparent; outline:none;
+    font-family: Georgia, serif; font-size: 1.4rem; font-weight: 600;
+    color: var(--ink); padding: 8px 0; margin-bottom: 4px;
+  }
+  .editor-content{
+    border:none; background:transparent; outline:none; resize:none;
+    font-family: -apple-system, sans-serif; font-size: 1rem; color: var(--ink);
+    line-height: 1.6; flex:1; padding: 8px 0; min-height: 140px;
+  }
+  .editor-title::placeholder, .editor-content::placeholder{ color: var(--ink-soft); }
+  .editor-date{
+    border:none; background:transparent; outline:none;
+    font-family: -apple-system, sans-serif; font-size: 0.85rem; color: var(--ink-soft);
+    padding: 2px 0 12px; margin-bottom: 4px; border-bottom: 1px solid var(--line); width: fit-content;
+  }
+  .photo-section{ margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .photo-section-label{ font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 10px; }
+  .photo-grid{ display:flex; flex-wrap:wrap; gap: 10px; }
+  .photo-thumb{ position: relative; width: 84px; height: 84px; border-radius: 10px; overflow: hidden; }
+  .photo-thumb img{ width:100%; height:100%; object-fit: cover; display:block; }
+  .photo-remove{
+    position: absolute; top: 4px; right: 4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(43,42,40,.65); color: white; border: none;
+    font-size: 0.85rem; line-height: 0; display:flex; align-items:center; justify-content:center;
+  }
+  .photo-add-btn{
+    width: 84px; height: 84px; border-radius: 10px;
+    border: 1.5px dashed var(--line);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--ink-soft); cursor: pointer;
+  }
+  .photo-add-btn svg{ width: 24px; height: 24px; }
+  .note-photos{ display:flex; gap: 6px; margin-top: 10px; align-items:center; }
+  .note-photos img{ width: 42px; height: 42px; border-radius: 8px; object-fit: cover; }
+  .note-photos-more{ font-size: 0.75rem; color: var(--ink-soft); }
+  .lightbox{
+    position: fixed; inset: 0; background: rgba(20,19,17,.92);
+    display:flex; align-items:center; justify-content:center; padding: 24px; z-index: 50;
+  }
+  .lightbox img{ max-width: 100%; max-height: 100%; border-radius: 8px; }
+  .lightbox video{ max-width: 100%; max-height: 100%; border-radius: 8px; }
+  .video-section{ margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .video-list{ display:flex; flex-direction:column; gap: 8px; margin-bottom: 10px; }
+  .video-item{
+    display:flex; align-items:center; gap: 10px;
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: 10px;
+    padding: 8px 10px;
+  }
+  .video-play{
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink:0;
+    background: var(--teal); color:white; border:none; display:flex; align-items:center; justify-content:center;
+  }
+  .video-play svg{ width: 16px; height: 16px; }
+  .video-info{ flex:1; min-width:0; }
+  .video-name{ font-size: 0.85rem; color: var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .video-size{ font-size: 0.72rem; color: var(--ink-soft); }
+  .video-add-btn{
+    display:flex; align-items:center; gap: 8px; justify-content:center;
+    width: 100%; border: 1.5px dashed var(--line); border-radius: var(--radius);
+    background: transparent; color: var(--ink-soft); padding: 12px; font-size: 0.88rem;
+  }
+  .video-add-btn svg{ width: 18px; height: 18px; }
+
+  /* ---------- CALENDAR ---------- */
+  .calendar-header{ display:flex; align-items:center; justify-content:space-between; padding: 10px 4px 18px; }
+  .calendar-month-label{ font-family: Georgia, serif; font-size: 1.15rem; text-transform: capitalize; }
+  .calendar-nav-btn{ background: var(--paper-raised); border: 1px solid var(--line); border-radius: 50%; width: 34px; height: 34px; display:flex; align-items:center; justify-content:center; color: var(--ink); }
+  .calendar-nav-btn svg{ width: 16px; height: 16px; }
+  .calendar-weekdays{ display:grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
+  .calendar-weekday{ text-align:center; font-size: 0.7rem; color: var(--ink-soft); text-transform: uppercase; }
+  .calendar-grid{ display:grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .calendar-day{
+    aspect-ratio: 1; border-radius: 10px; border: none; background: transparent;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 3px;
+    font-size: 0.9rem; color: var(--ink); position: relative;
+  }
+  .calendar-day.other-month{ color: var(--line); }
+  .calendar-day.today{ background: var(--teal); color: white; font-weight: 600; }
+  .calendar-day-dot{ width: 5px; height: 5px; border-radius: 50%; background: var(--amber); }
+  .calendar-day-dots{ display:flex; gap: 3px; }
+  .calendar-day.today .calendar-day-dot{ box-shadow: 0 0 0 1px white; }
+  .calendar-day.has-couple{ background: rgba(122,31,53,0.16); border: 1.5px solid #7A1F35; color: #7A1F35; font-weight: 600; }
+  .category-picker{ display:flex; flex-wrap:wrap; gap: 8px; padding: 10px 0 16px; }
+  .category-chip{
+    display:flex; align-items:center; gap: 6px;
+    background: var(--paper-raised); border: 1.5px solid var(--line); border-radius: 20px;
+    padding: 7px 12px 7px 8px; font-size: 0.82rem; color: var(--ink-soft);
+  }
+  .category-chip .category-dot{ width: 10px; height: 10px; border-radius: 50%; background: var(--chip-color); }
+  .category-chip.active{ border-color: var(--chip-color); color: var(--ink); background: white; font-weight: 600; }
+  .event-title{ display:flex; align-items:center; gap: 8px; font-size: 0.95rem; }
+  .event-title .category-dot{ width: 8px; height: 8px; border-radius: 50%; flex-shrink:0; }
+  .day-view-title{ font-size: 1.15rem; text-transform: capitalize; margin-bottom: 16px; }
+  .event-item{
+    display:flex; gap: 12px; background: var(--paper-raised); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 12px 14px; margin-bottom: 10px; cursor: pointer;
+  }
+  .event-time{ font-size: 0.78rem; color: var(--teal-deep); font-weight: 600; min-width: 44px; padding-top: 2px; }
+  .event-title{ font-size: 0.95rem; }
+  .event-notes{ font-size: 0.82rem; color: var(--ink-soft); margin-top: 3px; line-height: 1.4; }
+  .event-time-row{ display:flex; align-items:center; flex-wrap:wrap; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 8px; font-size: 0.88rem; color: var(--ink-soft); }
+  .event-time-row input{ border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: var(--paper-raised); color: var(--ink); }
+
+  /* ---------- JOURNAL ---------- */
+  .journal-date-input{
+    border: 1px solid var(--line); border-radius: 8px; background: var(--paper-raised);
+    color: var(--ink); padding: 6px 10px; font-size: 0.88rem;
+  }
+  .journal-day-label{ text-align:center; font-size: 0.82rem; color: var(--ink-soft); text-transform: capitalize; margin-bottom: 18px; }
+  .journal-list{ display:flex; flex-direction:column; }
+  .journal-row{ display:flex; gap: 10px; cursor:pointer; }
+  .journal-time{ width: 46px; flex-shrink:0; font-size: 0.78rem; font-weight: 600; color: var(--teal-deep); padding-top: 10px; text-align:right; }
+  .journal-track{ width: 2px; background: var(--line); align-self: stretch; position: relative; flex-shrink:0; }
+  .journal-dot{ position:absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 9px; height:9px; border-radius:50%; background: var(--teal); border: 2px solid var(--paper); }
+  .journal-card{
+    flex:1; background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 10px 14px; margin: 4px 0 14px; font-size: 0.9rem; line-height: 1.5;
+  }
+  .journal-card-cat{ display:flex; align-items:center; gap: 6px; font-size: 0.75rem; color: var(--ink-soft); margin-bottom: 4px; }
+  .category-chip.new-category{ border-style: dashed; color: var(--ink-soft); }
+  .category-chip-wrap{ position: relative; display:inline-flex; }
+  .category-chip-x{
+    position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--danger); color: white; border: 2px solid var(--paper); font-size: 0.65rem;
+    line-height: 0; display:flex; align-items:center; justify-content:center;
+  }
+  .journal-summary{ background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 18px; }
+  .summary-row{ display:flex; align-items:center; gap: 8px; padding: 5px 0; font-size: 0.85rem; }
+  .summary-name{ flex:1; }
+  .summary-duration{ font-weight: 600; color: var(--teal-deep); }
+  .settings-category-row{ display:flex; align-items:center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .settings-category-row .category-dot{ width: 12px; height: 12px; border-radius: 50%; flex-shrink:0; }
+  .settings-category-row span.name{ flex:1; font-size: 0.9rem; }
+  .settings-category-row button{ background:none; border:none; color: var(--danger); font-size: 0.8rem; }
+  .visually-hidden{
+    position: absolute; width: 1px; height: 1px; padding:0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  /* ---------- TRANSLATION ---------- */
+  .translate-section{ margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .translate-row{ display:flex; align-items:center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .translate-row select{
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: 8px;
+    padding: 7px 8px; font-size: 0.82rem; color: var(--ink);
+  }
+  .translate-row .arrow{ color: var(--ink-soft); }
+  .translate-btn{
+    background: var(--teal); color: white; border: none; border-radius: 8px;
+    padding: 7px 14px; font-size: 0.82rem; margin-left: auto;
+  }
+  .translate-btn[disabled]{ opacity: 0.6; }
+  .translate-status{ font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 8px; }
+  .translate-result{
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 12px 14px; margin-top: 4px;
+  }
+  .translate-result h4{ font-family: Georgia, serif; font-size: 1rem; margin-bottom: 6px; }
+  .translate-result p{ margin: 0; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; }
+  .translate-disclaimer{ font-size: 0.7rem; color: var(--ink-soft); margin-top: 8px; }
+
+  /* ---------- BOTTOM NAV ---------- */
+  .bottom-nav{
+    position: sticky; bottom:0;
+    display:flex;
+    background: var(--paper-raised);
+    border-top: 1px solid var(--line);
+    padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-item{
+    flex: 0 0 auto; min-width: 70px;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:none; border:none; color: var(--ink-soft); font-size: 0.66rem; padding: 6px 4px;
+  }
+  .nav-item.active{ color: var(--teal-deep); }
+  .nav-item svg{ width:20px; height:20px; }
+  .nav-item .soon{ font-size: 0.58rem; opacity: .75; }
+
+  .toast{
+    position: fixed; left: 50%; bottom: 110px; transform: translateX(-50%);
+    background: var(--ink); color: var(--paper); padding: 8px 16px; border-radius: 20px;
+    font-size: 0.82rem; opacity: 0; pointer-events:none; transition: opacity .25s; max-width: 85%; text-align:center;
+    z-index: 60;
+  }
+  .toast.show{ opacity: 0.95; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const app = document.getElementById('app');
+
+const STRINGS = {
+  fr: {
+    appTitle: 'Carnet',
+    lock_setup_title_enter: 'Choisis ton code',
+    lock_setup_title_confirm: 'Confirme ton code',
+    lock_unlock_title: 'Ton carnet',
+    lock_setup_sub_enter: "Ce code protège l'accès à ton carnet sur cet appareil.",
+    lock_setup_sub_confirm: 'Retape le même code pour confirmer.',
+    lock_unlock_sub: 'Entre ton code pour continuer',
+    lock_error_mismatch: 'Les codes ne correspondent pas, réessaie.',
+    lock_error_wrong: 'Code incorrect',
+    nav_notes: 'Notes', nav_recipes: 'Recettes', nav_photos: 'Photos', nav_passwords: 'Mots de passe', nav_calendar: 'Calendrier', nav_soon: 'bientôt',
+    event_add: 'Ajouter un événement',
+    event_title_placeholder: "Titre de l'événement",
+    event_time_label: 'Heure (optionnel)',
+    event_notes_placeholder: 'Notes (optionnel)',
+    event_empty_day: 'Aucun événement ce jour-là',
+    event_delete: 'Supprimer',
+    event_back: '‹ Retour',
+    event_no_time: 'Toute la journée',
+    category_label: 'Catégorie',
+    category_rdv: 'Rendez-vous',
+    category_anniversaire: 'Anniversaire',
+    category_travail: 'Travail',
+    category_fete: 'Fête',
+    category_voyage: 'Voyage',
+    category_couple: 'Couple',
+    nav_journal: 'Journal',
+    journal_empty_title: 'Rien de noté ce jour-là',
+    journal_empty_sub: "Touche le bouton + pour ajouter ce que tu es en train de faire.",
+    journal_entry_placeholder: "Qu'es-tu en train de faire ?",
+    journal_time_label: 'Heure',
+    journal_back: '‹ Retour',
+    journal_delete: 'Supprimer',
+    journal_start_time_label: 'De',
+    journal_end_time_label: 'À',
+    journal_category_label: 'Catégorie',
+    journal_no_category: 'Sans catégorie',
+    journal_new_category: '+ Nouvelle catégorie',
+    journal_new_category_prompt: 'Nom de la nouvelle catégorie :',
+    journal_summary_title: 'Récapitulatif du jour',
+    journal_summary_empty: 'Ajoute une heure de début et de fin à tes entrées pour voir le temps passé par catégorie.',
+    settings_journal_categories_title: 'Catégories du journal',
+    journal_category_delete_confirm: 'Supprimer cette catégorie ? Les entrées qui l\'utilisent deviendront "Sans catégorie".',
+    settings_cloud_title: 'Sauvegarde cloud (Google Drive)',
+    settings_cloud_desc: "Connecte ton compte Google pour que tes notes, événements et journal se sauvegardent automatiquement sur ton Drive pendant que tu utilises l'app.",
+    cloud_client_id_label: 'Google Client ID',
+    cloud_client_id_placeholder: 'Colle ici ton Client ID Google',
+    cloud_connect_button: 'Connecter Google Drive',
+    cloud_connected_label: 'Connecté à Google Drive',
+    cloud_backup_now: 'Sauvegarder maintenant',
+    cloud_restore: 'Restaurer depuis Drive',
+    cloud_last_sync: (d)=> `Dernière sauvegarde : ${d}`,
+    cloud_never_synced: 'Jamais encore sauvegardé',
+    toast_drive_backup_ok: 'Sauvegardé sur Google Drive',
+    toast_drive_backup_failed: 'La sauvegarde Google Drive a échoué',
+    toast_drive_connected: 'Connecté à Google Drive',
+    toast_drive_no_backup: 'Aucune sauvegarde trouvée sur ce compte Drive',
+    cloud_missing_client_id: "Renseigne d'abord ton Google Client ID ci-dessus.",
+    home_title: 'Notes',
+    home_count: (n)=> n>1 ? `${n} notes` : `${n} note`,
+    home_empty_title: "Aucune note pour l'instant",
+    home_empty_sub: 'Touche le bouton + pour écrire ta première note.',
+    untitled: 'Sans titre',
+    soon_title: 'Bientôt disponible',
+    soon_desc: (label)=> `On ajoutera ${label} à ton carnet dans une prochaine étape.`,
+    editor_back: '‹ Retour',
+    editor_delete: 'Supprimer',
+    editor_title_placeholder: 'Titre',
+    editor_content_placeholder: 'Écris quelque chose…',
+    photos_label: 'Photos',
+    videos_label: 'Vidéos',
+    videos_backup_note: "Les vidéos ne sont pas incluses dans la sauvegarde exportée (fichiers trop volumineux).",
+    video_large_confirm: (size)=> `Cette vidéo pèse ${size}. Elle va occuper beaucoup de place sur ton téléphone. Continuer ?`,
+    toast_video_failed: "Cette vidéo n'a pas pu être ajoutée ou lue",
+    settings_title: 'Réglages',
+    settings_backup_title: 'Sauvegarde',
+    settings_backup_desc: "Tes notes et photos sont stockées uniquement sur cet appareil, dans ce navigateur. Pour les garder en cas de changement de téléphone, télécharge une sauvegarde régulièrement et range-la où tu veux (Drive, iCloud, mail...).",
+    settings_export: 'Exporter mes données',
+    settings_import: 'Importer une sauvegarde',
+    settings_language_title: "Langue de l'application",
+    toast_note_deleted: 'Note supprimée',
+    toast_backup_downloaded: 'Sauvegarde téléchargée',
+    toast_backup_imported: 'Sauvegarde importée',
+    toast_backup_invalid: 'Fichier de sauvegarde invalide',
+    toast_backup_unreadable: 'Impossible de lire ce fichier',
+    toast_photo_failed: "Cette photo n'a pas pu être ajoutée",
+    confirm_import: (cur,inc)=> `Remplacer tes notes actuelles (${cur}) par celles de cette sauvegarde (${inc}) ? Cette action est irréversible.`,
+    translate_section_title: 'Traduction automatique',
+    translate_from: 'Depuis', translate_to: 'Vers', translate_button: 'Traduire',
+    translate_loading: 'Traduction en cours…',
+    translate_error: 'La traduction a échoué. Vérifie ta connexion internet et réessaie.',
+    translate_result_label: (lang)=> `Traduction (${lang})`,
+    translate_disclaimer: 'Traduction automatique, peut contenir des approximations.',
+    lang_fr: 'Français', lang_en: 'English', lang_hu: 'Magyar',
+  },
+  en: {
+    appTitle: 'Notebook',
+    lock_setup_title_enter: 'Choose your code',
+    lock_setup_title_confirm: 'Confirm your code',
+    lock_unlock_title: 'Your notebook',
+    lock_setup_sub_enter: 'This code protects access to your notebook on this device.',
+    lock_setup_sub_confirm: 'Enter the same code again to confirm.',
+    lock_unlock_sub: 'Enter your code to continue',
+    lock_error_mismatch: "The codes don't match, try again.",
+    lock_error_wrong: 'Incorrect code',
+    nav_notes: 'Notes', nav_recipes: 'Recipes', nav_photos: 'Photos', nav_passwords: 'Passwords', nav_calendar: 'Calendar', nav_soon: 'soon',
+    event_add: 'Add an event',
+    event_title_placeholder: 'Event title',
+    event_time_label: 'Time (optional)',
+    event_notes_placeholder: 'Notes (optional)',
+    event_empty_day: 'No events on this day',
+    event_delete: 'Delete',
+    event_back: '‹ Back',
+    event_no_time: 'All day',
+    category_label: 'Category',
+    category_rdv: 'Appointment',
+    category_anniversaire: 'Birthday',
+    category_travail: 'Work',
+    category_fete: 'Party',
+    category_voyage: 'Travel',
+    category_couple: 'Couple',
+    nav_journal: 'Journal',
+    journal_empty_title: 'Nothing logged this day',
+    journal_empty_sub: 'Tap the + button to add what you\'re doing right now.',
+    journal_entry_placeholder: 'What are you doing?',
+    journal_time_label: 'Time',
+    journal_back: '‹ Back',
+    journal_delete: 'Delete',
+    journal_start_time_label: 'From',
+    journal_end_time_label: 'To',
+    journal_category_label: 'Category',
+    journal_no_category: 'No category',
+    journal_new_category: '+ New category',
+    journal_new_category_prompt: 'Name of the new category:',
+    journal_summary_title: 'Day summary',
+    journal_summary_empty: 'Add a start and end time to your entries to see time spent per category.',
+    settings_journal_categories_title: 'Journal categories',
+    journal_category_delete_confirm: 'Delete this category? Entries using it will become "No category".',
+    settings_cloud_title: 'Cloud backup (Google Drive)',
+    settings_cloud_desc: "Connect your Google account so your notes, events and journal back up automatically to your Drive while you use the app.",
+    cloud_client_id_label: 'Google Client ID',
+    cloud_client_id_placeholder: 'Paste your Google Client ID here',
+    cloud_connect_button: 'Connect Google Drive',
+    cloud_connected_label: 'Connected to Google Drive',
+    cloud_backup_now: 'Back up now',
+    cloud_restore: 'Restore from Drive',
+    cloud_last_sync: (d)=> `Last backup: ${d}`,
+    cloud_never_synced: 'Never backed up yet',
+    toast_drive_backup_ok: 'Backed up to Google Drive',
+    toast_drive_backup_failed: 'Google Drive backup failed',
+    toast_drive_connected: 'Connected to Google Drive',
+    toast_drive_no_backup: 'No backup found on this Drive account',
+    cloud_missing_client_id: 'Fill in your Google Client ID above first.',
+    home_title: 'Notes',
+    home_count: (n)=> n>1 ? `${n} notes` : `${n} note`,
+    home_empty_title: 'No notes yet',
+    home_empty_sub: 'Tap the + button to write your first note.',
+    untitled: 'Untitled',
+    soon_title: 'Coming soon',
+    soon_desc: (label)=> `We'll add ${label} to your notebook in a future update.`,
+    editor_back: '‹ Back',
+    editor_delete: 'Delete',
+    editor_title_placeholder: 'Title',
+    editor_content_placeholder: 'Write something…',
+    photos_label: 'Photos',
+    videos_label: 'Videos',
+    videos_backup_note: "Videos are not included in the exported backup (files too large).",
+    video_large_confirm: (size)=> `This video is ${size}. It will take up a lot of space on your phone. Continue?`,
+    toast_video_failed: "This video couldn't be added or played",
+    settings_title: 'Settings',
+    settings_backup_title: 'Backup',
+    settings_backup_desc: "Your notes and photos are stored only on this device, in this browser. To keep them if you switch phones, download a backup regularly and save it wherever you like (Drive, iCloud, email...).",
+    settings_export: 'Export my data',
+    settings_import: 'Import a backup',
+    settings_language_title: 'App language',
+    toast_note_deleted: 'Note deleted',
+    toast_backup_downloaded: 'Backup downloaded',
+    toast_backup_imported: 'Backup imported',
+    toast_backup_invalid: 'Invalid backup file',
+    toast_backup_unreadable: 'Unable to read this file',
+    toast_photo_failed: "This photo couldn't be added",
+    confirm_import: (cur,inc)=> `Replace your current notes (${cur}) with those from this backup (${inc})? This action is irreversible.`,
+    translate_section_title: 'Automatic translation',
+    translate_from: 'From', translate_to: 'To', translate_button: 'Translate',
+    translate_loading: 'Translating…',
+    translate_error: 'Translation failed. Check your internet connection and try again.',
+    translate_result_label: (lang)=> `Translation (${lang})`,
+    translate_disclaimer: 'Automatic translation, may contain inaccuracies.',
+    lang_fr: 'Français', lang_en: 'English', lang_hu: 'Magyar',
+  },
+  hu: {
+    appTitle: 'Jegyzetfüzet',
+    lock_setup_title_enter: 'Válaszd ki a kódodat',
+    lock_setup_title_confirm: 'Erősítsd meg a kódot',
+    lock_unlock_title: 'A jegyzetfüzeted',
+    lock_setup_sub_enter: 'Ez a kód védi a jegyzetfüzetedhez való hozzáférést ezen a készüléken.',
+    lock_setup_sub_confirm: 'Írd be újra ugyanazt a kódot a megerősítéshez.',
+    lock_unlock_sub: 'Add meg a kódot a folytatáshoz',
+    lock_error_mismatch: 'A kódok nem egyeznek, próbáld újra.',
+    lock_error_wrong: 'Helytelen kód',
+    nav_notes: 'Jegyzetek', nav_recipes: 'Receptek', nav_photos: 'Fotók', nav_passwords: 'Jelszavak', nav_soon: 'hamarosan',
+    home_title: 'Jegyzetek',
+    home_count: (n)=> `${n} jegyzet`,
+    home_empty_title: 'Még nincs jegyzet',
+    home_empty_sub: 'Koppints a + gombra az első jegyzet írásához.',
+    untitled: 'Cím nélkül',
+    soon_title: 'Hamarosan elérhető',
+    soon_desc: (label)=> `${label} funkciót egy következő frissítésben adjuk hozzá a jegyzetfüzetedhez.`,
+    editor_back: '‹ Vissza',
+    editor_delete: 'Törlés',
+    editor_title_placeholder: 'Cím',
+    editor_content_placeholder: 'Írj valamit…',
+    photos_label: 'Fotók',
+    settings_title: 'Beállítások',
+    settings_backup_title: 'Biztonsági mentés',
+    settings_backup_desc: 'A jegyzeteid és fotóid csak ezen a készüléken, ebben a böngészőben tárolódnak. Ha telefont váltasz, tölts le rendszeresen egy mentést, és mentsd el, ahová szeretnéd (Drive, iCloud, e-mail...).',
+    settings_export: 'Adataim exportálása',
+    settings_import: 'Biztonsági mentés importálása',
+    settings_language_title: 'Alkalmazás nyelve',
+    toast_note_deleted: 'Jegyzet törölve',
+    toast_backup_downloaded: 'Biztonsági mentés letöltve',
+    toast_backup_imported: 'Biztonsági mentés importálva',
+    toast_backup_invalid: 'Érvénytelen mentésfájl',
+    toast_backup_unreadable: 'A fájl nem olvasható',
+    toast_photo_failed: 'Ezt a fotót nem sikerült hozzáadni',
+    confirm_import: (cur,inc)=> `Lecseréled a jelenlegi jegyzeteidet (${cur}) erre a mentésre (${inc})? Ez a művelet nem vonható vissza.`,
+    translate_section_title: 'Automatikus fordítás',
+    translate_from: 'Ebből', translate_to: 'Ebbe', translate_button: 'Fordítás',
+    translate_loading: 'Fordítás folyamatban…',
+    translate_error: 'A fordítás sikertelen. Ellenőrizd az internetkapcsolatot, és próbáld újra.',
+    translate_result_label: (lang)=> `Fordítás (${lang})`,
+    translate_disclaimer: 'Gépi fordítás, pontatlanságokat tartalmazhat.',
+    lang_fr: 'Français', lang_en: 'English', lang_hu: 'Magyar',
+  },
+};
+
+const LANGS = ['fr','en'];
+
+const CATEGORIES = [
+  { id: 'rdv', color: '#4C6FA8' },
+  { id: 'anniversaire', color: '#C0392B' },
+  { id: 'travail', color: '#5B6B73' },
+  { id: 'fete', color: '#B5548C' },
+  { id: 'voyage', color: '#5B8A5A' },
+  { id: 'couple', color: '#7A1F35' },
+];
+function categoryColor(id){
+  const c = CATEGORIES.find(c => c.id === id);
+  return c ? c.color : CATEGORIES[0].color;
+}
+function categoryLabel(id){
+  return tr('category_' + (id || 'rdv'));
+}
+
+const JOURNAL_PALETTE = ['#4C6FA8','#C0392B','#5B6B73','#B5548C','#5B8A5A','#7A1F35','#C97B3D','#3F7D8C','#8A6D3B','#6B4C8A'];
+
+function tr(key, ...args){
+  const dict = STRINGS[state.lang] || STRINGS.fr;
+  const val = dict[key] !== undefined ? dict[key] : STRINGS.fr[key];
+  return typeof val === 'function' ? val(...args) : val;
+}
+
+const state = {
+  screen: 'loading',   // loading | setpin | unlock | home | editor | soon | settings
+  lang: 'fr',
+  pinEntry: '',
+  pinError: false,
+  pinStage: 'enter',    // for setup: enter -> confirm
+  firstPin: '',
+  notes: [],
+  currentNote: null,
+  tab: 'notes',
+  translateFrom: 'fr',
+  translateTo: 'en',
+  translating: false,
+  events: [],
+  calendarYear: null,
+  calendarMonth: null,
+  selectedDate: null,
+  currentEvent: null,
+  journal: [],
+  journalDate: null,
+  currentJournalEntry: null,
+  journalCategories: [],
+  lastJournalCategory: null,
+  googleClientId: '',
+  googleConnected: false,
+  lastDriveSync: null,
+};
+
+function svgIcon(name){
+  const icons = {
+    lock: '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+    notes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h8l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>',
+    recipe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3v6a3 3 0 0 0 3 3v9M18 3v18M6 3a3 3 0 0 0 3 3M6 9a3 3 0 0 0 3-3"/></svg>',
+    photo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-4 4-2-2-5 5"/></svg>',
+    key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="15" r="4"/><path d="M10.5 12.5 20 3M17 6l3 3M14 9l2 2"/></svg>',
+    settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>',
+    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v13m0 0-4-4m4 4 4-4M4 19h16"/></svg>',
+    upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20V7m0 0-4 4m4-4 4 4M4 4h16"/></svg>',
+    video: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10.5 21 7v10l-5-3.5Z"/></svg>',
+    calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    chevronLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg>',
+    chevronRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  };
+  return icons[name] || '';
+}
+
+async function storageGet(key){
+  try{
+    const raw = window.localStorage.getItem('carnet:' + key);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ console.error('storage error', e); return null; }
+}
+async function storageSet(key, value){
+  try{ window.localStorage.setItem('carnet:' + key, JSON.stringify(value)); }catch(e){ console.error('storage error', e); }
+}
+
+/* ---------- VIDEO STORAGE (IndexedDB — videos are too large for localStorage) ---------- */
+const VIDEO_DB_NAME = 'carnet-media';
+const VIDEO_STORE = 'videos';
+let videoDbPromise = null;
+function openVideoDB(){
+  if(videoDbPromise) return videoDbPromise;
+  videoDbPromise = new Promise((resolve, reject)=>{
+    const req = indexedDB.open(VIDEO_DB_NAME, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if(!db.objectStoreNames.contains(VIDEO_STORE)) db.createObjectStore(VIDEO_STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return videoDbPromise;
+}
+async function videoPut(id, blob){
+  const db = await openVideoDB();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(VIDEO_STORE, 'readwrite');
+    tx.objectStore(VIDEO_STORE).put(blob, id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+async function videoGet(id){
+  const db = await openVideoDB();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(VIDEO_STORE, 'readonly');
+    const req = tx.objectStore(VIDEO_STORE).get(id);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function videoDelete(id){
+  const db = await openVideoDB();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(VIDEO_STORE, 'readwrite');
+    tx.objectStore(VIDEO_STORE).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+function formatFileSize(bytes){
+  if(bytes < 1024*1024) return Math.round(bytes/1024) + ' Ko';
+  return (bytes/(1024*1024)).toFixed(1) + ' Mo';
+}
+
+function simpleHash(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0; }
+  return h.toString(36);
+}
+
+let toastTimer = null;
+function showToast(msg){
+  render();
+  requestAnimationFrame(()=>{
+    const t = document.querySelector('.toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>{ t.classList.remove('show'); }, 1800);
+  });
+}
+
+async function init(){
+  const savedPin = await storageGet('pin_hash');
+  const savedNotes = await storageGet('notes');
+  const savedLang = await storageGet('lang');
+  const savedEvents = await storageGet('events');
+  const savedJournal = await storageGet('journal');
+  const savedJournalCategories = await storageGet('journalCategories');
+  const savedLastCategory = await storageGet('lastJournalCategory');
+  state.lastJournalCategory = savedLastCategory || null;
+  state.googleClientId = (await storageGet('googleClientId')) || '';
+  state.lastDriveSync = (await storageGet('lastDriveSync')) || null;
+  state.notes = savedNotes || [];
+  state.events = savedEvents || [];
+  state.journal = (savedJournal || []).map(e => e.startTime !== undefined ? e : {
+    ...e, startTime: e.time || '', endTime: e.time || '', category: e.category || null,
+  });
+  state.journalCategories = savedJournalCategories || [];
+  const today = new Date();
+  state.calendarYear = today.getFullYear();
+  state.calendarMonth = today.getMonth();
+  state.journalDate = todayISO();
+  state.lang = LANGS.includes(savedLang) ? savedLang : (LANGS.includes(navigator.language?.slice(0,2)) ? navigator.language.slice(0,2) : 'fr');
+  state.screen = savedPin ? 'unlock' : 'setpin';
+  state.savedPinHash = savedPin;
+  document.title = tr('appTitle');
+  document.documentElement.lang = state.lang;
+  render();
+}
+
+async function setLang(lang){
+  state.lang = lang;
+  document.title = tr('appTitle');
+  document.documentElement.lang = lang;
+  await storageSet('lang', lang);
+  render();
+}
+
+function onKeyPress(digit){
+  if(state.pinEntry.length >= 4) return;
+  state.pinEntry += digit;
+  state.pinError = false;
+  render();
+  if(state.pinEntry.length === 4){
+    setTimeout(handlePinComplete, 150);
+  }
+}
+function onKeyDelete(){
+  state.pinEntry = state.pinEntry.slice(0, -1);
+  render();
+}
+
+async function handlePinComplete(){
+  if(state.screen === 'setpin'){
+    if(state.pinStage === 'enter'){
+      state.firstPin = state.pinEntry;
+      state.pinEntry = '';
+      state.pinStage = 'confirm';
+      render();
+    } else {
+      if(state.pinEntry === state.firstPin){
+        const hash = simpleHash(state.pinEntry);
+        await storageSet('pin_hash', hash);
+        state.savedPinHash = hash;
+        state.screen = 'home';
+        state.pinEntry = '';
+        render();
+      } else {
+        state.pinError = true;
+        state.pinEntry = '';
+        state.pinStage = 'enter';
+        state.firstPin = '';
+        render();
+      }
+    }
+  } else if(state.screen === 'unlock'){
+    const hash = simpleHash(state.pinEntry);
+    if(hash === state.savedPinHash){
+      state.screen = 'home';
+      state.pinEntry = '';
+      render();
+    } else {
+      state.pinError = true;
+      state.pinEntry = '';
+      render();
+      setTimeout(()=>{ state.pinError = false; render(); }, 600);
+    }
+  }
+}
+
+function openNote(note){
+  state.currentNote = note
+    ? {...note, photos: note.photos ? [...note.photos] : [], videos: note.videos ? [...note.videos] : [], translations: note.translations ? {...note.translations} : {}}
+    : { id: 'n' + Date.now(), title: '', content: '', date: todayISO(), updated: Date.now(), photos: [], videos: [], translations: {} };
+  state.screen = 'editor';
+  render();
+}
+
+function todayISO(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+
+function formatNoteDate(iso){
+  if(!iso) return '';
+  const [y,m,d] = iso.split('-').map(Number);
+  const date = new Date(y, m-1, d);
+  const locale = state.lang === 'en' ? 'en-GB' : state.lang === 'hu' ? 'hu-HU' : 'fr-FR';
+  return date.toLocaleDateString(locale, { day:'numeric', month:'long', year:'numeric' });
+}
+
+async function saveCurrentNote(){
+  const n = state.currentNote;
+  if(!n.title.trim() && !n.content.trim() && (!n.photos || !n.photos.length) && (!n.videos || !n.videos.length)){
+    return;
+  }
+  n.updated = Date.now();
+  const idx = state.notes.findIndex(x => x.id === n.id);
+  if(idx >= 0) state.notes[idx] = n;
+  else state.notes.unshift(n);
+  await storageSet('notes', state.notes);
+  triggerAutoSync();
+}
+
+async function deleteCurrentNote(){
+  const videos = state.currentNote.videos || [];
+  for(const v of videos){
+    try{ await videoDelete(v.id); }catch(e){ console.error('video delete error', e); }
+  }
+  state.notes = state.notes.filter(x => x.id !== state.currentNote.id);
+  await storageSet('notes', state.notes);
+  triggerAutoSync();
+  state.screen = 'home';
+  state.currentNote = null;
+  render();
+  showToast(tr('toast_note_deleted'));
+}
+
+async function backFromEditor(){
+  await saveCurrentNote();
+  state.screen = 'home';
+  state.currentNote = null;
+  render();
+}
+
+function formatDate(ts){
+  const d = new Date(ts);
+  const locale = state.lang === 'en' ? 'en-GB' : state.lang === 'hu' ? 'hu-HU' : 'fr-FR';
+  return d.toLocaleDateString(locale, { day:'numeric', month:'short' }) + ' · ' + d.toLocaleTimeString(locale, { hour:'2-digit', minute:'2-digit' });
+}
+
+function fileToCompressedDataUrl(file, maxDim=1100, quality=0.72){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if(width > maxDim || height > maxDim){
+          if(width > height){ height = Math.round(height * maxDim/width); width = maxDim; }
+          else{ width = Math.round(width * maxDim/height); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => reject(new Error('image invalide'));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error('lecture impossible'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handlePhotoInput(input){
+  const files = Array.from(input.files || []);
+  for(const file of files){
+    try{
+      const dataUrl = await fileToCompressedDataUrl(file);
+      if(!state.currentNote.photos) state.currentNote.photos = [];
+      state.currentNote.photos.push({ id: 'p' + Date.now() + Math.random().toString(36).slice(2,6), dataUrl });
+    }catch(e){
+      console.error('photo error', e);
+      showToast(tr('toast_photo_failed'));
+    }
+  }
+  input.value = '';
+  render();
+}
+
+function deletePhoto(id){
+  state.currentNote.photos = (state.currentNote.photos || []).filter(p => p.id !== id);
+  render();
+}
+
+async function handleVideoInput(input){
+  const files = Array.from(input.files || []);
+  for(const file of files){
+    if(file.size > 300 * 1024 * 1024){
+      const proceed = window.confirm(tr('video_large_confirm', formatFileSize(file.size)));
+      if(!proceed) continue;
+    }
+    const id = 'v' + Date.now() + Math.random().toString(36).slice(2,6);
+    try{
+      await videoPut(id, file);
+      if(!state.currentNote.videos) state.currentNote.videos = [];
+      state.currentNote.videos.push({ id, name: file.name, size: file.size, type: file.type });
+    }catch(e){
+      console.error('video store error', e);
+      showToast(tr('toast_video_failed'));
+    }
+  }
+  input.value = '';
+  render();
+}
+
+async function deleteVideo(id){
+  try{ await videoDelete(id); }catch(e){ console.error('video delete error', e); }
+  state.currentNote.videos = (state.currentNote.videos || []).filter(v => v.id !== id);
+  render();
+}
+
+async function playVideo(id){
+  try{
+    const blob = await videoGet(id);
+    if(!blob){ showToast(tr('toast_video_failed')); return; }
+    if(state.viewingVideoUrl) URL.revokeObjectURL(state.viewingVideoUrl);
+    state.viewingVideoUrl = URL.createObjectURL(blob);
+    render();
+  }catch(e){
+    console.error('video read error', e);
+    showToast(tr('toast_video_failed'));
+  }
+}
+
+function closeVideoPlayer(){
+  if(state.viewingVideoUrl){ URL.revokeObjectURL(state.viewingVideoUrl); }
+  state.viewingVideoUrl = null;
+  render();
+}
+
+/* ---------- CALENDAR ---------- */
+function changeMonth(delta){
+  let m = state.calendarMonth + delta;
+  let y = state.calendarYear;
+  if(m < 0){ m = 11; y -= 1; }
+  if(m > 11){ m = 0; y += 1; }
+  state.calendarMonth = m;
+  state.calendarYear = y;
+  render();
+}
+
+function dateToISO(y,m,d){
+  const pad = n => String(n).padStart(2,'0');
+  return `${y}-${pad(m+1)}-${pad(d)}`;
+}
+
+function selectDay(iso){
+  state.selectedDate = iso;
+  state.screen = 'day';
+  render();
+}
+
+function backFromDay(){
+  state.screen = 'calendar';
+  state.selectedDate = null;
+  render();
+}
+
+function openEvent(ev){
+  state.currentEvent = ev
+    ? {...ev}
+    : { id: 'e' + Date.now(), date: state.selectedDate, time: '', title: '', notes: '', category: 'rdv' };
+  state.screen = 'eventEditor';
+  render();
+}
+
+function setEventCategory(id){
+  state.currentEvent.category = id;
+  render();
+}
+
+async function saveCurrentEvent(){
+  const e = state.currentEvent;
+  if(!e.title.trim()) return;
+  const idx = state.events.findIndex(x => x.id === e.id);
+  if(idx >= 0) state.events[idx] = e;
+  else state.events.push(e);
+  await storageSet('events', state.events);
+  triggerAutoSync();
+}
+
+async function deleteCurrentEvent(){
+  state.events = state.events.filter(x => x.id !== state.currentEvent.id);
+  await storageSet('events', state.events);
+  triggerAutoSync();
+  state.currentEvent = null;
+  state.screen = 'day';
+  render();
+}
+
+async function backFromEventEditor(){
+  await saveCurrentEvent();
+  state.currentEvent = null;
+  state.screen = 'day';
+  render();
+}
+
+/* ---------- JOURNAL (minute-by-minute activity log) ---------- */
+function nowHHMM(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function changeJournalDay(delta){
+  const [y,m,d] = state.journalDate.split('-').map(Number);
+  const date = new Date(y, m-1, d + delta);
+  state.journalDate = dateToISO(date.getFullYear(), date.getMonth(), date.getDate());
+  render();
+}
+
+function setJournalDate(iso){
+  state.journalDate = iso;
+  render();
+}
+
+function openJournalEntry(entry){
+  state.currentJournalEntry = entry
+    ? {...entry}
+    : { id: 'j' + Date.now(), date: state.journalDate, startTime: nowHHMM(), endTime: '', category: state.lastJournalCategory, text: '' };
+  state.screen = 'journalEntry';
+  render();
+}
+
+function entryDurationMinutes(e){
+  if(!e.startTime || !e.endTime) return 0;
+  const [sh,sm] = e.startTime.split(':').map(Number);
+  const [eh,em] = e.endTime.split(':').map(Number);
+  if(isNaN(sh) || isNaN(eh)) return 0;
+  let start = sh*60+sm, end = eh*60+em;
+  if(end < start) end += 24*60;
+  return end - start;
+}
+
+function formatDuration(totalMinutes){
+  if(totalMinutes <= 0) return '0min';
+  const h = Math.floor(totalMinutes/60);
+  const m = totalMinutes % 60;
+  if(h === 0) return `${m}min`;
+  if(m === 0) return `${h}h`;
+  return `${h}h${String(m).padStart(2,'0')}`;
+}
+
+function journalCategoryById(id){
+  return state.journalCategories.find(c => c.id === id);
+}
+
+async function setJournalEntryCategory(id){
+  state.currentJournalEntry.category = id;
+  state.lastJournalCategory = id;
+  await storageSet('lastJournalCategory', id);
+  render();
+}
+
+async function addJournalCategory(){
+  const name = window.prompt(tr('journal_new_category_prompt'));
+  if(!name || !name.trim()) return;
+  const id = 'jc' + Date.now();
+  const color = JOURNAL_PALETTE[state.journalCategories.length % JOURNAL_PALETTE.length];
+  state.journalCategories.push({ id, name: name.trim(), color });
+  await storageSet('journalCategories', state.journalCategories);
+  if(state.currentJournalEntry) state.currentJournalEntry.category = id;
+  render();
+}
+
+async function deleteJournalCategory(id){
+  const ok = window.confirm(tr('journal_category_delete_confirm'));
+  if(!ok) return;
+  state.journalCategories = state.journalCategories.filter(c => c.id !== id);
+  await storageSet('journalCategories', state.journalCategories);
+  state.journal.forEach(e => { if(e.category === id) e.category = null; });
+  await storageSet('journal', state.journal);
+  if(state.lastJournalCategory === id){
+    state.lastJournalCategory = null;
+    await storageSet('lastJournalCategory', null);
+  }
+  render();
+}
+
+/* ---------- GOOGLE DRIVE BACKUP ---------- */
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_BACKUP_FILENAME = 'carnet-sauvegarde.json';
+let googleTokenClient = null;
+let googleAccessToken = null;
+let driveFileId = null;
+
+function triggerAutoSync(){
+  if(!state.googleConnected) return;
+  driveUploadBackup();
+}
+
+async function setGoogleClientId(value){
+  state.googleClientId = value.trim();
+  googleTokenClient = null;
+  await storageSet('googleClientId', state.googleClientId);
+}
+
+function ensureGoogleTokenClient(){
+  if(!state.googleClientId) return null;
+  if(!window.google || !google.accounts || !google.accounts.oauth2) return null;
+  if(googleTokenClient) return googleTokenClient;
+  googleTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: state.googleClientId,
+    scope: DRIVE_SCOPE,
+    callback: () => {},
+  });
+  return googleTokenClient;
+}
+
+function requestGoogleToken(){
+  return new Promise((resolve, reject)=>{
+    const client = ensureGoogleTokenClient();
+    if(!client){ reject(new Error('google-not-ready')); return; }
+    client.callback = (resp) => {
+      if(resp.error){ reject(resp); return; }
+      googleAccessToken = resp.access_token;
+      resolve(resp.access_token);
+    };
+    client.requestAccessToken({ prompt: googleAccessToken ? '' : 'consent' });
+  });
+}
+
+async function connectGoogleDrive(){
+  if(!state.googleClientId){ showToast(tr('cloud_missing_client_id')); return; }
+  try{
+    await requestGoogleToken();
+    state.googleConnected = true;
+    render();
+    showToast(tr('toast_drive_connected'));
+    driveUploadBackup();
+  }catch(e){
+    console.error('google connect error', e);
+    showToast(tr('toast_drive_backup_failed'));
+  }
+}
+
+async function driveFindBackupFile(token){
+  const q = encodeURIComponent(`name='${DRIVE_BACKUP_FILENAME}' and trashed=false`);
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name)`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if(!res.ok) throw new Error('drive-list-failed');
+  const data = await res.json();
+  return (data.files && data.files[0]) || null;
+}
+
+function buildBackupPayload(){
+  return {
+    app: 'carnet', version: 1, exportedAt: new Date().toISOString(),
+    pin_hash: state.savedPinHash || null,
+    notes: state.notes, events: state.events,
+    journal: state.journal, journalCategories: state.journalCategories,
+  };
+}
+
+async function driveUploadBackup(){
+  if(!state.googleConnected && !state.googleClientId) return;
+  try{
+    const token = googleAccessToken || await requestGoogleToken();
+    const content = JSON.stringify(buildBackupPayload());
+    if(!driveFileId){
+      const existing = await driveFindBackupFile(token);
+      if(existing) driveFileId = existing.id;
+    }
+    const boundary = 'carnetboundary';
+    const metadata = { name: DRIVE_BACKUP_FILENAME, mimeType: 'application/json' };
+    const body =
+      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${driveFileId ? '{}' : JSON.stringify(metadata)}\r\n` +
+      `--${boundary}\r\nContent-Type: application/json\r\n\r\n${content}\r\n--${boundary}--`;
+    const url = driveFileId
+      ? `https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=multipart`
+      : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
+    const res = await fetch(url, {
+      method: driveFileId ? 'PATCH' : 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
+      body,
+    });
+    if(!res.ok) throw new Error('drive-upload-failed');
+    const data = await res.json();
+    driveFileId = data.id;
+    state.googleConnected = true;
+    state.lastDriveSync = Date.now();
+    await storageSet('lastDriveSync', state.lastDriveSync);
+    showToast(tr('toast_drive_backup_ok'));
+    if(state.screen === 'settings') render();
+  }catch(e){
+    console.error('drive upload error', e);
+    showToast(tr('toast_drive_backup_failed'));
+  }
+}
+
+async function driveRestoreBackup(){
+  if(!state.googleClientId){ showToast(tr('cloud_missing_client_id')); return; }
+  try{
+    const token = googleAccessToken || await requestGoogleToken();
+    const existing = await driveFindBackupFile(token);
+    if(!existing){ showToast(tr('toast_drive_no_backup')); return; }
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${existing.id}?alt=media`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if(!res.ok) throw new Error('drive-download-failed');
+    const data = await res.json();
+    const ok = window.confirm(tr('confirm_import', state.notes.length, (data.notes||[]).length));
+    if(!ok) return;
+    state.notes = data.notes || [];
+    state.events = data.events || [];
+    state.journal = data.journal || [];
+    state.journalCategories = data.journalCategories || [];
+    await storageSet('notes', state.notes);
+    await storageSet('events', state.events);
+    await storageSet('journal', state.journal);
+    await storageSet('journalCategories', state.journalCategories);
+    if(data.pin_hash){ state.savedPinHash = data.pin_hash; await storageSet('pin_hash', data.pin_hash); }
+    driveFileId = existing.id;
+    state.googleConnected = true;
+    render();
+    showToast(tr('toast_backup_imported'));
+  }catch(e){
+    console.error('drive restore error', e);
+    showToast(tr('toast_drive_backup_failed'));
+  }
+}
+
+async function saveCurrentJournalEntry(){
+  const e = state.currentJournalEntry;
+  if(!e.text.trim()) return;
+  const idx = state.journal.findIndex(x => x.id === e.id);
+  if(idx >= 0) state.journal[idx] = e;
+  else state.journal.push(e);
+  await storageSet('journal', state.journal);
+  triggerAutoSync();
+}
+
+async function deleteCurrentJournalEntry(){
+  state.journal = state.journal.filter(x => x.id !== state.currentJournalEntry.id);
+  await storageSet('journal', state.journal);
+  triggerAutoSync();
+  state.currentJournalEntry = null;
+  state.screen = 'journal';
+  render();
+}
+
+async function backFromJournalEntry(){
+  await saveCurrentJournalEntry();
+  state.currentJournalEntry = null;
+  state.screen = 'journal';
+  render();
+}
+
+function viewPhoto(dataUrl){
+  state.viewingPhoto = dataUrl;
+  render();
+}
+
+function closeLightbox(){
+  state.viewingPhoto = null;
+  render();
+}
+
+function openSettings(){
+  state.screen = 'settings';
+  render();
+}
+
+function exportData(){
+  const payload = {
+    app: 'carnet',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    pin_hash: state.savedPinHash || null,
+    notes: state.notes,
+    events: state.events,
+    journal: state.journal,
+    journalCategories: state.journalCategories,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = todayISO();
+  a.href = url;
+  a.download = `carnet-sauvegarde-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(tr('toast_backup_downloaded'));
+}
+
+async function handleImportFile(input){
+  const file = input.files && input.files[0];
+  input.value = '';
+  if(!file) return;
+  try{
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if(!data || !Array.isArray(data.notes)){
+      showToast(tr('toast_backup_invalid'));
+      return;
+    }
+    const ok = window.confirm(tr('confirm_import', state.notes.length, data.notes.length));
+    if(!ok) return;
+    state.notes = data.notes;
+    await storageSet('notes', state.notes);
+    if(Array.isArray(data.events)){
+      state.events = data.events;
+      await storageSet('events', state.events);
+    }
+    if(Array.isArray(data.journal)){
+      state.journal = data.journal;
+      await storageSet('journal', state.journal);
+    }
+    if(Array.isArray(data.journalCategories)){
+      state.journalCategories = data.journalCategories;
+      await storageSet('journalCategories', state.journalCategories);
+    }
+    if(data.pin_hash){
+      state.savedPinHash = data.pin_hash;
+      await storageSet('pin_hash', data.pin_hash);
+    }
+    render();
+    showToast(tr('toast_backup_imported'));
+  }catch(e){
+    console.error('import error', e);
+    showToast(tr('toast_backup_unreadable'));
+  }
+}
+
+/* ---------- TRANSLATION ---------- */
+const LANG_CODE_MAP = { fr: 'fr', en: 'en', hu: 'hu' };
+
+async function googleTranslateChunk(text, from, to){
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${LANG_CODE_MAP[from]}&tl=${LANG_CODE_MAP[to]}&dt=t&q=${encodeURIComponent(text)}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('network');
+  const data = await res.json();
+  const segments = data && data[0] ? data[0] : [];
+  const translated = segments.map(seg => seg[0]).join('');
+  if(!translated) throw new Error('empty');
+  return translated;
+}
+
+async function myMemoryChunkFallback(text, from, to){
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${LANG_CODE_MAP[from]}|${LANG_CODE_MAP[to]}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('network');
+  const data = await res.json();
+  // Prefer a genuine machine-translation match over noisy community translation-memory entries
+  let best = data && data.responseData && data.responseData.translatedText;
+  if(Array.isArray(data && data.matches)){
+    const mt = data.matches.find(m => m.translation && /mt!?/i.test((m['created-by'] || m['last-updated-by'] || '')));
+    if(mt) best = mt.translation;
+  }
+  if(!best) throw new Error('empty');
+  return best;
+}
+
+async function translateChunk(text, from, to){
+  try{
+    return await googleTranslateChunk(text, from, to);
+  }catch(e){
+    console.warn('Google Translate unavailable, falling back to MyMemory', e);
+    return await myMemoryChunkFallback(text, from, to);
+  }
+}
+
+async function myMemoryTranslate(text, from, to){
+  if(!text || !text.trim()) return '';
+  const chunks = text.match(/[\s\S]{1,1800}(?=\n|$)/g) || [text];
+  const results = [];
+  for(const chunk of chunks){
+    results.push(await translateChunk(chunk, from, to));
+  }
+  return results.join(' ');
+}
+
+function setTranslateFrom(v){ state.translateFrom = v; render(); }
+function setTranslateTo(v){ state.translateTo = v; render(); }
+
+async function translateNote(){
+  const n = state.currentNote;
+  const from = state.translateFrom, to = state.translateTo;
+  if(from === to) return;
+  state.translating = true;
+  render();
+  try{
+    const [title, content] = await Promise.all([
+      myMemoryTranslate(n.title, from, to),
+      myMemoryTranslate(n.content, from, to),
+    ]);
+    if(!n.translations) n.translations = {};
+    n.translations[to] = { title, content, from, at: Date.now() };
+    await saveCurrentNote();
+  }catch(e){
+    console.error('translate error', e);
+    state.translateErrored = true;
+  }
+  state.translating = false;
+  render();
+}
+
+function escapeHtml(str){
+  return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(str){ return escapeHtml(str); }
+
+function langLabel(code){
+  return code === 'fr' ? tr('lang_fr') : code === 'en' ? tr('lang_en') : tr('lang_hu');
+}
+
+function renderPinScreen(){
+  const isSetup = state.screen === 'setpin';
+  const title = isSetup
+    ? (state.pinStage === 'enter' ? tr('lock_setup_title_enter') : tr('lock_setup_title_confirm'))
+    : tr('lock_unlock_title');
+  const sub = isSetup
+    ? (state.pinStage === 'enter' ? tr('lock_setup_sub_enter') : tr('lock_setup_sub_confirm'))
+    : tr('lock_unlock_sub');
+
+  const dots = [0,1,2,3].map(i => {
+    let cls = 'pin-dot';
+    if(state.pinError) cls += ' error';
+    else if(i < state.pinEntry.length) cls += ' filled';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+
+  const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  const keypad = keys.map(k => {
+    if(k === '') return `<div class="key ghost"></div>`;
+    if(k === '⌫') return `<button class="key ghost" onclick="onKeyDelete()">⌫</button>`;
+    return `<button class="key" onclick="onKeyPress('${k}')">${k}</button>`;
+  }).join('');
+
+  const langSwitch = LANGS.map(l => `<button class="${state.lang===l?'active':''}" onclick="setLang('${l}')">${langLabel(l)}</button>`).join('');
+
+  return `
+    <div class="lock-screen">
+      <div class="lock-mark">${svgIcon('lock')}</div>
+      <div>
+        <div class="lock-title">${title}</div>
+        <div class="lock-sub">${sub}</div>
+      </div>
+      <div class="pin-dots">${dots}</div>
+      <div class="lock-error">${state.pinError ? (isSetup ? tr('lock_error_mismatch') : tr('lock_error_wrong')) : ''}</div>
+      <div class="keypad">${keypad}</div>
+      <div class="lock-lang-switch">${langSwitch}</div>
+    </div>
+  `;
+}
+
+function renderHome(){
+  const notes = [...state.notes].sort((a,b)=>b.updated-a.updated);
+  const list = notes.length ? notes.map(n => `
+    <div class="note-card" onclick='openNoteById("${n.id}")'>
+      <h3>${n.title ? escapeHtml(n.title) : tr('untitled')}</h3>
+      <p>${escapeHtml(n.content || '')}</p>
+      ${n.photos && n.photos.length ? `
+        <div class="note-photos">
+          ${n.photos.slice(0,3).map(p => `<img src="${p.dataUrl}">`).join('')}
+          ${n.photos.length > 3 ? `<span class="note-photos-more">+${n.photos.length - 3}</span>` : ''}
+        </div>
+      ` : ''}
+      <div class="meta">${formatNoteDate(n.date) || formatDate(n.updated)}</div>
+    </div>
+  `).join('') : `
+    <div class="empty-state">
+      <strong>${tr('home_empty_title')}</strong>
+      ${tr('home_empty_sub')}
+    </div>
+  `;
+
+  return `
+    <div class="top-bar">
+      <h1>${tr('home_title')}</h1>
+      <div class="top-bar-right">
+        <span class="count">${tr('home_count', notes.length)}</span>
+        <button class="settings-btn" onclick="openSettings()">${svgIcon('settings')}</button>
+      </div>
+    </div>
+    <div class="content">${list}</div>
+    <button class="fab" onclick="openNote(null)">+</button>
+    ${renderBottomNav()}
+  `;
+}
+
+function renderSettings(){
+  const langOptions = LANGS.map(l => `
+    <button class="lang-option ${state.lang===l?'active':''}" onclick="setLang('${l}')">${langLabel(l)}</button>
+  `).join('');
+  return `
+    <div class="top-bar">
+      <button class="icon-btn" onclick="state.screen='home'; render();">${tr('editor_back')}</button>
+      <h1 style="font-size:1.2rem">${tr('settings_title')}</h1>
+      <span style="width:40px"></span>
+    </div>
+    <div class="content">
+      <div class="settings-section">
+        <div class="settings-title">${tr('settings_language_title')}</div>
+        <div class="lang-options">${langOptions}</div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">${tr('settings_journal_categories_title')}</div>
+        ${state.journalCategories.map(c => `
+          <div class="settings-category-row">
+            <span class="category-dot" style="background:${c.color}"></span>
+            <span class="name">${escapeHtml(c.name)}</span>
+            <button onclick="deleteJournalCategory('${c.id}')">${tr('journal_delete')}</button>
+          </div>
+        `).join('')}
+        <button class="settings-btn-full secondary" onclick="addJournalCategory()" style="margin-top:10px">${tr('journal_new_category')}</button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">${tr('settings_cloud_title')}</div>
+        <p class="settings-desc">${tr('settings_cloud_desc')}</p>
+        <label class="cloud-field-label">${tr('cloud_client_id_label')}</label>
+        <input type="text" class="cloud-client-input" placeholder="${tr('cloud_client_id_placeholder')}" value="${escapeAttr(state.googleClientId)}" onchange="setGoogleClientId(this.value)">
+        ${state.googleConnected ? `
+          <div class="cloud-status">✓ ${tr('cloud_connected_label')}</div>
+          <div class="cloud-sync-time">${state.lastDriveSync ? tr('cloud_last_sync', new Date(state.lastDriveSync).toLocaleString(state.lang==='en'?'en-GB':'fr-FR')) : tr('cloud_never_synced')}</div>
+          <button class="settings-btn-full" onclick="driveUploadBackup()">${svgIcon('upload')} ${tr('cloud_backup_now')}</button>
+          <button class="settings-btn-full secondary" onclick="driveRestoreBackup()">${svgIcon('download')} ${tr('cloud_restore')}</button>
+        ` : `
+          <button class="settings-btn-full" onclick="connectGoogleDrive()" style="margin-top:10px">${tr('cloud_connect_button')}</button>
+        `}
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">${tr('settings_backup_title')}</div>
+        <p class="settings-desc">${tr('settings_backup_desc')}</p>
+        <button class="settings-btn-full" onclick="exportData()">${svgIcon('download')} ${tr('settings_export')}</button>
+        <button class="settings-btn-full secondary" onclick="document.getElementById('importFileInput').click()">${svgIcon('upload')} ${tr('settings_import')}</button>
+        <input type="file" id="importFileInput" accept="application/json" class="visually-hidden" onchange="handleImportFile(this)">
+      </div>
+    </div>
+  `;
+}
+
+function renderSoon(label){
+  return `
+    <div class="top-bar"><h1>${label}</h1></div>
+    <div class="content">
+      <div class="empty-state">
+        <strong>${tr('soon_title')}</strong>
+        ${tr('soon_desc', label)}
+      </div>
+    </div>
+    ${renderBottomNav()}
+  `;
+}
+
+function renderCalendar(){
+  const y = state.calendarYear, m = state.calendarMonth;
+  const locale = state.lang === 'en' ? 'en-GB' : 'fr-FR';
+  const monthLabel = new Date(y, m, 1).toLocaleDateString(locale, { month:'long', year:'numeric' });
+  const firstOfMonth = new Date(y, m, 1);
+  let startOffset = firstOfMonth.getDay() - 1; // make Monday = 0
+  if(startOffset < 0) startOffset = 6;
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const daysInPrevMonth = new Date(y, m, 0).getDate();
+  const todayIso = todayISO();
+
+  const categoriesByDate = {};
+  state.events.forEach(e => {
+    if(!categoriesByDate[e.date]) categoriesByDate[e.date] = new Set();
+    categoriesByDate[e.date].add(e.category || 'rdv');
+  });
+
+  const weekdayLabels = [0,1,2,3,4,5,6].map(i => {
+    const d = new Date(2024, 0, 1 + i); // a known Monday
+    return d.toLocaleDateString(locale, { weekday: 'short' }).slice(0,2);
+  });
+
+  let cells = '';
+  for(let i=0; i<startOffset; i++){
+    const d = daysInPrevMonth - startOffset + i + 1;
+    cells += `<div class="calendar-day other-month"><span>${d}</span></div>`;
+  }
+  for(let d=1; d<=daysInMonth; d++){
+    const iso = dateToISO(y,m,d);
+    const isToday = iso === todayIso;
+    const cats = categoriesByDate[iso] ? [...categoriesByDate[iso]].slice(0,3) : [];
+    const hasCouple = (categoriesByDate[iso] || new Set()).has('couple');
+    const dots = cats.map(c => `<div class="calendar-day-dot" style="background:${categoryColor(c)}"></div>`).join('');
+    cells += `
+      <button class="calendar-day ${isToday?'today':''} ${hasCouple ? 'has-couple':''}" onclick="selectDay('${iso}')">
+        <span>${d}</span>
+        ${dots ? `<div class="calendar-day-dots">${dots}</div>` : ''}
+      </button>
+    `;
+  }
+  const totalCells = startOffset + daysInMonth;
+  const trailing = (7 - (totalCells % 7)) % 7;
+  for(let d=1; d<=trailing; d++){
+    cells += `<div class="calendar-day other-month"><span>${d}</span></div>`;
+  }
+
+  return `
+    <div class="top-bar">
+      <h1>${tr('nav_calendar')}</h1>
+      <button class="settings-btn" onclick="openSettings()">${svgIcon('settings')}</button>
+    </div>
+    <div class="content">
+      <div class="calendar-header">
+        <button class="calendar-nav-btn" onclick="changeMonth(-1)">${svgIcon('chevronLeft')}</button>
+        <div class="calendar-month-label">${monthLabel}</div>
+        <button class="calendar-nav-btn" onclick="changeMonth(1)">${svgIcon('chevronRight')}</button>
+      </div>
+      <div class="calendar-weekdays">
+        ${weekdayLabels.map(w => `<div class="calendar-weekday">${w}</div>`).join('')}
+      </div>
+      <div class="calendar-grid">${cells}</div>
+    </div>
+    ${renderBottomNav()}
+  `;
+}
+
+function renderDayView(){
+  const iso = state.selectedDate;
+  const locale = state.lang === 'en' ? 'en-GB' : 'fr-FR';
+  const [y,mo,d] = iso.split('-').map(Number);
+  const label = new Date(y, mo-1, d).toLocaleDateString(locale, { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const dayEvents = state.events
+    .filter(e => e.date === iso)
+    .sort((a,b) => (a.time||'99:99').localeCompare(b.time||'99:99'));
+
+  const list = dayEvents.length ? dayEvents.map(e => `
+    <div class="event-item" onclick='openEvent(${JSON.stringify(e).replace(/'/g, "&#39;")})'>
+      <div class="event-time">${e.time ? e.time : tr('event_no_time')}</div>
+      <div class="event-body">
+        <div class="event-title"><span class="category-dot" style="background:${categoryColor(e.category)}"></span>${escapeHtml(e.title)}</div>
+        ${e.notes ? `<div class="event-notes">${escapeHtml(e.notes)}</div>` : ''}
+      </div>
+    </div>
+  `).join('') : `
+    <div class="empty-state">
+      <strong>${tr('event_empty_day')}</strong>
+    </div>
+  `;
+
+  return `
+    <div class="top-bar">
+      <button class="icon-btn" onclick="backFromDay()">${tr('event_back')}</button>
+    </div>
+    <div class="content">
+      <h2 class="day-view-title">${label}</h2>
+      ${list}
+    </div>
+    <button class="fab" onclick="openEvent(null)">+</button>
+  `;
+}
+
+function renderEventEditor(){
+  const e = state.currentEvent;
+  return `
+    <div class="editor">
+      <div class="editor-bar">
+        <button class="icon-btn" onclick="backFromEventEditor()">${tr('event_back')}</button>
+        <button class="icon-btn delete" onclick="deleteCurrentEvent()">${tr('event_delete')}</button>
+      </div>
+      <div class="editor-body">
+        <input class="editor-title" placeholder="${tr('event_title_placeholder')}" value="${escapeAttr(e.title)}" oninput="state.currentEvent.title=this.value">
+        <div class="category-picker">
+          ${CATEGORIES.map(c => `
+            <button type="button" class="category-chip ${e.category===c.id?'active':''}" style="--chip-color:${c.color}" onclick="setEventCategory('${c.id}')">
+              <span class="category-dot"></span>${categoryLabel(c.id)}
+            </button>
+          `).join('')}
+        </div>
+        <div class="event-time-row">
+          <label>${tr('event_time_label')}</label>
+          <input type="time" value="${e.time || ''}" onchange="state.currentEvent.time=this.value">
+        </div>
+        <textarea class="editor-content" placeholder="${tr('event_notes_placeholder')}" oninput="state.currentEvent.notes=this.value">${escapeHtml(e.notes || '')}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+function renderJournal(){
+  const iso = state.journalDate;
+  const locale = state.lang === 'en' ? 'en-GB' : 'fr-FR';
+  const [y,mo,d] = iso.split('-').map(Number);
+  const label = new Date(y, mo-1, d).toLocaleDateString(locale, { weekday:'long', day:'numeric', month:'long' });
+  const entries = state.journal
+    .filter(e => e.date === iso)
+    .sort((a,b) => (a.startTime||'').localeCompare(b.startTime||''));
+
+  const totals = {};
+  entries.forEach(e => {
+    const key = e.category || '_none';
+    totals[key] = (totals[key]||0) + entryDurationMinutes(e);
+  });
+  const totalRows = Object.keys(totals).filter(k => totals[k] > 0).map(key => {
+    const cat = key === '_none' ? null : journalCategoryById(key);
+    const name = cat ? cat.name : tr('journal_no_category');
+    const color = cat ? cat.color : 'var(--ink-soft)';
+    return `
+      <div class="summary-row">
+        <span class="category-dot" style="background:${color}"></span>
+        <span class="summary-name">${escapeHtml(name)}</span>
+        <span class="summary-duration">${formatDuration(totals[key])}</span>
+      </div>
+    `;
+  }).join('');
+
+  const summary = `
+    <div class="journal-summary">
+      <div class="photo-section-label">${tr('journal_summary_title')}</div>
+      ${totalRows || `<div class="translate-disclaimer">${tr('journal_summary_empty')}</div>`}
+    </div>
+  `;
+
+  const list = entries.length ? `
+    <div class="journal-list">
+      ${entries.map(e => {
+        const cat = e.category ? journalCategoryById(e.category) : null;
+        const duration = entryDurationMinutes(e);
+        return `
+        <div class="journal-row" onclick='openJournalEntry(${JSON.stringify(e).replace(/'/g, "&#39;")})'>
+          <div class="journal-time">${e.startTime || ''}${e.endTime ? '<br>'+e.endTime : ''}</div>
+          <div class="journal-track"><div class="journal-dot" style="${cat?`background:${cat.color}`:''}"></div></div>
+          <div class="journal-card">
+            ${cat ? `<div class="journal-card-cat"><span class="category-dot" style="background:${cat.color}"></span>${escapeHtml(cat.name)}${duration>0?` · ${formatDuration(duration)}`:''}</div>` : (duration>0 ? `<div class="journal-card-cat">${formatDuration(duration)}</div>` : '')}
+            ${escapeHtml(e.text)}
+          </div>
+        </div>
+      `;}).join('')}
+    </div>
+  ` : `
+    <div class="empty-state">
+      <strong>${tr('journal_empty_title')}</strong>
+      ${tr('journal_empty_sub')}
+    </div>
+  `;
+
+  return `
+    <div class="top-bar">
+      <h1>${tr('nav_journal')}</h1>
+      <button class="settings-btn" onclick="openSettings()">${svgIcon('settings')}</button>
+    </div>
+    <div class="content">
+      <div class="calendar-header">
+        <button class="calendar-nav-btn" onclick="changeJournalDay(-1)">${svgIcon('chevronLeft')}</button>
+        <input type="date" class="journal-date-input" value="${iso}" onchange="setJournalDate(this.value)">
+        <button class="calendar-nav-btn" onclick="changeJournalDay(1)">${svgIcon('chevronRight')}</button>
+      </div>
+      <div class="journal-day-label">${label}</div>
+      ${summary}
+      ${list}
+    </div>
+    <button class="fab" onclick="openJournalEntry(null)">+</button>
+    ${renderBottomNav()}
+  `;
+}
+
+function renderJournalEntryEditor(){
+  const e = state.currentJournalEntry;
+  const catChips = state.journalCategories.map(c => `
+    <div class="category-chip-wrap">
+      <button type="button" class="category-chip ${e.category===c.id?'active':''}" style="--chip-color:${c.color}" onclick="setJournalEntryCategory('${c.id}')">
+        <span class="category-dot"></span>${escapeHtml(c.name)}
+      </button>
+      <button type="button" class="category-chip-x" onclick="event.stopPropagation(); deleteJournalCategory('${c.id}')">×</button>
+    </div>
+  `).join('');
+  return `
+    <div class="editor">
+      <div class="editor-bar">
+        <button class="icon-btn" onclick="backFromJournalEntry()">${tr('journal_back')}</button>
+        <button class="icon-btn delete" onclick="deleteCurrentJournalEntry()">${tr('journal_delete')}</button>
+      </div>
+      <div class="editor-body">
+        <div class="event-time-row">
+          <label>${tr('journal_start_time_label')}</label>
+          <input type="time" value="${e.startTime || ''}" onchange="state.currentJournalEntry.startTime=this.value; render();">
+          <label>${tr('journal_end_time_label')}</label>
+          <input type="time" value="${e.endTime || ''}" onchange="state.currentJournalEntry.endTime=this.value; render();">
+        </div>
+        <div class="photo-section-label">${tr('journal_category_label')}</div>
+        <div class="category-picker">
+          ${catChips}
+          <button type="button" class="category-chip new-category" onclick="addJournalCategory()">${tr('journal_new_category')}</button>
+        </div>
+        <textarea class="editor-content" id="journalTextInput" placeholder="${tr('journal_entry_placeholder')}" oninput="state.currentJournalEntry.text=this.value">${escapeHtml(e.text || '')}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+function renderEditor(){
+  const n = state.currentNote;
+  if(!n.date) n.date = todayISO();
+  const photos = n.photos || [];
+  const photoGrid = photos.map(p => `
+    <div class="photo-thumb">
+      <img src="${p.dataUrl}" onclick="viewPhoto('${p.dataUrl}')">
+      <button class="photo-remove" onclick="event.stopPropagation(); deletePhoto('${p.id}')">×</button>
+    </div>
+  `).join('');
+
+  const langSelectOptions = (selected) => LANGS.map(l => `<option value="${l}" ${l===selected?'selected':''}>${langLabel(l)}</option>`).join('');
+  const cached = (n.translations || {})[state.translateTo];
+  const videos = n.videos || [];
+  const videoList = videos.map(v => `
+    <div class="video-item">
+      <button class="video-play" onclick="playVideo('${v.id}')">${svgIcon('video')}</button>
+      <div class="video-info">
+        <div class="video-name">${escapeHtml(v.name || '')}</div>
+        <div class="video-size">${formatFileSize(v.size || 0)}</div>
+      </div>
+      <button class="photo-remove" onclick="deleteVideo('${v.id}')">×</button>
+    </div>
+  `).join('');
+  const showCachedFromOther = cached && cached.from !== state.translateFrom;
+
+  return `
+    <div class="editor">
+      <div class="editor-bar">
+        <button class="icon-btn" onclick="backFromEditor()">${tr('editor_back')}</button>
+        <button class="icon-btn delete" onclick="deleteCurrentNote()">${tr('editor_delete')}</button>
+      </div>
+      <div class="editor-body">
+        <input class="editor-title" id="titleInput" placeholder="${tr('editor_title_placeholder')}" value="${escapeAttr(n.title)}" oninput="state.currentNote.title=this.value">
+        <input type="date" class="editor-date" id="dateInput" value="${n.date}" onchange="state.currentNote.date=this.value; render();">
+        <textarea class="editor-content" id="contentInput" placeholder="${tr('editor_content_placeholder')}" oninput="state.currentNote.content=this.value">${escapeHtml(n.content)}</textarea>
+
+        <div class="photo-section">
+          <div class="photo-section-label">${tr('photos_label')}</div>
+          <div class="photo-grid">
+            ${photoGrid}
+            <button type="button" class="photo-add-btn" onclick="document.getElementById('photoFileInput').click()">
+              ${svgIcon('photo')}
+            </button>
+          </div>
+          <input type="file" id="photoFileInput" accept="image/*" multiple onchange="handlePhotoInput(this)" class="visually-hidden">
+        </div>
+
+        <div class="video-section">
+          <div class="photo-section-label">${tr('videos_label')}</div>
+          <div class="video-list">
+            ${videoList}
+          </div>
+          <button type="button" class="video-add-btn" onclick="document.getElementById('videoFileInput').click()">
+            ${svgIcon('video')} ${tr('videos_label')}
+          </button>
+          <input type="file" id="videoFileInput" accept="video/*" multiple onchange="handleVideoInput(this)" class="visually-hidden">
+          <div class="translate-disclaimer">${tr('videos_backup_note')}</div>
+        </div>
+
+        <div class="translate-section">
+          <div class="photo-section-label">${tr('translate_section_title')}</div>
+          <div class="translate-row">
+            <span>${tr('translate_from')}</span>
+            <select onchange="setTranslateFrom(this.value)">${langSelectOptions(state.translateFrom)}</select>
+            <span class="arrow">→</span>
+            <span>${tr('translate_to')}</span>
+            <select onchange="setTranslateTo(this.value)">${langSelectOptions(state.translateTo)}</select>
+            <button class="translate-btn" ${state.translating || state.translateFrom===state.translateTo ? 'disabled' : ''} onclick="translateNote()">${tr('translate_button')}</button>
+          </div>
+          ${state.translating ? `<div class="translate-status">${tr('translate_loading')}</div>` : ''}
+          ${state.translateErrored ? `<div class="translate-status">${tr('translate_error')}</div>` : ''}
+          ${cached && !state.translating ? `
+            <div class="translate-result">
+              ${cached.title ? `<h4>${escapeHtml(cached.title)}</h4>` : ''}
+              <p>${escapeHtml(cached.content)}</p>
+              <div class="translate-disclaimer">${tr('translate_disclaimer')}</div>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    </div>
+    ${state.viewingPhoto ? `
+      <div class="lightbox" onclick="closeLightbox()">
+        <img src="${state.viewingPhoto}">
+      </div>
+    ` : ''}
+    ${state.viewingVideoUrl ? `
+      <div class="lightbox" onclick="closeVideoPlayer()">
+        <video src="${state.viewingVideoUrl}" controls autoplay playsinline onclick="event.stopPropagation()"></video>
+      </div>
+    ` : ''}
+  `;
+}
+
+function renderBottomNav(){
+  const items = [
+    { id:'notes', label:tr('nav_notes'), icon:'notes' },
+    { id:'calendar', label:tr('nav_calendar'), icon:'calendar' },
+    { id:'journal', label:tr('nav_journal'), icon:'clock' },
+    { id:'recipes', label:tr('nav_recipes'), icon:'recipe', soon:true },
+    { id:'passwords', label:tr('nav_passwords'), icon:'key', soon:true },
+  ];
+  return `
+    <div class="bottom-nav">
+      ${items.map(it => `
+        <button class="nav-item ${state.tab===it.id?'active':''}" onclick="switchTab('${it.id}')">
+          ${svgIcon(it.icon)}
+          <span>${it.label}</span>
+          ${it.soon ? `<span class="soon">${tr('nav_soon')}</span>` : ''}
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function switchTab(id){
+  state.tab = id;
+  if(id === 'notes') state.screen = 'home';
+  else if(id === 'calendar') state.screen = 'calendar';
+  else if(id === 'journal') state.screen = 'journal';
+  else state.screen = 'soon';
+  state.soonLabel = { recipes:tr('nav_recipes'), passwords:tr('nav_passwords') }[id];
+  render();
+}
+
+function openNoteById(id){
+  const n = state.notes.find(x => x.id === id);
+  openNote(n);
+}
+
+function render(){
+  let html = '';
+  if(state.screen === 'loading') html = '';
+  else if(state.screen === 'setpin' || state.screen === 'unlock') html = renderPinScreen();
+  else if(state.screen === 'home') html = renderHome();
+  else if(state.screen === 'settings') html = renderSettings();
+  else if(state.screen === 'calendar') html = renderCalendar();
+  else if(state.screen === 'day') html = renderDayView();
+  else if(state.screen === 'eventEditor') html = renderEventEditor();
+  else if(state.screen === 'journal') html = renderJournal();
+  else if(state.screen === 'journalEntry') html = renderJournalEntryEditor();
+  else if(state.screen === 'soon') html = renderSoon(state.soonLabel || '');
+  else if(state.screen === 'editor') html = renderEditor();
+
+  app.innerHTML = html + '<div class="toast"></div>';
+
+  if(state.screen === 'editor'){
+    const c = document.getElementById('contentInput');
+    if(c){ c.focus(); c.setSelectionRange(c.value.length, c.value.length); }
+  }
+  if(state.screen === 'journalEntry'){
+    const j = document.getElementById('journalTextInput');
+    if(j){ j.focus(); j.setSelectionRange(j.value.length, j.value.length); }
+  }
+}
+
+window.onKeyPress = onKeyPress;
+window.onKeyDelete = onKeyDelete;
+window.openNote = openNote;
+window.openNoteById = openNoteById;
+window.backFromEditor = backFromEditor;
+window.deleteCurrentNote = deleteCurrentNote;
+window.switchTab = switchTab;
+window.handlePhotoInput = handlePhotoInput;
+window.deletePhoto = deletePhoto;
+window.viewPhoto = viewPhoto;
+window.closeLightbox = closeLightbox;
+window.handleVideoInput = handleVideoInput;
+window.deleteVideo = deleteVideo;
+window.playVideo = playVideo;
+window.closeVideoPlayer = closeVideoPlayer;
+window.openSettings = openSettings;
+window.exportData = exportData;
+window.handleImportFile = handleImportFile;
+window.setLang = setLang;
+window.setTranslateFrom = setTranslateFrom;
+window.setTranslateTo = setTranslateTo;
+window.translateNote = translateNote;
+window.changeMonth = changeMonth;
+window.selectDay = selectDay;
+window.backFromDay = backFromDay;
+window.openEvent = openEvent;
+window.setEventCategory = setEventCategory;
+window.backFromEventEditor = backFromEventEditor;
+window.deleteCurrentEvent = deleteCurrentEvent;
+window.changeJournalDay = changeJournalDay;
+window.setJournalDate = setJournalDate;
+window.openJournalEntry = openJournalEntry;
+window.backFromJournalEntry = backFromJournalEntry;
+window.deleteCurrentJournalEntry = deleteCurrentJournalEntry;
+window.setJournalEntryCategory = setJournalEntryCategory;
+window.addJournalCategory = addJournalCategory;
+window.deleteJournalCategory = deleteJournalCategory;
+window.setGoogleClientId = setGoogleClientId;
+window.connectGoogleDrive = connectGoogleDrive;
+window.driveUploadBackup = driveUploadBackup;
+window.driveRestoreBackup = driveRestoreBackup;
+
+init();
+</script>
+</body>
+</html>
