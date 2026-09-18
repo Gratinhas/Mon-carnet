@@ -3294,6 +3294,15 @@ function formatDate(ts){
   return d.toLocaleDateString(locale, { day:'numeric', month:'short' }) + ' · ' + d.toLocaleTimeString(locale, { hour:'2-digit', minute:'2-digit' });
 }
 
+function fileToText(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error || new Error('lecture impossible'));
+    reader.readAsText(file);
+  });
+}
+
 function fileToCompressedDataUrl(file, maxDim=1100, quality=0.72){
   return new Promise((resolve, reject)=>{
     const reader = new FileReader();
@@ -5362,7 +5371,7 @@ async function handleImportFile(input){
   input.value = '';
   if(!file) return;
   try{
-    const text = await file.text();
+    const text = await fileToText(file);
     const data = await decryptBackupPayload(text);
     if(!data || !Array.isArray(data.notes)){
       showToast(tr('toast_backup_invalid'));
