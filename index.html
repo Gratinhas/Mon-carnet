@@ -1466,6 +1466,7 @@ const STRINGS = {
     toast_backup_imported: 'Sauvegarde importée',
     toast_backup_invalid: 'Fichier de sauvegarde invalide',
     toast_backup_unreadable: 'Impossible de lire ce fichier',
+    backup_passphrase_prompt: "Cette sauvegarde vient d'une autre installation de l'app. Quelle était ta phrase secrète à ce moment-là ?",
     toast_photo_failed: "Cette photo n'a pas pu être ajoutée",
     confirm_import: (cur,inc)=> `Remplacer tes notes actuelles (${cur}) par celles de cette sauvegarde (${inc}) ? Cette action est irréversible.`,
     translate_section_title: 'Traduction automatique',
@@ -2163,6 +2164,7 @@ const STRINGS = {
     toast_backup_imported: 'Backup imported',
     toast_backup_invalid: 'Invalid backup file',
     toast_backup_unreadable: 'Unable to read this file',
+    backup_passphrase_prompt: 'This backup comes from a different install of the app. What was your secret phrase at that time?',
     toast_photo_failed: "This photo couldn't be added",
     confirm_import: (cur,inc)=> `Replace your current notes (${cur}) with those from this backup (${inc})? This action is irreversible.`,
     translate_section_title: 'Automatic translation',
@@ -2786,25 +2788,47 @@ async function encryptString(plaintext){
   return 'enc:' + bytesToBase64(combined);
 }
 
-async function decryptString(payload){
+async function decryptPayloadWithKey(payload, key){
   if(!payload || !payload.startsWith('enc:')) throw new Error('not-encrypted');
   const combined = base64ToBytes(payload.slice(4));
   const iv = combined.slice(0, 12);
   const data = combined.slice(12);
-  const dec = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, cryptoKey, data);
+  const dec = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, key, data);
   return new TextDecoder().decode(dec);
 }
 
+async function decryptString(payload){
+  return decryptPayloadWithKey(payload, cryptoKey);
+}
+
 async function encryptBackupPayload(payload){
-  return await encryptString(JSON.stringify(payload));
+  const saltB64 = window.localStorage.getItem('carnet:encSalt') || '';
+  const inner = await encryptString(JSON.stringify(payload));
+  return 'enc2:' + saltB64 + ':' + inner;
 }
 async function decryptBackupPayload(text){
   try{
-    if(text.trim().startsWith('enc:')){
-      const json = await decryptString(text.trim());
+    const trimmed = text.trim();
+    if(trimmed.startsWith('enc2:')){
+      const rest = trimmed.slice(5);
+      const sepIdx = rest.indexOf(':');
+      const saltB64 = rest.slice(0, sepIdx);
+      const innerEnc = rest.slice(sepIdx + 1);
+      const localSaltB64 = window.localStorage.getItem('carnet:encSalt') || '';
+      let keyToUse = cryptoKey;
+      if(saltB64 && saltB64 !== localSaltB64){
+        const passphrase = window.prompt(tr('backup_passphrase_prompt'));
+        if(!passphrase) return null;
+        keyToUse = await deriveKeyFromPassphrase(passphrase, base64ToBytes(saltB64));
+      }
+      const json = await decryptPayloadWithKey(innerEnc, keyToUse);
       return JSON.parse(json);
     }
-    return JSON.parse(text);
+    if(trimmed.startsWith('enc:')){
+      const json = await decryptString(trimmed);
+      return JSON.parse(json);
+    }
+    return JSON.parse(trimmed);
   }catch(e){
     console.error('backup decrypt error', e);
     return null;
