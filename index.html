@@ -38,6 +38,8 @@
     --crown-gold-light: #D9A027;
     --crown-brown: #5C4530;
     --crown-brown-deep: #3F2F20;
+    --crown-plum: #8B5A7A;
+    --crown-red: #C0392B;
     --info-text-brown: #6B4A32;
     --journal-bg: #FBF6EC;
     --journal-card-bg: #FFFDF7;
@@ -962,6 +964,71 @@
   .recipe-grid-name{ font-family: 'Quicksand', sans-serif; font-size: 0.92rem; line-height: 1.25; margin-bottom: 4px; }
   .recipe-grid-meta{ font-size: 0.7rem; color: var(--ink-soft); }
 
+  /* ---------- FILMS & SERIES ---------- */
+  .film-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .film-grid-card{
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: 16px;
+    overflow:hidden; cursor:pointer;
+  }
+  .film-grid-photo-wrap{ position:relative; width:100%; aspect-ratio: 2/3; background: var(--paper); }
+  .film-grid-photo{ width:100%; height:100%; object-fit:cover; display:block; }
+  .film-grid-photo-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size: 2.4rem;
+    background: linear-gradient(160deg, var(--crown-red), #D9773D); opacity: 0.88;
+  }
+  .film-grid-rating-badge{
+    position:absolute; left:8px; bottom:8px; background: rgba(30,25,20,0.78); color: #fff;
+    border-radius: 20px; padding: 3px 9px; font-size: 0.72rem; font-weight:600; display:flex; align-items:center; gap:3px;
+  }
+  .film-grid-type-badge{
+    position:absolute; top:8px; right:8px; background: rgba(30,25,20,0.78); color:#fff;
+    border-radius: 20px; padding: 2px 8px; font-size: 0.64rem;
+  }
+  .film-grid-fav-btn{
+    position:absolute; top:8px; left:8px; background: rgba(30,25,20,0.55); color: rgba(255,255,255,0.85);
+    border:none; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+    font-size:0.92rem; cursor:pointer; padding:0;
+  }
+  .film-grid-fav-btn.active{ color: #E0733D; background: rgba(255,255,255,0.9); }
+  .film-grid-body{ padding: 10px 12px 12px; }
+  .film-grid-name{ font-family: 'Quicksand', sans-serif; font-size: 0.92rem; line-height: 1.25; margin-bottom: 4px; }
+  .film-grid-meta{ font-size: 0.7rem; color: var(--ink-soft); }
+
+  .film-search-result{
+    display:flex; align-items:center; gap: 12px;
+    padding: 10px 0; border-top: 1px solid var(--line); cursor:pointer;
+  }
+  .film-search-result:first-child{ border-top:none; }
+  .film-search-result-photo-wrap{ flex: 0 0 auto; width:52px; height:78px; border-radius: 8px; overflow:hidden; background: var(--paper); }
+  .film-search-result-photo{ width:100%; height:100%; object-fit:cover; display:block; }
+  .film-search-result-photo-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+    background: linear-gradient(160deg, var(--crown-red), #D9773D); opacity:0.85;
+  }
+  .film-search-result-text{ flex:1; }
+  .film-search-result-title{ font-size: 0.92rem; }
+  .film-search-result-meta{ font-size: 0.72rem; color: var(--ink-soft); margin-top: 2px; }
+
+  .film-poster-preview-wrap{ width:120px; aspect-ratio:2/3; border-radius: 12px; overflow:hidden; margin: 0 auto 16px; background: var(--paper-raised); }
+  .film-poster-preview{ width:100%; height:100%; object-fit:cover; display:block; }
+  .film-poster-preview-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:2.2rem;
+    background: linear-gradient(160deg, var(--crown-red), #D9773D); opacity:0.85;
+  }
+
+  .film-star-rating{ display:inline-flex; gap: 3px; }
+  .film-star-slot{ position:relative; width:30px; height:30px; font-size:26px; line-height:1; cursor:pointer; }
+  .film-star-slot.readonly{ cursor:default; }
+  .film-star-bg, .film-star-fg{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+  .film-star-bg{ color: var(--line); }
+  .film-star-fg{ color: #D9A027; overflow:hidden; width:0; }
+  .film-star-rating.small .film-star-slot{ width:16px; height:16px; font-size:14px; }
+
+  .film-rewatch-badge{
+    display:inline-block; font-size: 0.72rem; color: var(--crown-red); background: rgba(192,57,43,0.12);
+    border-radius: 20px; padding: 3px 10px; margin-bottom: 10px;
+  }
+
   /* ---------- RELATION (HEART) ---------- */
   .love-heart-wrap{
     width: 200px; margin: 10px auto 24px; cursor: pointer;
@@ -1078,6 +1145,19 @@
   .coach-check-done{ text-decoration: line-through; color: var(--ink-soft); }
   .journal-theme .category-chip{ background: var(--journal-card-bg); border-color: var(--journal-chip-bg); color: var(--journal-muted); }
   .journal-theme .category-chip.new-category{ border-style: dashed; border-color: var(--journal-accent-soft); color: var(--journal-accent); }
+  .journal-theme .category-chip.active{
+    border: 3px solid var(--chip-color);
+    background: color-mix(in srgb, var(--chip-color) 18%, var(--journal-card-bg));
+    color: var(--ink); font-weight: 700;
+  }
+  .journal-theme .category-chip.active .category-dot{ display:none; }
+  .journal-theme .category-chip.active::before{ content: '✓'; font-weight: 900; color: var(--chip-color); }
+  .journal-text-suggestions{ display:flex; flex-wrap:wrap; gap: 6px; margin-top: -8px; margin-bottom: 12px; }
+  .journal-text-suggestion-chip{
+    background: var(--journal-chip-bg); border: 1px dashed var(--journal-accent-soft); border-radius: 14px;
+    padding: 5px 10px; font-size: 0.76rem; color: var(--journal-muted); max-width: 100%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
   .event-title{ display:flex; align-items:center; gap: 8px; font-size: 0.95rem; }
   .event-title .category-dot{ width: 8px; height: 8px; border-radius: 50%; flex-shrink:0; }
   .day-view-title{ font-size: 1.15rem; text-transform: capitalize; margin-bottom: 16px; }
@@ -1805,6 +1885,79 @@ const STRINGS = {
     cat_nutrition: 'Nutrition',
     cat_vault: 'Coffre',
     cat_assistant: 'Mon assistant',
+    cat_divertissement: 'Divertissement',
+    cat_movies_series: 'Films & Séries',
+    cat_games: 'Jeux',
+    film_tab_watched: 'Vus',
+    film_tab_watchlist: 'À voir',
+    film_stat_total: (n)=> n > 1 ? `${n} films/séries vus` : `${n} film/série vu`,
+    film_stat_avg: (avg)=> `Note moyenne : ${avg}/5`,
+    film_stat_top_genre: (g)=> `Genre le plus vu : ${g}`,
+    film_filter_all: 'Tout',
+    film_filter_movies: 'Films',
+    film_filter_series: 'Séries',
+    film_filter_favorites: 'Favoris',
+    film_sort_date: 'Date',
+    film_sort_date_added: 'Ajout récent',
+    film_sort_rating: 'Note',
+    film_sort_rating_asc: 'Note (croissant)',
+    film_sort_alpha: 'A-Z',
+    film_subview_grid: 'Grille',
+    film_subview_calendar: 'Calendrier',
+    film_subview_bilan: 'Bilan',
+    film_list_search_placeholder: 'Rechercher un titre…',
+    film_genre_filter_all: 'Tous les genres',
+    film_rating_filter_all: 'Toutes les notes',
+    film_calendar_no_entry: 'Rien de noté ce jour-là.',
+    film_bilan_total: (n)=> n > 1 ? `${n} films/séries vus` : `${n} film/série vu`,
+    film_bilan_movies_series: (m,s)=> `${m} film(s) · ${s} série(s)`,
+    film_bilan_best: (t)=> `Mieux noté : ${t}`,
+    film_bilan_empty: (y)=> `Rien de noté en ${y}.`,
+    film_favorite_toggle: 'Marquer comme favori',
+    film_empty_watched: 'Aucun film ou série noté pour l\'instant.',
+    film_empty_watchlist: 'Ta liste à voir est vide.',
+    film_add_watched: '+ Marquer un film/série comme vu(e)',
+    film_add_watchlist: '+ Ajouter à voir plus tard',
+    film_search_title_watched: 'Qu\'as-tu vu ?',
+    film_search_title_watchlist: 'Qu\'aimerais-tu voir ?',
+    film_search_placeholder: 'Titre du film ou de la série',
+    film_search_button: 'Rechercher',
+    film_search_type_movie: 'Film',
+    film_search_type_series: 'Série',
+    film_search_loading: 'Recherche en cours…',
+    film_search_no_results: 'Aucun résultat. Essaie un autre titre ou ajoute-le manuellement.',
+    film_search_error: 'Recherche indisponible pour le moment. Réessaie plus tard ou ajoute-le manuellement.',
+    film_search_manual_add: (q)=> `Ajouter « ${q} » manuellement (sans affiche)`,
+    film_entry_rating_label: 'Note',
+    film_entry_review_label: 'Avis',
+    film_entry_review_placeholder: 'Qu\'as-tu pensé de ce film ou de cette série ?',
+    film_entry_date_label: 'Vu le',
+    film_entry_rewatch_label: 'Je l\'avais déjà vu(e) avant (revisionnage)',
+    film_entry_genres_label: 'Genres',
+    film_entry_genres_placeholder: 'Ajouter un genre',
+    film_entry_tags_label: 'Tags',
+    film_entry_tags_placeholder: 'Ajouter un tag (ex : comfort watch)',
+    film_entry_season_label: 'Saison',
+    film_entry_season_placeholder: 'Ex : Saison 2',
+    film_season_short: (s)=> `Saison ${s}`,
+    film_poster_upload_btn: 'Ajouter une affiche',
+    film_poster_change_btn: 'Changer l\'affiche',
+    film_poster_remove_btn: 'Retirer',
+    film_entry_save: 'Enregistrer',
+    film_entry_delete: 'Supprimer',
+    film_delete_confirm: 'Supprimer cette entrée ?',
+    film_title_required_toast: 'Indique un titre avant d\'enregistrer.',
+    film_added_watchlist_toast: 'Ajouté à ta liste à voir !',
+    film_watchlist_mark_watched: 'Marquer comme vu',
+    film_watchlist_delete: 'Retirer',
+    film_rewatch_badge: 'Revisionnage',
+    film_no_rating_yet: 'Pas encore noté',
+    film_settings_title: 'Films & Séries',
+    film_tmdb_key_label: 'Clé API TMDB (pour les affiches automatiques)',
+    film_tmdb_key_placeholder: 'Colle ta clé API ici',
+    film_tmdb_disclaimer: 'Gratuite et rapide à obtenir : crée un compte sur themoviedb.org, puis va dans Paramètres > API pour générer une clé (API Key v3 auth). Sans clé, tu peux toujours ajouter un film ou une série manuellement, sans affiche.',
+    film_search_no_key: 'Ajoute une clé API TMDB gratuite dans les réglages pour activer la recherche et la récupération automatique des affiches.',
+    film_search_no_key_settings_btn: 'Aller aux réglages',
     cat_relation: 'Relation',
     relation_partner_name: 'Nom de ta moitié',
     relation_set_name: 'Modifier le nom',
@@ -2800,6 +2953,79 @@ const STRINGS = {
     cat_nutrition: 'Nutrition',
     cat_vault: 'Vault',
     cat_assistant: 'My assistant',
+    cat_divertissement: 'Entertainment',
+    cat_movies_series: 'Movies & Series',
+    cat_games: 'Games',
+    film_tab_watched: 'Watched',
+    film_tab_watchlist: 'To watch',
+    film_stat_total: (n)=> n > 1 ? `${n} movies/series watched` : `${n} movie/series watched`,
+    film_stat_avg: (avg)=> `Average rating: ${avg}/5`,
+    film_stat_top_genre: (g)=> `Most watched genre: ${g}`,
+    film_filter_all: 'All',
+    film_filter_movies: 'Movies',
+    film_filter_series: 'Series',
+    film_filter_favorites: 'Favorites',
+    film_sort_date: 'Date',
+    film_sort_date_added: 'Recently added',
+    film_sort_rating: 'Rating',
+    film_sort_rating_asc: 'Rating (ascending)',
+    film_sort_alpha: 'A-Z',
+    film_subview_grid: 'Grid',
+    film_subview_calendar: 'Calendar',
+    film_subview_bilan: 'Recap',
+    film_list_search_placeholder: 'Search a title…',
+    film_genre_filter_all: 'All genres',
+    film_rating_filter_all: 'All ratings',
+    film_calendar_no_entry: 'Nothing logged that day.',
+    film_bilan_total: (n)=> n > 1 ? `${n} movies/series watched` : `${n} movie/series watched`,
+    film_bilan_movies_series: (m,s)=> `${m} movie(s) · ${s} series`,
+    film_bilan_best: (t)=> `Top rated: ${t}`,
+    film_bilan_empty: (y)=> `Nothing logged in ${y}.`,
+    film_favorite_toggle: 'Mark as favorite',
+    film_empty_watched: 'No movie or series rated yet.',
+    film_empty_watchlist: 'Your watchlist is empty.',
+    film_add_watched: '+ Mark a movie/series as watched',
+    film_add_watchlist: '+ Add to watch later',
+    film_search_title_watched: 'What did you watch?',
+    film_search_title_watchlist: 'What would you like to watch?',
+    film_search_placeholder: 'Movie or series title',
+    film_search_button: 'Search',
+    film_search_type_movie: 'Movie',
+    film_search_type_series: 'Series',
+    film_search_loading: 'Searching…',
+    film_search_no_results: 'No results. Try another title or add it manually.',
+    film_search_error: 'Search unavailable right now. Try again later or add it manually.',
+    film_search_manual_add: (q)=> `Add "${q}" manually (no poster)`,
+    film_entry_rating_label: 'Rating',
+    film_entry_review_label: 'Review',
+    film_entry_review_placeholder: 'What did you think of this movie or series?',
+    film_entry_date_label: 'Watched on',
+    film_entry_rewatch_label: 'I\'d already watched this before (rewatch)',
+    film_entry_genres_label: 'Genres',
+    film_entry_genres_placeholder: 'Add a genre',
+    film_entry_tags_label: 'Tags',
+    film_entry_tags_placeholder: 'Add a tag (e.g. comfort watch)',
+    film_entry_season_label: 'Season',
+    film_entry_season_placeholder: 'E.g. Season 2',
+    film_season_short: (s)=> `Season ${s}`,
+    film_poster_upload_btn: 'Add a poster',
+    film_poster_change_btn: 'Change poster',
+    film_poster_remove_btn: 'Remove',
+    film_entry_save: 'Save',
+    film_entry_delete: 'Delete',
+    film_delete_confirm: 'Delete this entry?',
+    film_title_required_toast: 'Enter a title before saving.',
+    film_added_watchlist_toast: 'Added to your watchlist!',
+    film_watchlist_mark_watched: 'Mark as watched',
+    film_watchlist_delete: 'Remove',
+    film_rewatch_badge: 'Rewatch',
+    film_no_rating_yet: 'Not rated yet',
+    film_settings_title: 'Movies & Series',
+    film_tmdb_key_label: 'TMDB API key (for automatic posters)',
+    film_tmdb_key_placeholder: 'Paste your API key here',
+    film_tmdb_disclaimer: 'Free and quick to get: create an account at themoviedb.org, then go to Settings > API to generate a key (API Key v3 auth). Without a key, you can still add a movie or series manually, with no poster.',
+    film_search_no_key: 'Add a free TMDB API key in settings to enable search and automatic poster fetching.',
+    film_search_no_key_settings_btn: 'Go to settings',
     cat_relation: 'Relationship',
     relation_partner_name: 'Partner\'s name',
     relation_set_name: 'Edit name',
@@ -3724,6 +3950,10 @@ function getCategoryStructure(){
       { id:'coach', title: tr('cat_coach'), screen:'coach' },
       { id:'ai_context', title: tr('cat_ai_context'), screen:'aiContext' },
     ]},
+    { id:'entertainment', title: tr('cat_divertissement'), icon:'catDivertissement', subcats: [
+      { id:'movies_series', title: tr('cat_movies_series'), screen:'films' },
+      { id:'games', title: tr('cat_games') },
+    ]},
   ];
 }
 
@@ -4152,6 +4382,7 @@ const state = {
   currentContact: null,
   directoryFilter: null,
   assistantApiKey: '',
+  tmdbApiKey: '',
   assistantModel: 'claude-sonnet-5',
   assistantHistory: [],
   assistantLoading: false,
@@ -4232,6 +4463,27 @@ const state = {
   selectedDiaryDate: null,
   currentDiaryText: '',
   currentDiaryEntryMode: 'edit',
+  filmEntries: [],
+  filmWatchlist: [],
+  currentFilmEntry: null,
+  filmTab: 'watched',
+  filmTypeFilter: 'all',
+  filmSortBy: 'date',
+  filmSearchMode: 'watched',
+  filmSearchType: 'movie',
+  filmSearchQuery: '',
+  filmSearchResults: null,
+  filmSearchLoading: false,
+  filmSearchErrored: false,
+  filmListQuery: '',
+  filmGenreFilter: 'all',
+  filmMinRating: 0,
+  filmFavoritesOnly: false,
+  filmSubView: 'grid',
+  filmCalYear: null,
+  filmCalMonth: null,
+  filmCalSelectedDate: null,
+  filmBilanYear: null,
   moodYear: null,
   moodMonth: null,
   selectedMoodDate: null,
@@ -4417,6 +4669,7 @@ function svgIcon(name){
     healthMedicalCross: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="7" width="26" height="26" rx="9"/><path d="M20 14v12M14 20h12" stroke-width="2.2" stroke-linecap="round"/></svg>',
     healthMoonCycle: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M25 8 C18 9 13 15 13 22 C13 29 18 34 25 33 C19 30 16 25 16 20 C16 15 19 10 25 8Z"/><circle cx="28" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="31" cy="18" r="1" fill="currentColor" stroke="none"/></svg>',
     catAssistant: '<svg viewBox="0 0 40 40" fill="none"><path d="M20 6 C21.5 13 22 17 30 20 C22 23 21.5 27 20 34 C18.5 27 18 23 10 20 C18 17 18.5 13 20 6Z" stroke="#4F6E4B" stroke-width="1.7"/><circle cx="30" cy="10" r="1.6" fill="#D9A027" stroke="none"/></svg>',
+    catDivertissement: '<svg viewBox="0 0 40 40" fill="none"><rect x="7" y="11" width="26" height="18" rx="3" stroke="#D9773D" stroke-width="1.8"/><path d="M16 16 L25 20 L16 24Z" stroke="#D9773D" stroke-width="1.6" stroke-linejoin="round"/><line x1="14" y1="32" x2="26" y2="32" stroke="#5C4530" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="29" x2="20" y2="32" stroke="#5C4530" stroke-width="1.3"/></svg>',
     medical: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>',
     cart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.8h7.2a2 2 0 0 0 2-1.6L21 8H6"/></svg>',
     trendUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>',
@@ -4433,7 +4686,7 @@ const SENSITIVE_KEYS = ['notes','noteCategories','events','journal','journalCate
   'budgetAmount','budgetTopups','expenses','savings','debts','projects','illnesses','symptoms','treatments','allergies','migraines','stressLog',
   'hydration','hydrationGoal','bathroomLog','periodDays','sleepLog','pendingSleepStart','height','weightLog','goalWeight',
   'activityLog','foodLog','relationInfo','personalInfo','contacts','recipes','fitnessLevel','trainingGoal',
-  'assistantApiKey','assistantModel','assistantHistory','assistantWindowDays','doctorHistory',
+  'assistantApiKey','tmdbApiKey','assistantModel','assistantHistory','assistantWindowDays','doctorHistory',
   'coachConstraints','coachProgram','aiSpendTotalUsd','passwordEntries','dismissedReminders','shoppingList'];
 let cryptoKey = null;
 
@@ -4709,6 +4962,7 @@ async function loadEncryptedAppData(){
   state.personalInfo = (await storageGet('personalInfo')) || { firstName:'', lastName:'', birthDate:'', birthCity:'', sex:'', bloodType:'', emergencyContactName:'', emergencyContactPhone:'', postalAddress:'', email:'', phone:'' };
   state.contacts = (await storageGet('contacts')) || [];
   state.assistantApiKey = (await storageGet('assistantApiKey')) || '';
+  state.tmdbApiKey = (await storageGet('tmdbApiKey')) || '';
   state.assistantModel = (await storageGet('assistantModel')) || 'claude-sonnet-5';
   state.assistantHistory = (await storageGet('assistantHistory')) || [];
   state.assistantWindowDays = (await storageGet('assistantWindowDays')) || 90;
@@ -4755,6 +5009,8 @@ async function loadEncryptedAppData(){
   state.diaryEntries = (await storageGet('diaryEntries')) || {};
   state.diaryEntryLang = (await storageGet('diaryEntryLang')) || {};
   state.diaryTranslations = (await storageGet('diaryTranslations')) || {};
+  state.filmEntries = (await storageGet('filmEntries')) || [];
+  state.filmWatchlist = (await storageGet('filmWatchlist')) || [];
   state.dayRecapYear = today.getFullYear();
   state.dayRecapMonth = today.getMonth();
   state.notes = (await storageGet('notes')) || [];
@@ -4838,8 +5094,10 @@ async function submitSetupPassphrase(){
   window.localStorage.setItem('carnet:encVerifier', verifier);
   await migrateLegacyPlaintextData();
   await loadEncryptedAppData();
-  state.screen = 'categoryHome';
-  render();
+  if(!handleDeepLinkAfterUnlock()){
+    state.screen = 'categoryHome';
+    render();
+  }
 }
 
 async function submitUnlockPassphrase(){
@@ -4861,7 +5119,9 @@ async function submitUnlockPassphrase(){
   }
   state.passError = '';
   await loadEncryptedAppData();
-  goToWelcomeFlow();
+  if(!handleDeepLinkAfterUnlock()){
+    goToWelcomeFlow();
+  }
   attemptSilentGoogleReconnect();
 }
 
@@ -5787,6 +6047,415 @@ function goToMoodSearchResult(iso){
   state.moodYear = y;
   state.moodMonth = m - 1;
   selectMoodDay(iso);
+}
+
+/* ---------- FILMS & SERIES ---------- */
+function openFilms(){
+  state.screen = 'films';
+  render();
+}
+
+function setFilmTab(tab){
+  state.filmTab = tab;
+  render();
+}
+
+function setFilmTypeFilter(t){
+  state.filmTypeFilter = t;
+  render();
+}
+
+function setFilmSortBy(s){
+  state.filmSortBy = s;
+  render();
+}
+
+function filmStats(){
+  const entries = state.filmEntries;
+  const total = entries.length;
+  const avg = total ? entries.reduce((s,e) => s + (Number(e.rating)||0), 0) / total : 0;
+  const genreCounts = {};
+  entries.forEach(e => (e.genres||[]).forEach(g => { genreCounts[g] = (genreCounts[g]||0) + 1; }));
+  const sortedGenres = Object.entries(genreCounts).sort((a,b) => b[1]-a[1]);
+  return { total, avg, topGenre: sortedGenres.length ? sortedGenres[0][0] : null };
+}
+
+function getFilteredSortedFilmEntries(){
+  let list = state.filmEntries.slice();
+  if(state.filmTypeFilter !== 'all') list = list.filter(e => e.type === state.filmTypeFilter);
+  if(state.filmGenreFilter !== 'all') list = list.filter(e => (e.genres||[]).includes(state.filmGenreFilter));
+  if(state.filmMinRating > 0) list = list.filter(e => (Number(e.rating)||0) >= state.filmMinRating);
+  if(state.filmFavoritesOnly) list = list.filter(e => !!e.favorite);
+  const q = (state.filmListQuery || '').trim().toLowerCase();
+  if(q) list = list.filter(e => (e.title||'').toLowerCase().includes(q));
+  if(state.filmSortBy === 'rating') list.sort((a,b) => (Number(b.rating)||0) - (Number(a.rating)||0));
+  else if(state.filmSortBy === 'ratingAsc') list.sort((a,b) => (Number(a.rating)||0) - (Number(b.rating)||0));
+  else if(state.filmSortBy === 'alpha') list.sort((a,b) => (a.title||'').localeCompare(b.title||''));
+  else if(state.filmSortBy === 'dateAdded') list.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+  else list.sort((a,b) => (b.watchedDate||'').localeCompare(a.watchedDate||'') || (b.createdAt||0) - (a.createdAt||0));
+  return list;
+}
+
+function filmAllGenres(){
+  const set = new Set();
+  state.filmEntries.forEach(e => (e.genres||[]).forEach(g => set.add(g)));
+  return Array.from(set).sort((a,b) => a.localeCompare(b));
+}
+
+function setFilmListQuery(v){
+  state.filmListQuery = v;
+  render();
+}
+
+function setFilmGenreFilter(g){
+  state.filmGenreFilter = g;
+  render();
+}
+
+function setFilmMinRating(v){
+  state.filmMinRating = Number(v) || 0;
+  render();
+}
+
+function toggleFilmFavoritesOnly(){
+  state.filmFavoritesOnly = !state.filmFavoritesOnly;
+  render();
+}
+
+function toggleFilmFavorite(id){
+  const e = state.filmEntries.find(x => x.id === id);
+  if(!e) return;
+  e.favorite = !e.favorite;
+  storageSet('filmEntries', state.filmEntries);
+  triggerAutoSync();
+  render();
+}
+
+function toggleFilmFavoriteCurrent(checked){
+  state.currentFilmEntry.favorite = checked;
+  render();
+}
+
+function setFilmSubView(v){
+  state.filmSubView = v;
+  if(v === 'calendar' && !state.filmCalYear){
+    const t = new Date();
+    state.filmCalYear = t.getFullYear();
+    state.filmCalMonth = t.getMonth();
+  }
+  if(v === 'bilan' && !state.filmBilanYear){
+    state.filmBilanYear = new Date().getFullYear();
+  }
+  render();
+}
+
+function changeFilmCalMonth(delta){
+  let m = state.filmCalMonth + delta;
+  let y = state.filmCalYear;
+  if(m < 0){ m = 11; y -= 1; }
+  if(m > 11){ m = 0; y += 1; }
+  state.filmCalMonth = m;
+  state.filmCalYear = y;
+  render();
+}
+
+function selectFilmCalDay(iso){
+  state.filmCalSelectedDate = state.filmCalSelectedDate === iso ? null : iso;
+  render();
+}
+
+function changeFilmBilanYear(delta){
+  state.filmBilanYear = (state.filmBilanYear || new Date().getFullYear()) + delta;
+  render();
+}
+
+function filmBilanStats(year){
+  const entries = state.filmEntries.filter(e => (e.watchedDate||'').slice(0,4) === String(year));
+  const total = entries.length;
+  const movies = entries.filter(e => e.type === 'movie').length;
+  const series = entries.filter(e => e.type === 'series').length;
+  const rated = entries.filter(e => Number(e.rating) > 0);
+  const avg = rated.length ? rated.reduce((s,e) => s + Number(e.rating), 0) / rated.length : 0;
+  const genreCounts = {};
+  entries.forEach(e => (e.genres||[]).forEach(g => { genreCounts[g] = (genreCounts[g]||0) + 1; }));
+  const sortedGenres = Object.entries(genreCounts).sort((a,b) => b[1]-a[1]);
+  const topGenre = sortedGenres.length ? sortedGenres[0][0] : null;
+  const bestRated = rated.length ? rated.slice().sort((a,b) => Number(b.rating) - Number(a.rating))[0] : null;
+  return { total, movies, series, avg, topGenre, bestRated };
+}
+
+function openFilmSearch(mode){
+  state.filmSearchMode = mode;
+  state.filmSearchQuery = '';
+  state.filmSearchResults = null;
+  state.filmSearchType = 'movie';
+  state.filmSearchLoading = false;
+  state.filmSearchErrored = false;
+  state.screen = 'filmSearch';
+  render();
+}
+
+function backFromFilmSearch(){
+  state.screen = 'films';
+  render();
+}
+
+function setFilmSearchType(t){
+  state.filmSearchType = t;
+  state.filmSearchResults = null;
+  render();
+}
+
+const TMDB_MOVIE_GENRES = {
+  fr: {28:'Action',12:'Aventure',16:'Animation',35:'Comédie',80:'Crime',99:'Documentaire',18:'Drame',10751:'Familial',14:'Fantastique',36:'Histoire',27:'Horreur',10402:'Musique',9648:'Mystère',10749:'Romance',878:'Science-Fiction',10770:'Téléfilm',53:'Thriller',10752:'Guerre',37:'Western'},
+  en: {28:'Action',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',27:'Horror',10402:'Music',9648:'Mystery',10749:'Romance',878:'Science Fiction',10770:'TV Movie',53:'Thriller',10752:'War',37:'Western'},
+};
+const TMDB_TV_GENRES = {
+  fr: {10759:'Action & Aventure',16:'Animation',35:'Comédie',80:'Crime',99:'Documentaire',18:'Drame',10751:'Familial',10762:'Enfants',9648:'Mystère',10763:'Actualités',10764:'Réalité',10765:'Science-Fiction & Fantastique',10766:'Feuilleton',10767:'Talk-show',10768:'Guerre & Politique',37:'Western'},
+  en: {10759:'Action & Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Documentary',18:'Drama',10751:'Family',10762:'Kids',9648:'Mystery',10763:'News',10764:'Reality',10765:'Sci-Fi & Fantasy',10766:'Soap',10767:'Talk',10768:'War & Politics',37:'Western'},
+};
+
+function tmdbGenreName(id, type){
+  const table = (type === 'series' ? TMDB_TV_GENRES : TMDB_MOVIE_GENRES)[state.lang === 'en' ? 'en' : 'fr'];
+  return table[id] || '';
+}
+
+async function searchFilmTitles(query, type){
+  if(!state.tmdbApiKey) return 'nokey';
+  const path = type === 'series' ? 'tv' : 'movie';
+  const langParam = state.lang === 'en' ? 'en-US' : 'fr-FR';
+  const url = `https://api.themoviedb.org/3/search/${path}?api_key=${encodeURIComponent(state.tmdbApiKey)}&query=${encodeURIComponent(query)}&language=${langParam}&include_adult=false`;
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('bad response ' + res.status);
+    const data = await res.json();
+    return (data.results || []).slice(0, 8).map(r => {
+      const title = type === 'series' ? (r.name || r.original_name || '') : (r.title || r.original_title || '');
+      const dateStr = type === 'series' ? r.first_air_date : r.release_date;
+      const genreId = (r.genre_ids || [])[0];
+      return {
+        title,
+        year: (dateStr || '').slice(0,4),
+        posterUrl: r.poster_path ? `https://image.tmdb.org/t/p/w500${r.poster_path}` : '',
+        genre: genreId ? tmdbGenreName(genreId, type) : '',
+      };
+    }).filter(r => r.title);
+  }catch(err){
+    console.error('film search error', err);
+    return null;
+  }
+}
+
+async function runFilmSearch(){
+  const q = (state.filmSearchQuery || '').trim();
+  if(!q) return;
+  if(!state.tmdbApiKey){
+    state.filmSearchResults = 'nokey';
+    state.filmSearchErrored = false;
+    state.filmSearchLoading = false;
+    render();
+    return;
+  }
+  state.filmSearchLoading = true;
+  state.filmSearchErrored = false;
+  render();
+  const results = await searchFilmTitles(q, state.filmSearchType);
+  state.filmSearchLoading = false;
+  state.filmSearchErrored = results === null;
+  state.filmSearchResults = results === null ? [] : (results === 'nokey' ? 'nokey' : results);
+  render();
+}
+
+function selectFilmResult(r){
+  if(state.filmSearchMode === 'watchlist'){
+    const item = {
+      id: 'fw' + Date.now(), title: r.title, type: state.filmSearchType,
+      year: r.year || '', posterUrl: r.posterUrl || '', genres: r.genre ? [r.genre] : [],
+      addedDate: todayISO(),
+    };
+    state.filmWatchlist.push(item);
+    storageSet('filmWatchlist', state.filmWatchlist);
+    triggerAutoSync();
+    state.filmTab = 'watchlist';
+    state.screen = 'films';
+    render();
+    showToast(tr('film_added_watchlist_toast'));
+  } else {
+    const alreadyWatched = state.filmEntries.some(e => e.title.toLowerCase() === r.title.toLowerCase() && e.type === state.filmSearchType);
+    state.currentFilmEntry = {
+      id: 'f' + Date.now(), title: r.title, type: state.filmSearchType,
+      year: r.year || '', posterUrl: r.posterUrl || '', genres: r.genre ? [r.genre] : [],
+      rating: 0, review: '', watchedDate: todayISO(),
+      rewatch: alreadyWatched, fromWatchlistId: null, createdAt: Date.now(),
+      favorite: false, tags: [], season: '',
+    };
+    state.screen = 'filmEntry';
+    render();
+  }
+}
+
+function pickFilmSearchResult(index){
+  const r = (state.filmSearchResults || [])[index];
+  if(r) selectFilmResult(r);
+}
+
+function addFilmManually(){
+  const q = (state.filmSearchQuery || '').trim();
+  if(!q) return;
+  selectFilmResult({ title: q, year: '', posterUrl: '', genre: '' });
+}
+
+function markWatchlistItemWatched(id){
+  const item = state.filmWatchlist.find(w => w.id === id);
+  if(!item) return;
+  const alreadyWatched = state.filmEntries.some(e => e.title.toLowerCase() === item.title.toLowerCase() && e.type === item.type);
+  state.currentFilmEntry = {
+    id: 'f' + Date.now(), title: item.title, type: item.type,
+    year: item.year || '', posterUrl: item.posterUrl || '', genres: (item.genres||[]).slice(),
+    rating: 0, review: '', watchedDate: todayISO(),
+    rewatch: alreadyWatched, fromWatchlistId: id, createdAt: Date.now(),
+    favorite: false, tags: [], season: '',
+  };
+  state.screen = 'filmEntry';
+  render();
+}
+
+async function deleteFilmWatchlistItem(id){
+  const ok = window.confirm(tr('film_delete_confirm'));
+  if(!ok) return;
+  state.filmWatchlist = state.filmWatchlist.filter(w => w.id !== id);
+  await storageSet('filmWatchlist', state.filmWatchlist);
+  triggerAutoSync();
+  render();
+}
+
+function openFilmEntry(id){
+  const e = state.filmEntries.find(x => x.id === id);
+  if(!e) return;
+  state.currentFilmEntry = {...e, genres: (e.genres||[]).slice(), tags: (e.tags||[]).slice(), fromWatchlistId: null};
+  state.screen = 'filmEntry';
+  render();
+}
+
+function backFromFilmEntry(){
+  state.currentFilmEntry = null;
+  state.screen = 'films';
+  render();
+}
+
+function setFilmRatingClick(event, starIndex){
+  const rect = event.currentTarget.getBoundingClientRect();
+  const clickX = event.clientX - rect.left;
+  const isHalf = clickX < rect.width / 2;
+  state.currentFilmEntry.rating = isHalf ? starIndex - 0.5 : starIndex;
+  render();
+}
+
+function toggleFilmRewatch(checked){
+  state.currentFilmEntry.rewatch = checked;
+  render();
+}
+
+function addFilmGenreFromInput(inputEl){
+  const raw = (inputEl.value || '').trim();
+  if(!raw) return;
+  const parts = raw.split(',').map(s => s.trim()).filter(Boolean);
+  const existingLower = (state.currentFilmEntry.genres || []).map(g => g.toLowerCase());
+  parts.forEach(p => {
+    if(!existingLower.includes(p.toLowerCase())){
+      state.currentFilmEntry.genres.push(p);
+      existingLower.push(p.toLowerCase());
+    }
+  });
+  inputEl.value = '';
+  render();
+}
+
+function removeFilmGenre(g){
+  state.currentFilmEntry.genres = (state.currentFilmEntry.genres || []).filter(x => x !== g);
+  render();
+}
+
+function addFilmTagFromInput(inputEl){
+  const raw = (inputEl.value || '').trim();
+  if(!raw) return;
+  const parts = raw.split(',').map(s => s.trim()).filter(Boolean);
+  if(!state.currentFilmEntry.tags) state.currentFilmEntry.tags = [];
+  const existingLower = state.currentFilmEntry.tags.map(g => g.toLowerCase());
+  parts.forEach(p => {
+    if(!existingLower.includes(p.toLowerCase())){
+      state.currentFilmEntry.tags.push(p);
+      existingLower.push(p.toLowerCase());
+    }
+  });
+  inputEl.value = '';
+  render();
+}
+
+function removeFilmTag(t){
+  state.currentFilmEntry.tags = (state.currentFilmEntry.tags || []).filter(x => x !== t);
+  render();
+}
+
+async function handleFilmPosterInput(input){
+  const file = (input.files || [])[0];
+  if(!file) return;
+  try{
+    state.currentFilmEntry.posterUrl = await fileToCompressedDataUrl(file, 700, 0.75);
+  }catch(err){
+    console.error('film poster upload error', err);
+    showToast(tr('toast_photo_failed'));
+  }
+  input.value = '';
+  render();
+}
+
+function removeFilmPoster(){
+  state.currentFilmEntry.posterUrl = '';
+  render();
+}
+
+async function saveFilmEntry(){
+  const e = state.currentFilmEntry;
+  if(!e.title || !e.title.trim()){ showToast(tr('film_title_required_toast')); return; }
+  const idx = state.filmEntries.findIndex(x => x.id === e.id);
+  if(idx >= 0) state.filmEntries[idx] = e;
+  else state.filmEntries.push(e);
+  await storageSet('filmEntries', state.filmEntries);
+  if(e.fromWatchlistId){
+    state.filmWatchlist = state.filmWatchlist.filter(w => w.id !== e.fromWatchlistId);
+    await storageSet('filmWatchlist', state.filmWatchlist);
+  }
+  triggerAutoSync();
+  state.currentFilmEntry = null;
+  state.filmTab = 'watched';
+  state.screen = 'films';
+  render();
+}
+
+async function deleteFilmEntry(){
+  const ok = window.confirm(tr('film_delete_confirm'));
+  if(!ok) return;
+  const id = state.currentFilmEntry.id;
+  state.filmEntries = state.filmEntries.filter(x => x.id !== id);
+  await storageSet('filmEntries', state.filmEntries);
+  triggerAutoSync();
+  state.currentFilmEntry = null;
+  state.screen = 'films';
+  render();
+}
+
+function filmStarRatingHtml(rating, editable, small){
+  const slots = [1,2,3,4,5].map(i => {
+    const fillPct = rating >= i ? 100 : (rating >= i - 0.5 ? 50 : 0);
+    return `
+      <span class="film-star-slot ${editable ? '' : 'readonly'}" ${editable ? `onclick="setFilmRatingClick(event, ${i})"` : ''}>
+        <span class="film-star-bg">★</span>
+        <span class="film-star-fg" style="width:${fillPct}%">★</span>
+      </span>
+    `;
+  }).join('');
+  return `<span class="film-star-rating ${small ? 'small' : ''}">${slots}</span>`;
 }
 
 /* ---------- BUDGET ---------- */
@@ -7598,10 +8267,80 @@ function setJournalDate(iso){
   render();
 }
 
+const DEEPLINK_NEW_JOURNAL_ENTRY = 'nouvelle-entree-journal';
+
+function handleDeepLinkAfterUnlock(){
+  if(window.location.hash === '#' + DEEPLINK_NEW_JOURNAL_ENTRY){
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    state.journalDate = todayISO();
+    openJournalEntry(null);
+    return true;
+  }
+  return false;
+}
+
+function journalTextSuggestions(query){
+  const e = state.currentJournalEntry;
+  if(!e) return [];
+  const cats = journalEntryCategories(e);
+  const q = (query || '').trim().toLowerCase();
+  let pool = state.journal.filter(x => x.id !== e.id && (x.text||'').trim());
+  if(cats.length){
+    pool = pool.filter(x => journalEntryCategories(x).some(c => cats.includes(c)));
+  }
+  pool.sort((a,b) => (b.date + (b.startTime||'')).localeCompare(a.date + (a.startTime||'')));
+  const seen = new Set();
+  const results = [];
+  for(const x of pool){
+    const t = x.text.trim();
+    const key = t.toLowerCase();
+    if(seen.has(key)) continue;
+    if(q && !key.includes(q)) continue;
+    seen.add(key);
+    results.push(t);
+    if(results.length >= 5) break;
+  }
+  return results;
+}
+
+function journalTextSuggestionsHtml(query){
+  const results = journalTextSuggestions(query);
+  if(!results.length) return '';
+  return `
+    <div class="journal-text-suggestions">
+      ${results.map(t => `<button type="button" class="journal-text-suggestion-chip" onmousedown="event.preventDefault(); pickJournalTextSuggestion('${escapeAttr(t).replace(/'/g,"\\'")}')">${escapeHtml(t)}</button>`).join('')}
+    </div>
+  `;
+}
+
+function updateJournalTextSuggestions(){
+  const container = document.getElementById('journalTextSuggestions');
+  const input = document.getElementById('journalTextInput');
+  if(!container || !input) return;
+  container.innerHTML = journalTextSuggestionsHtml(input.value);
+}
+
+function pickJournalTextSuggestion(text){
+  state.currentJournalEntry.text = text;
+  const input = document.getElementById('journalTextInput');
+  if(input){
+    input.value = text;
+    input.focus();
+  }
+  updateJournalTextSuggestions();
+}
+
+function journalLastEndTimeForDate(dateIso){
+  const withEnd = state.journal.filter(e => e.date === dateIso && e.endTime);
+  if(!withEnd.length) return null;
+  withEnd.sort((a,b) => (b.endTime||'').localeCompare(a.endTime||''));
+  return withEnd[0].endTime;
+}
+
 function openJournalEntry(entry){
   state.currentJournalEntry = entry
     ? {...entry}
-    : { id: 'j' + Date.now(), date: state.journalDate, startTime: nowHHMM(), endTime: '', category: null, categories: [], text: '', person: '', noEndTime: false, unknown: false };
+    : { id: 'j' + Date.now(), date: state.journalDate, startTime: journalLastEndTimeForDate(state.journalDate) || nowHHMM(), endTime: '', category: null, categories: [], text: '', person: '', noEndTime: false, unknown: false };
   state.screen = 'journalEntry';
   render();
 }
@@ -8015,6 +8754,8 @@ function buildBackupPayload(){
     moodExtras: state.moodExtras,
     diaryEntries: state.diaryEntries,
     diaryEntryLang: state.diaryEntryLang,
+    filmEntries: state.filmEntries,
+    filmWatchlist: state.filmWatchlist,
     budgetAmount: state.budgetAmount, expenses: state.expenses, savings: state.savings, debts: state.debts, projects: state.projects, budgetTopups: state.budgetTopups,
     illnesses: state.illnesses, symptoms: state.symptoms, bathroomLog: state.bathroomLog, deprimeLog: state.deprimeLog, periodDays: state.periodDays, sleepLog: state.sleepLog, treatments: state.treatments, allergies: state.allergies, migraines: state.migraines, stressLog: state.stressLog, hydration: state.hydration, hydrationGoal: state.hydrationGoal, relationInfo: state.relationInfo,
     height: state.height, weightLog: state.weightLog, measurementLog: state.measurementLog,
@@ -8093,6 +8834,8 @@ async function driveRestoreBackup(){
     state.moodExtras = data.moodExtras || {};
     state.diaryEntries = data.diaryEntries || {};
     state.diaryEntryLang = data.diaryEntryLang || {};
+    state.filmEntries = data.filmEntries || [];
+    state.filmWatchlist = data.filmWatchlist || [];
     state.budgetAmount = data.budgetAmount || 0;
     state.budgetTopups = data.budgetTopups || [];
     state.expenses = data.expenses || [];
@@ -8149,6 +8892,8 @@ async function driveRestoreBackup(){
     await storageSet('moodExtras', state.moodExtras);
     await storageSet('diaryEntries', state.diaryEntries);
     await storageSet('diaryEntryLang', state.diaryEntryLang);
+    await storageSet('filmEntries', state.filmEntries);
+    await storageSet('filmWatchlist', state.filmWatchlist);
     await storageSet('budgetAmount', state.budgetAmount);
     await storageSet('budgetTopups', state.budgetTopups);
     await storageSet('expenses', state.expenses);
@@ -8253,6 +8998,8 @@ async function exportData(){
     moodExtras: state.moodExtras,
     diaryEntries: state.diaryEntries,
     diaryEntryLang: state.diaryEntryLang,
+    filmEntries: state.filmEntries,
+    filmWatchlist: state.filmWatchlist,
     budgetAmount: state.budgetAmount, expenses: state.expenses, savings: state.savings, debts: state.debts, projects: state.projects, budgetTopups: state.budgetTopups,
     illnesses: state.illnesses, symptoms: state.symptoms, bathroomLog: state.bathroomLog, deprimeLog: state.deprimeLog, periodDays: state.periodDays, sleepLog: state.sleepLog, treatments: state.treatments, allergies: state.allergies, migraines: state.migraines, stressLog: state.stressLog, hydration: state.hydration, hydrationGoal: state.hydrationGoal, relationInfo: state.relationInfo,
     height: state.height, weightLog: state.weightLog, measurementLog: state.measurementLog,
@@ -8334,6 +9081,14 @@ async function handleImportFile(input){
     if(data.diaryEntryLang && typeof data.diaryEntryLang === 'object'){
       state.diaryEntryLang = data.diaryEntryLang;
       await storageSet('diaryEntryLang', state.diaryEntryLang);
+    }
+    if(Array.isArray(data.filmEntries)){
+      state.filmEntries = data.filmEntries;
+      await storageSet('filmEntries', state.filmEntries);
+    }
+    if(Array.isArray(data.filmWatchlist)){
+      state.filmWatchlist = data.filmWatchlist;
+      await storageSet('filmWatchlist', state.filmWatchlist);
     }
     if(typeof data.budgetAmount === 'number'){
       state.budgetAmount = data.budgetAmount;
@@ -9311,6 +10066,12 @@ function setDirectoryFilter(group){
 async function setAssistantApiKey(value){
   state.assistantApiKey = value.trim();
   await storageSet('assistantApiKey', state.assistantApiKey);
+  render();
+}
+
+async function setTmdbApiKey(value){
+  state.tmdbApiKey = value.trim();
+  await storageSet('tmdbApiKey', state.tmdbApiKey);
   render();
 }
 
@@ -11090,6 +11851,7 @@ const CATEGORY_ACCENT_COLORS = {
   nutrition: 'var(--crown-leaf)',
   vault: 'var(--crown-leaf-deep)',
   assistant: 'var(--lock-pink)',
+  entertainment: 'var(--crown-red)',
 };
 
 function svgFlowerO(){
@@ -11986,6 +12748,13 @@ function renderSettings(){
         <div class="translate-disclaimer">${tr('assistant_window_disclaimer')}</div>
         <div class="translate-disclaimer" style="margin-top:8px">${tr('assistant_setup_disclaimer')}</div>
         ${renderAiSpendTracker()}
+      </div>
+      ${svgDividerLeaf()}
+      <div class="settings-section">
+        <div class="settings-title">${tr('film_settings_title')}</div>
+        <label class="cloud-field-label">${tr('film_tmdb_key_label')}</label>
+        <input type="password" class="cloud-client-input" placeholder="${tr('film_tmdb_key_placeholder')}" value="${escapeAttr(state.tmdbApiKey || '')}" onchange="setTmdbApiKey(this.value)">
+        <div class="translate-disclaimer" style="margin-top:8px">${tr('film_tmdb_disclaimer')}</div>
       </div>
       ${svgDividerLeaf()}
       <div class="settings-section">
@@ -14363,6 +15132,323 @@ function renderDiaryEditor(){
   `;
 }
 
+function filmCardHtml(e){
+  return `
+    <div class="film-grid-card" onclick="openFilmEntry('${e.id}')">
+      <div class="film-grid-photo-wrap">
+        ${e.posterUrl ? `<img src="${escapeAttr(e.posterUrl)}" class="film-grid-photo" loading="lazy" onerror="this.outerHTML='&lt;div class=&quot;film-grid-photo-placeholder&quot;&gt;🎬&lt;/div&gt;'">` : `<div class="film-grid-photo-placeholder">🎬</div>`}
+        <button type="button" class="film-grid-fav-btn ${e.favorite ? 'active' : ''}" aria-label="${tr('film_favorite_toggle')}" onclick="event.stopPropagation(); toggleFilmFavorite('${e.id}')">${e.favorite ? '♥' : '♡'}</button>
+        <div class="film-grid-rating-badge">★ ${e.rating ? Number(e.rating).toFixed(1) : '—'}</div>
+        <div class="film-grid-type-badge">${e.type === 'series' ? tr('film_search_type_series') : tr('film_search_type_movie')}</div>
+      </div>
+      <div class="film-grid-body">
+        <div class="film-grid-name">${escapeHtml(e.title)}${e.type === 'series' && e.season ? ` — ${tr('film_season_short', e.season)}` : ''}${e.year ? ` (${e.year})` : ''}</div>
+        <div class="film-grid-meta">${formatDateDisplay(e.watchedDate)}${e.rewatch ? ` · ${tr('film_rewatch_badge')}` : ''}${(e.tags && e.tags.length) ? ` · ${e.tags.map(t => escapeHtml(t)).join(', ')}` : ''}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderFilmCalendarView(){
+  const locale = state.lang === 'en' ? 'en-GB' : 'fr-FR';
+  const cy = state.filmCalYear, cm = state.filmCalMonth;
+  const monthLabel = new Date(cy, cm, 1).toLocaleDateString(locale, { month:'long', year:'numeric' });
+  const firstOfMonth = new Date(cy, cm, 1);
+  let startOffset = firstOfMonth.getDay() - 1;
+  if(startOffset < 0) startOffset = 6;
+  const daysInMonth = new Date(cy, cm+1, 0).getDate();
+  const daysInPrevMonth = new Date(cy, cm, 0).getDate();
+  const todayIso = todayISO();
+  const weekdayLabels = [0,1,2,3,4,5,6].map(i => {
+    const wd = new Date(2024, 0, 1 + i);
+    return wd.toLocaleDateString(locale, { weekday: 'short' }).slice(0,2);
+  });
+  const entriesByDate = {};
+  state.filmEntries.forEach(e => {
+    if(!e.watchedDate) return;
+    (entriesByDate[e.watchedDate] = entriesByDate[e.watchedDate] || []).push(e);
+  });
+  let calCells = '';
+  for(let i=0; i<startOffset; i++){
+    const dd = daysInPrevMonth - startOffset + i + 1;
+    calCells += `<div class="calendar-day other-month"><span>${dd}</span></div>`;
+  }
+  for(let dd=1; dd<=daysInMonth; dd++){
+    const iso = dateToISO(cy,cm,dd);
+    const isToday = iso === todayIso;
+    const isSelected = iso === state.filmCalSelectedDate;
+    const hasData = !!(entriesByDate[iso] && entriesByDate[iso].length);
+    calCells += `
+      <button class="calendar-day ${isToday && !isSelected ? 'today' : ''}" ${isSelected ? `style="background:var(--crown-red); border-color:var(--crown-red); color:white;"` : ''} onclick="selectFilmCalDay('${iso}')">
+        <span>${dd}</span>
+        ${hasData && !isSelected ? `<div class="calendar-day-dot" style="background:var(--crown-red)"></div>` : ''}
+      </button>
+    `;
+  }
+  const totalCells = startOffset + daysInMonth;
+  const trailing = (7 - (totalCells % 7)) % 7;
+  for(let dd=1; dd<=trailing; dd++){
+    calCells += `<div class="calendar-day other-month"><span>${dd}</span></div>`;
+  }
+  const selectedEntries = state.filmCalSelectedDate ? (entriesByDate[state.filmCalSelectedDate] || []) : [];
+  return `
+    <div class="cal-illustrated">
+      <div class="calendar-header">
+        <button class="calendar-nav-btn" onclick="changeFilmCalMonth(-1)">${svgIcon('chevronLeft')}</button>
+        <div class="calendar-month-label" style="text-transform:capitalize;">${monthLabel}</div>
+        <button class="calendar-nav-btn" onclick="changeFilmCalMonth(1)">${svgIcon('chevronRight')}</button>
+      </div>
+      <div class="calendar-grid">
+        ${weekdayLabels.map(w => `<div class="calendar-weekday">${w}</div>`).join('')}
+        ${calCells}
+      </div>
+    </div>
+    ${state.filmCalSelectedDate ? `
+      <h2 class="day-view-title" style="margin: 14px 0">${formatDateDisplay(state.filmCalSelectedDate)}</h2>
+      ${selectedEntries.length ? `<div class="film-grid">${selectedEntries.map(e => filmCardHtml(e)).join('')}</div>` : `<div class="translate-disclaimer">${tr('film_calendar_no_entry')}</div>`}
+    ` : ''}
+  `;
+}
+
+function renderFilmBilanView(){
+  const year = state.filmBilanYear || new Date().getFullYear();
+  const s = filmBilanStats(year);
+  return `
+    <div class="calendar-header" style="margin-bottom:14px">
+      <button class="calendar-nav-btn" onclick="changeFilmBilanYear(-1)">${svgIcon('chevronLeft')}</button>
+      <div class="calendar-month-label">${year}</div>
+      <button class="calendar-nav-btn" onclick="changeFilmBilanYear(1)">${svgIcon('chevronRight')}</button>
+    </div>
+    ${s.total ? `
+      <div class="journal-summary">
+        <div class="summary-row"><span class="summary-name">${tr('film_bilan_total', s.total)}</span></div>
+        <div class="summary-row"><span class="summary-name">${tr('film_bilan_movies_series', s.movies, s.series)}</span></div>
+        ${s.avg ? `<div class="summary-row"><span class="summary-name">${tr('film_stat_avg', s.avg.toFixed(1))}</span></div>` : ''}
+        ${s.topGenre ? `<div class="summary-row"><span class="summary-name">${tr('film_stat_top_genre', s.topGenre)}</span></div>` : ''}
+        ${s.bestRated ? `<div class="summary-row"><span class="summary-name">${tr('film_bilan_best', s.bestRated.title)}</span><span class="summary-duration">★ ${Number(s.bestRated.rating).toFixed(1)}</span></div>` : ''}
+      </div>
+    ` : `<div class="translate-disclaimer">${tr('film_bilan_empty', year)}</div>`}
+  `;
+}
+
+function renderFilms(){
+  const stats = filmStats();
+  const watchedList = getFilteredSortedFilmEntries();
+  const watchlist = state.filmWatchlist.slice().sort((a,b) => (b.addedDate||'').localeCompare(a.addedDate||''));
+  const list = state.filmTab === 'watched' ? watchedList : watchlist;
+  const genres = filmAllGenres();
+
+  const watchedCards = list.map(e => filmCardHtml(e)).join('');
+
+  const watchlistCards = list.map(w => `
+    <div class="film-grid-card" onclick="markWatchlistItemWatched('${w.id}')">
+      <div class="film-grid-photo-wrap">
+        ${w.posterUrl ? `<img src="${escapeAttr(w.posterUrl)}" class="film-grid-photo" loading="lazy" onerror="this.outerHTML='&lt;div class=&quot;film-grid-photo-placeholder&quot;&gt;🎬&lt;/div&gt;'">` : `<div class="film-grid-photo-placeholder">🎬</div>`}
+        <div class="film-grid-type-badge">${w.type === 'series' ? tr('film_search_type_series') : tr('film_search_type_movie')}</div>
+      </div>
+      <div class="film-grid-body">
+        <div class="film-grid-name">${escapeHtml(w.title)}${w.year ? ` (${w.year})` : ''}</div>
+        <div class="film-grid-meta" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="category-chip" style="--chip-color:var(--crown-red); padding:4px 10px; font-size:0.68rem;" onclick="event.stopPropagation(); markWatchlistItemWatched('${w.id}')">${tr('film_watchlist_mark_watched')}</button>
+          <button type="button" onclick="event.stopPropagation(); deleteFilmWatchlistItem('${w.id}')" aria-label="${tr('film_watchlist_delete')}" style="background:none; border:none; color:var(--ink-soft); font-size:1.1rem; line-height:1; padding:2px 4px; cursor:pointer;">×</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="top-bar">
+      <div class="top-bar-left">
+        ${renderBreadcrumb()}
+      </div>
+      <button class="settings-btn" onclick="openSettings()">${svgIcon('settings')}</button>
+    </div>
+    <div class="content">
+      <div class="lang-options" style="margin-bottom:14px">
+        <button class="lang-option ${state.filmTab==='watched'?'active':''}" onclick="setFilmTab('watched')">${tr('film_tab_watched')}</button>
+        <button class="lang-option ${state.filmTab==='watchlist'?'active':''}" onclick="setFilmTab('watchlist')">${tr('film_tab_watchlist')}</button>
+      </div>
+      ${state.filmTab === 'watched' ? `
+        <div class="category-picker" style="margin-bottom:10px">
+          <button type="button" class="category-chip ${state.filmSubView==='grid'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmSubView('grid')">${tr('film_subview_grid')}</button>
+          <button type="button" class="category-chip ${state.filmSubView==='calendar'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmSubView('calendar')">${tr('film_subview_calendar')}</button>
+          <button type="button" class="category-chip ${state.filmSubView==='bilan'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmSubView('bilan')">${tr('film_subview_bilan')}</button>
+        </div>
+        ${state.filmSubView === 'grid' ? `
+          ${stats.total ? `
+            <div class="journal-summary" style="margin-bottom:14px">
+              <div class="summary-row"><span class="summary-name">${tr('film_stat_total', stats.total)}</span></div>
+              <div class="summary-row"><span class="summary-name">${tr('film_stat_avg', stats.avg.toFixed(1))}</span></div>
+              ${stats.topGenre ? `<div class="summary-row"><span class="summary-name">${tr('film_stat_top_genre', stats.topGenre)}</span></div>` : ''}
+            </div>
+          ` : ''}
+          <input type="text" class="cloud-client-input" id="filmListSearchInput" placeholder="${tr('film_list_search_placeholder')}" style="margin-bottom:10px" value="${escapeAttr(state.filmListQuery)}" oninput="setFilmListQuery(this.value)">
+          <div class="category-picker" style="margin-bottom:10px">
+            <button type="button" class="category-chip ${state.filmTypeFilter==='all'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmTypeFilter('all')">${tr('film_filter_all')}</button>
+            <button type="button" class="category-chip ${state.filmTypeFilter==='movie'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmTypeFilter('movie')">${tr('film_filter_movies')}</button>
+            <button type="button" class="category-chip ${state.filmTypeFilter==='series'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmTypeFilter('series')">${tr('film_filter_series')}</button>
+            <button type="button" class="category-chip ${state.filmFavoritesOnly?'active':''}" style="--chip-color:var(--crown-red)" onclick="toggleFilmFavoritesOnly()">♥ ${tr('film_filter_favorites')}</button>
+          </div>
+          ${genres.length ? `
+            <div class="category-picker" style="margin-bottom:10px">
+              <button type="button" class="category-chip ${state.filmGenreFilter==='all'?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmGenreFilter('all')">${tr('film_genre_filter_all')}</button>
+              ${genres.map(g => `<button type="button" class="category-chip ${state.filmGenreFilter===g?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmGenreFilter('${escapeAttr(g).replace(/'/g,"\\'")}')">${escapeHtml(g)}</button>`).join('')}
+            </div>
+          ` : ''}
+          <div class="category-picker" style="margin-bottom:10px">
+            <button type="button" class="category-chip ${state.filmMinRating===0?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmMinRating(0)">${tr('film_rating_filter_all')}</button>
+            <button type="button" class="category-chip ${state.filmMinRating===3?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmMinRating(3)">★ 3+</button>
+            <button type="button" class="category-chip ${state.filmMinRating===4?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmMinRating(4)">★ 4+</button>
+            <button type="button" class="category-chip ${state.filmMinRating===4.5?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmMinRating(4.5)">★ 4.5+</button>
+          </div>
+          <div class="category-picker" style="margin-bottom:14px">
+            <button type="button" class="category-chip ${state.filmSortBy==='date'?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmSortBy('date')">${tr('film_sort_date')}</button>
+            <button type="button" class="category-chip ${state.filmSortBy==='dateAdded'?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmSortBy('dateAdded')">${tr('film_sort_date_added')}</button>
+            <button type="button" class="category-chip ${state.filmSortBy==='rating'?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmSortBy('rating')">${tr('film_sort_rating')}</button>
+            <button type="button" class="category-chip ${state.filmSortBy==='ratingAsc'?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmSortBy('ratingAsc')">${tr('film_sort_rating_asc')}</button>
+            <button type="button" class="category-chip ${state.filmSortBy==='alpha'?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmSortBy('alpha')">${tr('film_sort_alpha')}</button>
+          </div>
+        ` : ''}
+        ${state.filmSubView === 'calendar' ? renderFilmCalendarView() : ''}
+        ${state.filmSubView === 'bilan' ? renderFilmBilanView() : ''}
+      ` : ''}
+      ${state.filmTab === 'watchlist' || state.filmSubView === 'grid' ? `
+        ${list.length ? `<div class="film-grid">${state.filmTab==='watched' ? watchedCards : watchlistCards}</div>` : `<div class="translate-disclaimer">${state.filmTab==='watched' ? tr('film_empty_watched') : tr('film_empty_watchlist')}</div>`}
+      ` : ''}
+      <button type="button" class="settings-btn-full budget-add-btn" onclick="openFilmSearch('${state.filmTab === 'watchlist' ? 'watchlist' : 'watched'}')">${state.filmTab === 'watchlist' ? tr('film_add_watchlist') : tr('film_add_watched')}</button>
+    </div>
+    ${renderBottomNav()}
+  `;
+}
+
+function renderFilmSearch(){
+  const results = state.filmSearchResults;
+  const noKey = !state.tmdbApiKey;
+  return `
+    <div class="editor">
+      <div class="editor-bar">
+        <button class="icon-btn" onclick="backFromFilmSearch()">${tr('journal_back')}</button>
+      </div>
+      <div class="editor-body">
+        <h2 class="note-view-title">${state.filmSearchMode === 'watchlist' ? tr('film_search_title_watchlist') : tr('film_search_title_watched')}</h2>
+        ${noKey ? `
+          <div class="translate-disclaimer" style="margin-top:6px">${tr('film_search_no_key')}</div>
+          <button type="button" class="home-weather-retry" style="margin-top:10px" onclick="openSettings()">${tr('film_search_no_key_settings_btn')}</button>
+        ` : `
+        <div class="lang-options" style="margin: 10px 0 14px">
+          <button class="lang-option ${state.filmSearchType==='movie'?'active':''}" onclick="setFilmSearchType('movie')">${tr('film_search_type_movie')}</button>
+          <button class="lang-option ${state.filmSearchType==='series'?'active':''}" onclick="setFilmSearchType('series')">${tr('film_search_type_series')}</button>
+        </div>
+        <input type="text" class="cloud-client-input" id="filmSearchInput" placeholder="${tr('film_search_placeholder')}" value="${escapeAttr(state.filmSearchQuery)}" oninput="state.filmSearchQuery=this.value" onkeydown="if(event.key==='Enter'){event.preventDefault(); runFilmSearch();}">
+        <button type="button" class="home-weather-retry" style="margin-top:10px" onclick="runFilmSearch()">${tr('film_search_button')}</button>
+
+        ${state.filmSearchLoading ? `<div class="translate-disclaimer" style="margin-top:16px">${tr('film_search_loading')}</div>` : ''}
+
+        ${!state.filmSearchLoading && Array.isArray(results) && results.length ? `
+          <div style="margin-top:12px">
+            ${results.map((r,i) => `
+              <div class="film-search-result" onclick="pickFilmSearchResult(${i})">
+                <div class="film-search-result-photo-wrap">
+                  ${r.posterUrl ? `<img src="${escapeAttr(r.posterUrl)}" class="film-search-result-photo" loading="lazy" onerror="this.outerHTML='&lt;div class=&quot;film-search-result-photo-placeholder&quot;&gt;🎬&lt;/div&gt;'">` : `<div class="film-search-result-photo-placeholder">🎬</div>`}
+                </div>
+                <div class="film-search-result-text">
+                  <div class="film-search-result-title">${escapeHtml(r.title)}</div>
+                  <div class="film-search-result-meta">${[r.year, r.genre].filter(Boolean).join(' · ')}</div>
+                </div>
+                ${svgIcon('chevronRight')}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        ${!state.filmSearchLoading && state.filmSearchErrored ? `<div class="translate-disclaimer" style="margin-top:16px">${tr('film_search_error')}</div>` : ''}
+        ${!state.filmSearchLoading && !state.filmSearchErrored && Array.isArray(results) && !results.length ? `<div class="translate-disclaimer" style="margin-top:16px">${tr('film_search_no_results')}</div>` : ''}
+        `}
+
+        ${(state.filmSearchQuery || '').trim() ? `
+          <button type="button" class="settings-btn-full secondary budget-add-btn" style="margin-top:16px" onclick="addFilmManually()">${tr('film_search_manual_add', state.filmSearchQuery.trim())}</button>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderFilmEntryEditor(){
+  const e = state.currentFilmEntry;
+  const isEdit = state.filmEntries.some(x => x.id === e.id);
+  return `
+    <div class="editor">
+      <div class="editor-bar">
+        <button class="icon-btn" onclick="backFromFilmEntry()">${tr('journal_back')}</button>
+        ${isEdit ? `<button class="icon-btn delete" onclick="deleteFilmEntry()">${tr('film_entry_delete')}</button>` : ''}
+      </div>
+      <div class="editor-body">
+        <div class="film-poster-preview-wrap">
+          ${e.posterUrl ? `<img src="${escapeAttr(e.posterUrl)}" class="film-poster-preview" onerror="this.outerHTML='&lt;div class=&quot;film-poster-preview-placeholder&quot;&gt;🎬&lt;/div&gt;'">` : `<div class="film-poster-preview-placeholder">🎬</div>`}
+        </div>
+        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:14px;">
+          <label class="settings-btn-full secondary budget-add-btn" style="margin:0; display:inline-flex; width:auto; padding:8px 16px; font-size:0.8rem; cursor:pointer;">
+            ${e.posterUrl ? tr('film_poster_change_btn') : tr('film_poster_upload_btn')}
+            <input type="file" accept="image/*" class="visually-hidden" onchange="handleFilmPosterInput(this)">
+          </label>
+          ${e.posterUrl ? `<button type="button" class="settings-btn-full secondary budget-add-btn" style="margin:0; width:auto; padding:8px 16px; font-size:0.8rem;" onclick="removeFilmPoster()">${tr('film_poster_remove_btn')}</button>` : ''}
+        </div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
+          <h2 class="note-view-title" style="text-align:center; margin:0;">${escapeHtml(e.title)}${e.year ? ` (${e.year})` : ''}</h2>
+          <button type="button" onclick="toggleFilmFavoriteCurrent(${!e.favorite})" aria-label="${tr('film_favorite_toggle')}" style="background:none; border:none; font-size:1.3rem; color:${e.favorite ? '#E0733D' : 'var(--ink-soft)'}; cursor:pointer; padding:0;">${e.favorite ? '♥' : '♡'}</button>
+        </div>
+
+        ${e.rewatch ? `<div style="text-align:center">${filmStarRatingHtml(0,false,false)}</div>` : ''}
+        <div style="display:flex; justify-content:center; margin: 14px 0 4px">
+          ${filmStarRatingHtml(Number(e.rating)||0, true, false)}
+        </div>
+
+        <div class="photo-section-label">${tr('film_entry_date_label')}</div>
+        <input type="date" class="editor-date" value="${e.watchedDate}" onchange="state.currentFilmEntry.watchedDate=this.value">
+
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--ink-soft); margin-top:10px;">
+          <input type="checkbox" ${e.rewatch ? 'checked' : ''} onchange="toggleFilmRewatch(this.checked)">
+          ${tr('film_entry_rewatch_label')}
+        </label>
+
+        ${e.type === 'series' ? `
+          <div class="photo-section-label" style="margin-top:14px">${tr('film_entry_season_label')}</div>
+          <input type="text" class="cloud-client-input" placeholder="${tr('film_entry_season_placeholder')}" value="${escapeAttr(e.season || '')}" onchange="state.currentFilmEntry.season=this.value">
+        ` : ''}
+
+        <div class="photo-section-label" style="margin-top:14px">${tr('film_entry_genres_label')}</div>
+        <div class="category-picker">
+          ${(e.genres||[]).map(g => `
+            <div class="category-chip-wrap">
+              <button type="button" class="category-chip active" style="--chip-color:var(--crown-red)">
+                <span class="category-dot"></span>${escapeHtml(g)}
+              </button>
+              <button type="button" class="category-chip-x" onclick="removeFilmGenre('${escapeAttr(g).replace(/'/g,"\\'")}')">×</button>
+            </div>
+          `).join('')}
+          <input type="text" class="list-add-input" placeholder="${tr('film_entry_genres_placeholder')}" onkeydown="if(event.key==='Enter'){event.preventDefault(); addFilmGenreFromInput(this);}">
+        </div>
+
+        <div class="photo-section-label" style="margin-top:14px">${tr('film_entry_tags_label')}</div>
+        <div class="category-picker">
+          ${(e.tags||[]).map(t => `
+            <div class="category-chip-wrap">
+              <button type="button" class="category-chip active" style="--chip-color:var(--amber)">
+                <span class="category-dot"></span>${escapeHtml(t)}
+              </button>
+              <button type="button" class="category-chip-x" onclick="removeFilmTag('${escapeAttr(t).replace(/'/g,"\\'")}')">×</button>
+            </div>
+          `).join('')}
+          <input type="text" class="list-add-input" placeholder="${tr('film_entry_tags_placeholder')}" onkeydown="if(event.key==='Enter'){event.preventDefault(); addFilmTagFromInput(this);}">
+        </div>
+
+        <div class="photo-section-label" style="margin-top:14px">${tr('film_entry_review_label')}</div>
+        <textarea class="editor-content" placeholder="${tr('film_entry_review_placeholder')}" oninput="state.currentFilmEntry.review=this.value">${escapeHtml(e.review || '')}</textarea>
+      </div>
+      ${renderSaveBar('saveFilmEntry()')}
+    </div>
+  `;
+}
+
 function renderMoodCalendar(){
   if(state.moodSearchActive) return renderMoodSearch();
   const y = state.moodYear, m = state.moodMonth;
@@ -15131,7 +16217,8 @@ function renderJournalEntryEditor(){
           </button>
         </div>
         ${!e.unknown ? `
-          <textarea class="editor-content" id="journalTextInput" placeholder="${tr('journal_entry_placeholder')}" oninput="state.currentJournalEntry.text=this.value">${escapeHtml(e.text || '')}</textarea>
+          <textarea class="editor-content" id="journalTextInput" placeholder="${tr('journal_entry_placeholder')}" oninput="state.currentJournalEntry.text=this.value; updateJournalTextSuggestions();">${escapeHtml(e.text || '')}</textarea>
+          <div class="journal-text-suggestions" id="journalTextSuggestions">${journalTextSuggestionsHtml(e.text || '')}</div>
         ` : ''}
       </div>
         ${renderSaveBar('backFromJournalEntry()')}
@@ -15887,6 +16974,9 @@ function render(){
   else if(state.screen === 'moodPicker') html = renderMoodPicker();
   else if(state.screen === 'diary') html = renderDiaryCalendar();
   else if(state.screen === 'diaryEntry') html = renderDiaryEntry();
+  else if(state.screen === 'films') html = renderFilms();
+  else if(state.screen === 'filmSearch') html = renderFilmSearch();
+  else if(state.screen === 'filmEntry') html = renderFilmEntryEditor();
   else if(state.screen === 'budgetExpenses') html = renderBudgetExpenses();
   else if(state.screen === 'budgetTopupEntry') html = renderBudgetTopupEntry();
   else if(state.screen === 'budgetDebts') html = renderBudgetDebts();
@@ -15966,6 +17056,10 @@ function render(){
   }
   if(activeId === 'journalSearchInput'){
     const s = document.getElementById('journalSearchInput');
+    if(s){ s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
+  }
+  if(activeId === 'filmListSearchInput'){
+    const s = document.getElementById('filmListSearchInput');
     if(s){ s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
   }
   if(state.screen === 'moodPicker'){
@@ -16260,6 +17354,9 @@ window.openJournalEntry = openJournalEntry;
 window.backFromJournalEntry = backFromJournalEntry;
 window.deleteCurrentJournalEntry = deleteCurrentJournalEntry;
 window.toggleJournalEntryCategory = toggleJournalEntryCategory;
+window.updateJournalTextSuggestions = updateJournalTextSuggestions;
+window.pickJournalTextSuggestion = pickJournalTextSuggestion;
+window.handleDeepLinkAfterUnlock = handleDeepLinkAfterUnlock;
 window.setJournalEntryPerson = setJournalEntryPerson;
 window.promptJournalEntryOtherPerson = promptJournalEntryOtherPerson;
 window.setJournalFilter = setJournalFilter;
@@ -16340,6 +17437,7 @@ window.setPersonalInfoField = setPersonalInfoField;
 window.openContactEntry = openContactEntry;
 window.setDirectoryFilter = setDirectoryFilter;
 window.setAssistantApiKey = setAssistantApiKey;
+window.setTmdbApiKey = setTmdbApiKey;
 window.setAssistantModel = setAssistantModel;
 window.setAssistantWindowDays = setAssistantWindowDays;
 window.askAssistant = askAssistant;
@@ -16372,6 +17470,40 @@ window.editDiaryEntry = editDiaryEntry;
 window.backFromDiary = backFromDiary;
 window.saveDiaryEntry = saveDiaryEntry;
 window.deleteDiaryEntry = deleteDiaryEntry;
+window.openFilms = openFilms;
+window.setFilmTab = setFilmTab;
+window.setFilmTypeFilter = setFilmTypeFilter;
+window.setFilmSortBy = setFilmSortBy;
+window.openFilmSearch = openFilmSearch;
+window.backFromFilmSearch = backFromFilmSearch;
+window.setFilmSearchType = setFilmSearchType;
+window.runFilmSearch = runFilmSearch;
+window.pickFilmSearchResult = pickFilmSearchResult;
+window.addFilmManually = addFilmManually;
+window.markWatchlistItemWatched = markWatchlistItemWatched;
+window.deleteFilmWatchlistItem = deleteFilmWatchlistItem;
+window.openFilmEntry = openFilmEntry;
+window.backFromFilmEntry = backFromFilmEntry;
+window.setFilmRatingClick = setFilmRatingClick;
+window.toggleFilmRewatch = toggleFilmRewatch;
+window.addFilmGenreFromInput = addFilmGenreFromInput;
+window.removeFilmGenre = removeFilmGenre;
+window.saveFilmEntry = saveFilmEntry;
+window.deleteFilmEntry = deleteFilmEntry;
+window.setFilmListQuery = setFilmListQuery;
+window.setFilmGenreFilter = setFilmGenreFilter;
+window.setFilmMinRating = setFilmMinRating;
+window.toggleFilmFavoritesOnly = toggleFilmFavoritesOnly;
+window.toggleFilmFavorite = toggleFilmFavorite;
+window.toggleFilmFavoriteCurrent = toggleFilmFavoriteCurrent;
+window.setFilmSubView = setFilmSubView;
+window.changeFilmCalMonth = changeFilmCalMonth;
+window.selectFilmCalDay = selectFilmCalDay;
+window.changeFilmBilanYear = changeFilmBilanYear;
+window.addFilmTagFromInput = addFilmTagFromInput;
+window.removeFilmTag = removeFilmTag;
+window.handleFilmPosterInput = handleFilmPosterInput;
+window.removeFilmPoster = removeFilmPoster;
 window.dismissProfileBanner = dismissProfileBanner;
 window.toggleJournalSearch = toggleJournalSearch;
 window.viewPasswordEntry = viewPasswordEntry;
