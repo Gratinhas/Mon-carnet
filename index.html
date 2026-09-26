@@ -4370,6 +4370,7 @@ const state = {
   googleClientId: '',
   googleConnected: false,
   lastDriveSync: null,
+  lastGoogleReconnectAttempt: null,
   darkMode: false,
   isMigrating: false,
   passError: '',
@@ -4681,7 +4682,7 @@ function svgIcon(name){
 }
 
 /* ---------- ENCRYPTION (Web Crypto API, AES-GCM + PBKDF2) ---------- */
-const PLAINTEXT_KEYS = new Set(['lang','darkMode','googleClientId','rates','ratesDate','lastDriveSync']);
+const PLAINTEXT_KEYS = new Set(['lang','darkMode','googleClientId','rates','ratesDate','lastDriveSync','lastGoogleReconnectAttempt']);
 const SENSITIVE_KEYS = ['notes','noteCategories','events','journal','journalCategories','lastJournalCategory','moods','moodNotes',
   'budgetAmount','budgetTopups','expenses','savings','debts','projects','illnesses','symptoms','treatments','allergies','migraines','stressLog',
   'hydration','hydrationGoal','bathroomLog','periodDays','sleepLog','pendingSleepStart','height','weightLog','goalWeight',
@@ -4932,6 +4933,7 @@ async function loadEncryptedAppData(){
   state.lastJournalCategory = (await storageGet('lastJournalCategory')) || null;
   state.googleClientId = (await storageGet('googleClientId')) || '';
   state.lastDriveSync = (await storageGet('lastDriveSync')) || null;
+  state.lastGoogleReconnectAttempt = (await storageGet('lastGoogleReconnectAttempt')) || null;
   state.moods = (await storageGet('moods')) || {};
   state.moodNotes = (await storageGet('moodNotes')) || {};
   state.moodIntensity = (await storageGet('moodIntensity')) || {};
@@ -5122,7 +5124,7 @@ async function submitUnlockPassphrase(){
   if(!handleDeepLinkAfterUnlock()){
     goToWelcomeFlow();
   }
-  attemptSilentGoogleReconnect();
+  attemptDailySilentGoogleReconnect();
 }
 
 async function changePassphrase(){
@@ -8679,8 +8681,30 @@ let googleTokenClient = null;
 let googleAccessToken = null;
 let driveFileId = null;
 
+let driveSyncTimer = null;
+let driveSyncFirstPendingAt = null;
+const DRIVE_SYNC_DEBOUNCE_MS = 60 * 1000; // wait for a lull in edits...
+const DRIVE_SYNC_MAX_WAIT_MS = 5 * 60 * 1000; // ...but never longer than this since the first pending change
+
 function triggerAutoSync(){
   if(!state.googleConnected) return;
+  const now = Date.now();
+  if(!driveSyncFirstPendingAt) driveSyncFirstPendingAt = now;
+  if(driveSyncTimer) clearTimeout(driveSyncTimer);
+  const elapsed = now - driveSyncFirstPendingAt;
+  const wait = Math.min(DRIVE_SYNC_DEBOUNCE_MS, Math.max(0, DRIVE_SYNC_MAX_WAIT_MS - elapsed));
+  driveSyncTimer = setTimeout(() => {
+    driveSyncTimer = null;
+    driveSyncFirstPendingAt = null;
+    driveUploadBackup();
+  }, wait);
+}
+
+function flushPendingDriveSync(){
+  if(!driveSyncTimer) return;
+  clearTimeout(driveSyncTimer);
+  driveSyncTimer = null;
+  driveSyncFirstPendingAt = null;
   driveUploadBackup();
 }
 
@@ -8713,6 +8737,19 @@ function requestGoogleToken(){
     };
     client.requestAccessToken({ prompt: googleAccessToken ? '' : 'consent' });
   });
+}
+
+const GOOGLE_RECONNECT_MIN_INTERVAL_MS = 24 * 60 * 60 * 1000; // au plus une tentative automatique par jour
+
+// Tentative automatique, mais limitée à une fois par jour maximum (appelée au déverrouillage),
+// pour éviter de redéclencher la fenêtre Google à chaque ouverture de l'app.
+async function attemptDailySilentGoogleReconnect(){
+  if(state.googleConnected) return;
+  const now = Date.now();
+  if(state.lastGoogleReconnectAttempt && (now - state.lastGoogleReconnectAttempt) < GOOGLE_RECONNECT_MIN_INTERVAL_MS) return;
+  state.lastGoogleReconnectAttempt = now;
+  await storageSet('lastGoogleReconnectAttempt', now);
+  attemptSilentGoogleReconnect();
 }
 
 async function attemptSilentGoogleReconnect(){
@@ -9005,6 +9042,7 @@ function closeLightbox(){
 function openSettings(){
   state.screen = 'settings';
   render();
+  if(!state.googleConnected) attemptSilentGoogleReconnect();
 }
 
 async function exportData(){
@@ -17625,6 +17663,14 @@ window.setGoogleClientId = setGoogleClientId;
 window.connectGoogleDrive = connectGoogleDrive;
 window.driveUploadBackup = driveUploadBackup;
 window.driveRestoreBackup = driveRestoreBackup;
+
+// Flush any pending (debounced) Drive backup right away if the app is being
+// closed/hidden, so a batch of recent changes is never lost while waiting
+// for the debounce/quiet period to elapse.
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'hidden') flushPendingDriveSync();
+});
+window.addEventListener('pagehide', flushPendingDriveSync);
 
 init();
 
