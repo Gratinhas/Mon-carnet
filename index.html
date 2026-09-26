@@ -994,6 +994,27 @@
   .film-grid-name{ font-family: 'Quicksand', sans-serif; font-size: 0.92rem; line-height: 1.25; margin-bottom: 4px; }
   .film-grid-meta{ font-size: 0.7rem; color: var(--ink-soft); }
 
+  .film-journal-month{ font-size: 0.72rem; letter-spacing: 1.5px; color: var(--crown-red); font-weight:700; text-transform: uppercase; margin: 18px 0 10px; }
+  .film-journal-month:first-child{ margin-top: 0; }
+  .film-journal-wrap{ position:relative; padding-left: 34px; margin-bottom: 6px; }
+  .film-journal-wrap::before{ content:''; position:absolute; left:16px; top:6px; bottom:6px; width:1.5px; background: var(--line); }
+  .film-journal-row{ position:relative; display:flex; align-items:center; gap:12px; padding:9px 0; cursor:pointer; }
+  .film-journal-marker{ position:absolute; left:-34px; top:50%; transform:translateY(-50%); width:34px; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .film-journal-marker-icon{ width:23px; height:23px; display:block; }
+  .film-journal-marker-day{ font-size:0.66rem; font-weight:700; color: var(--ink); line-height:1; }
+  .film-journal-poster{ width:40px; height:56px; border-radius:6px; object-fit:cover; flex-shrink:0; display:block; }
+  .film-journal-poster.film-grid-photo-placeholder{ font-size:1.3rem; }
+  .film-journal-info{ min-width:0; }
+  .film-journal-title{ font-weight:700; font-size:0.88rem; }
+  .film-journal-year{ font-weight:500; color: var(--ink-soft); font-size:0.78rem; }
+
+  .film-add-btn{
+    width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+    background: var(--crown-red); color:white; border:none; border-radius:24px;
+    padding:13px; font-size:0.9rem; font-weight:700; font-family:'Quicksand', sans-serif; cursor:pointer;
+  }
+  .film-add-btn svg{ flex-shrink:0; }
+
   .film-search-result{
     display:flex; align-items:center; gap: 12px;
     padding: 10px 0; border-top: 1px solid var(--line); cursor:pointer;
@@ -1019,10 +1040,11 @@
   .film-star-rating{ display:inline-flex; gap: 3px; }
   .film-star-slot{ position:relative; width:30px; height:30px; font-size:26px; line-height:1; cursor:pointer; }
   .film-star-slot.readonly{ cursor:default; }
-  .film-star-bg, .film-star-fg{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-  .film-star-bg{ color: var(--line); }
-  .film-star-fg{ color: #D9A027; overflow:hidden; width:0; }
+  .film-star-bg{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; color: var(--line); }
+  .film-star-fg-clip{ position:absolute; inset:0; overflow:hidden; pointer-events:none; width:0; }
+  .film-star-fg{ position:absolute; top:0; left:0; width:30px; height:100%; display:flex; align-items:center; justify-content:center; color: #D9A027; }
   .film-star-rating.small .film-star-slot{ width:16px; height:16px; font-size:14px; }
+  .film-star-rating.small .film-star-fg{ width:16px; }
 
   .film-rewatch-badge{
     display:inline-block; font-size: 0.72rem; color: var(--crown-red); background: rgba(192,57,43,0.12);
@@ -1483,6 +1505,7 @@ const STRINGS = {
     pwd_copy_login: "Copier l'identifiant",
     pwd_copy_password: 'Copier le mot de passe',
     pwd_copy_email: "Copier l'adresse email",
+    pwd_copy_notes: 'Copier la note',
     pwd_empty: 'Aucun mot de passe enregistré pour le moment.',
     pwd_add: '+ Ajouter un mot de passe',
     pwd_back: '‹ Retour',
@@ -1903,6 +1926,7 @@ const STRINGS = {
     film_sort_rating_asc: 'Note (croissant)',
     film_sort_alpha: 'A-Z',
     film_subview_grid: 'Grille',
+    film_subview_journal: 'Journal',
     film_subview_calendar: 'Calendrier',
     film_subview_bilan: 'Bilan',
     film_list_search_placeholder: 'Rechercher un titre…',
@@ -2129,6 +2153,8 @@ const STRINGS = {
     shopping_recipe_added: (n)=> n > 0 ? `${n} ingrédient${n>1?'s':''} ajouté${n>1?'s':''} à ta liste de courses.` : 'Ces ingrédients sont déjà dans ta liste.',
     life_preview_passwords: (n)=> `${n} mot${n>1?'s':''} de passe enregistré${n>1?'s':''}`,
     life_preview_passwords_empty: 'Aucun mot de passe enregistré',
+    life_preview_films: (n)=> `${n} film${n>1?'s':''} ou série${n>1?'s':''} noté${n>1?'s':''}`,
+    life_preview_films_empty: 'Aucun film noté pour le moment',
     life_preview_personal_info: 'Configurées',
     life_preview_personal_info_empty: 'Non configurées',
     life_preview_directory: (n)=> `${n} contact${n>1?'s':''}`,
@@ -2551,6 +2577,7 @@ const STRINGS = {
     pwd_copy_login: 'Copy username',
     pwd_copy_password: 'Copy password',
     pwd_copy_email: 'Copy email address',
+    pwd_copy_notes: 'Copy note',
     pwd_empty: 'No passwords saved yet.',
     pwd_add: '+ Add a password',
     pwd_back: '‹ Back',
@@ -2971,6 +2998,7 @@ const STRINGS = {
     film_sort_rating_asc: 'Rating (ascending)',
     film_sort_alpha: 'A-Z',
     film_subview_grid: 'Grid',
+    film_subview_journal: 'Diary',
     film_subview_calendar: 'Calendar',
     film_subview_bilan: 'Recap',
     film_list_search_placeholder: 'Search a title…',
@@ -3197,6 +3225,8 @@ const STRINGS = {
     shopping_recipe_added: (n)=> n > 0 ? `${n} ingredient${n>1?'s':''} added to your shopping list.` : 'These ingredients are already on your list.',
     life_preview_passwords: (n)=> `${n} password${n>1?'s':''} saved`,
     life_preview_passwords_empty: 'No passwords saved',
+    life_preview_films: (n)=> `${n} movie${n>1?'s':''} or show${n>1?'s':''} rated`,
+    life_preview_films_empty: 'No movies rated yet',
     life_preview_personal_info: 'Set up',
     life_preview_personal_info_empty: 'Not set up',
     life_preview_directory: (n)=> `${n} contact${n>1?'s':''}`,
@@ -6453,7 +6483,7 @@ function filmStarRatingHtml(rating, editable, small){
     return `
       <span class="film-star-slot ${editable ? '' : 'readonly'}" ${editable ? `onclick="setFilmRatingClick(event, ${i})"` : ''}>
         <span class="film-star-bg">★</span>
-        <span class="film-star-fg" style="width:${fillPct}%">★</span>
+        <span class="film-star-fg-clip" style="width:${fillPct}%"><span class="film-star-fg">★</span></span>
       </span>
     `;
   }).join('');
@@ -11339,8 +11369,11 @@ function renderPasswordView(){
 
         ${e.notes ? `
           <div class="journal-summary" style="margin-top:14px">
-            <div class="photo-section-label">${tr('pwd_notes_label')}</div>
-            <div class="translate-disclaimer">${escapeHtml(e.notes)}</div>
+            <div class="photo-section-label" style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+              <span>${tr('pwd_notes_label')}</span>
+              <button type="button" class="icon-btn" title="${tr('pwd_copy_notes')}" data-copy-text="${escapeAttr(e.notes)}" onclick="copyToClipboard(this.dataset.copyText, event)">${svgIcon('copy')}</button>
+            </div>
+            <div class="translate-disclaimer" style="user-select:text; -webkit-user-select:text;">${escapeHtml(e.notes)}</div>
           </div>
         ` : ''}
       </div>
@@ -12278,6 +12311,14 @@ function getVaultSubcatMeta(){
   };
 }
 
+function getEntertainmentSubcatMeta(){
+  const filmCount = state.filmEntries.length;
+  return {
+    movies_series: { preview: filmCount ? tr('life_preview_films', filmCount) : tr('life_preview_films_empty') },
+    games: { preview: tr('nav_soon') },
+  };
+}
+
 function getAssistantSubcatMeta(){
   return {
     doctor: { icon: 'medical', color: '#A2503B', preview: state.doctorHistory.length ? tr('life_preview_doctor', state.doctorHistory.length) : tr('life_preview_doctor_empty') },
@@ -12559,6 +12600,64 @@ function renderVaultChestsDetail(cat, meta){
   `;
 }
 
+function svgEntertainmentDefs(){
+  return `
+    <g id="entIconReel">
+      <circle cx="0" cy="0" r="8" fill="none" stroke="var(--crown-red)" stroke-width="1.8"/>
+      <circle cx="0" cy="-23" r="6" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.6"/>
+      <circle cx="20" cy="-10" r="6" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.6"/>
+      <circle cx="20" cy="13" r="6" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.6"/>
+      <circle cx="0" cy="25" r="6" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.6"/>
+      <circle cx="-20" cy="13" r="6" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.6"/>
+      <circle cx="-20" cy="-10" r="6" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.6"/>
+    </g>
+    <g id="entIconController">
+      <rect x="-15" y="-8" width="30" height="18" rx="7" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.8"/>
+      <circle cx="-7" cy="1" r="2.6" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.4"/>
+      <circle cx="6" cy="-2" r="1.6" fill="var(--crown-gold-light)"/>
+      <circle cx="10" cy="1" r="1.6" fill="var(--crown-gold-light)"/>
+    </g>
+  `;
+}
+function svgEntertainmentMedal(iconId){
+  return `
+    <svg class="vault-chest-svg" viewBox="0 0 90 90">
+      <defs>${svgEntertainmentDefs()}</defs>
+      <g transform="translate(45,45)">
+        <circle cx="0" cy="0" r="34" fill="none" stroke="var(--crown-red)" stroke-width="2"/>
+        <use href="#${iconId}"/>
+      </g>
+    </svg>
+  `;
+}
+function renderEntertainmentMedalsDetail(cat, meta){
+  const subById = {};
+  cat.subcats.forEach(s => subById[s.id] = s);
+  const items = [
+    { id: 'movies_series', icon: 'entIconReel' },
+    { id: 'games', icon: 'entIconController' },
+  ];
+  return `
+    <div class="top-bar">
+      <div class="top-bar-left">
+        ${renderBreadcrumb()}
+      </div>
+    </div>
+    <div class="content vault-chests-content">
+      <div class="vault-chests-grid">
+        ${items.map(item => `
+          <button class="vault-chest-item" onclick="goToSubcategory('${cat.id}','${item.id}')">
+            ${svgEntertainmentMedal(item.icon)}
+            <div class="vault-chest-title">${subById[item.id].title}</div>
+            <div class="vault-chest-preview">${(meta[item.id] || {}).preview || ''}</div>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+    ${renderBottomNav()}
+  `;
+}
+
 function svgAssistantStarDefs(){
   return `
     <g id="astIconCalendar">
@@ -12690,6 +12789,9 @@ function renderCategoryDetail(){
   }
   if(cat.id === 'assistant'){
     return renderAssistantStarDetail(cat, getAssistantSubcatMeta());
+  }
+  if(cat.id === 'entertainment'){
+    return renderEntertainmentMedalsDetail(cat, getEntertainmentSubcatMeta());
   }
 
   if(cardMetaByCategory[cat.id]){
@@ -15195,6 +15297,10 @@ function renderDiaryEditor(){
   `;
 }
 
+function svgFilmReelIcon(){
+  return `<svg width="18" height="18" viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="15" cy="15" r="3" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="15" cy="6.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="22" cy="11" r="1.8" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="22" cy="19" r="1.8" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="15" cy="23.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="8" cy="19" r="1.8" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="8" cy="11" r="1.8" fill="none" stroke="currentColor" stroke-width="1.1"/></svg>`;
+}
+
 function filmCardHtml(e){
   return `
     <div class="film-grid-card" onclick="openFilmEntry('${e.id}')">
@@ -15210,6 +15316,50 @@ function filmCardHtml(e){
       </div>
     </div>
   `;
+}
+
+function renderFilmJournalView(){
+  const locale = state.lang === 'en' ? 'en-GB' : 'fr-FR';
+  const entries = state.filmEntries.filter(e => e.watchedDate).slice()
+    .sort((a,b) => (b.watchedDate||'').localeCompare(a.watchedDate||'') || (b.createdAt||0) - (a.createdAt||0));
+  if(!entries.length) return `<div class="translate-disclaimer">${tr('film_empty_watched')}</div>`;
+  let html = '';
+  let lastMonthKey = null;
+  entries.forEach(e => {
+    const d = new Date(e.watchedDate + 'T00:00:00');
+    const monthKey = e.watchedDate.slice(0,7);
+    if(monthKey !== lastMonthKey){
+      if(lastMonthKey !== null) html += `</div>`;
+      const monthLabel = d.toLocaleDateString(locale, { month:'long', year:'numeric' });
+      html += `<div class="film-journal-month">${escapeHtml(monthLabel)}</div><div class="film-journal-wrap">`;
+      lastMonthKey = monthKey;
+    }
+    html += `
+      <div class="film-journal-row" onclick="openFilmEntry('${e.id}')">
+        <div class="film-journal-marker">
+          <svg class="film-journal-marker-icon" viewBox="0 0 30 30">
+            <circle cx="15" cy="15" r="13" fill="var(--paper)"/>
+            <circle cx="15" cy="15" r="12" fill="none" stroke="var(--crown-red)" stroke-width="1.6"/>
+            <circle cx="15" cy="15" r="3" fill="none" stroke="var(--crown-red)" stroke-width="1.3"/>
+            <circle cx="15" cy="6.5" r="2.1" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.2"/>
+            <circle cx="22" cy="11" r="2.1" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.2"/>
+            <circle cx="22" cy="19" r="2.1" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.2"/>
+            <circle cx="15" cy="23.5" r="2.1" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.2"/>
+            <circle cx="8" cy="19" r="2.1" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.2"/>
+            <circle cx="8" cy="11" r="2.1" fill="none" stroke="var(--crown-gold-light)" stroke-width="1.2"/>
+          </svg>
+          <div class="film-journal-marker-day">${d.getDate()}</div>
+        </div>
+        ${e.posterUrl ? `<img src="${escapeAttr(e.posterUrl)}" class="film-journal-poster" loading="lazy" onerror="this.outerHTML='&lt;div class=&quot;film-journal-poster film-grid-photo-placeholder&quot;&gt;🎬&lt;/div&gt;'">` : `<div class="film-journal-poster film-grid-photo-placeholder">🎬</div>`}
+        <div class="film-journal-info">
+          <div class="film-journal-title">${escapeHtml(e.title)}${e.year ? ` <span class="film-journal-year">${e.year}</span>` : ''}</div>
+          ${filmStarRatingHtml(Number(e.rating)||0, false, true)}
+        </div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  return html;
 }
 
 function renderFilmCalendarView(){
@@ -15331,9 +15481,11 @@ function renderFilms(){
         <button class="lang-option ${state.filmTab==='watched'?'active':''}" onclick="setFilmTab('watched')">${tr('film_tab_watched')}</button>
         <button class="lang-option ${state.filmTab==='watchlist'?'active':''}" onclick="setFilmTab('watchlist')">${tr('film_tab_watchlist')}</button>
       </div>
+      <button type="button" class="film-add-btn" style="margin-bottom:14px" onclick="openFilmSearch('${state.filmTab === 'watchlist' ? 'watchlist' : 'watched'}')">${svgFilmReelIcon()} ${state.filmTab === 'watchlist' ? tr('film_add_watchlist') : tr('film_add_watched')}</button>
       ${state.filmTab === 'watched' ? `
         <div class="category-picker" style="margin-bottom:10px">
           <button type="button" class="category-chip ${state.filmSubView==='grid'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmSubView('grid')">${tr('film_subview_grid')}</button>
+          <button type="button" class="category-chip ${state.filmSubView==='journal'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmSubView('journal')">${tr('film_subview_journal')}</button>
           <button type="button" class="category-chip ${state.filmSubView==='calendar'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmSubView('calendar')">${tr('film_subview_calendar')}</button>
           <button type="button" class="category-chip ${state.filmSubView==='bilan'?'active':''}" style="--chip-color:var(--crown-red)" onclick="setFilmSubView('bilan')">${tr('film_subview_bilan')}</button>
         </div>
@@ -15372,13 +15524,13 @@ function renderFilms(){
             <button type="button" class="category-chip ${state.filmSortBy==='alpha'?'active':''}" style="--chip-color:var(--amber)" onclick="setFilmSortBy('alpha')">${tr('film_sort_alpha')}</button>
           </div>
         ` : ''}
+        ${state.filmSubView === 'journal' ? renderFilmJournalView() : ''}
         ${state.filmSubView === 'calendar' ? renderFilmCalendarView() : ''}
         ${state.filmSubView === 'bilan' ? renderFilmBilanView() : ''}
       ` : ''}
       ${state.filmTab === 'watchlist' || state.filmSubView === 'grid' ? `
         ${list.length ? `<div class="film-grid">${state.filmTab==='watched' ? watchedCards : watchlistCards}</div>` : `<div class="translate-disclaimer">${state.filmTab==='watched' ? tr('film_empty_watched') : tr('film_empty_watchlist')}</div>`}
       ` : ''}
-      <button type="button" class="settings-btn-full budget-add-btn" onclick="openFilmSearch('${state.filmTab === 'watchlist' ? 'watchlist' : 'watched'}')">${state.filmTab === 'watchlist' ? tr('film_add_watchlist') : tr('film_add_watched')}</button>
     </div>
     ${renderBottomNav()}
   `;
