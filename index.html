@@ -8269,9 +8269,20 @@ function setJournalDate(iso){
 
 const DEEPLINK_NEW_JOURNAL_ENTRY = 'nouvelle-entree-journal';
 
+function journalDeepLinkRequested(){
+  // Accept both a query param (?action=..., most reliable across iOS home-screen bookmarks,
+  // since fragments/hashes are sometimes dropped when a page is saved to the home screen)
+  // and a hash (#...) for anyone who already saved the old-style link.
+  try{
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('action') === DEEPLINK_NEW_JOURNAL_ENTRY) return true;
+  }catch(err){ /* ignore */ }
+  return window.location.hash === '#' + DEEPLINK_NEW_JOURNAL_ENTRY;
+}
+
 function handleDeepLinkAfterUnlock(){
-  if(window.location.hash === '#' + DEEPLINK_NEW_JOURNAL_ENTRY){
-    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  if(journalDeepLinkRequested()){
+    window.history.replaceState(null, '', window.location.pathname);
     state.journalDate = todayISO();
     openJournalEntry(null);
     return true;
@@ -8330,8 +8341,9 @@ function pickJournalTextSuggestion(text){
   updateJournalTextSuggestions();
 }
 
-function journalLastEndTimeForDate(dateIso){
-  const withEnd = state.journal.filter(e => e.date === dateIso && e.endTime);
+function journalChainedStartTime(dateIso, person){
+  const p = person || '';
+  const withEnd = state.journal.filter(e => e.date === dateIso && e.endTime && ((e.person || '') === p || e.person === JOURNAL_TOGETHER));
   if(!withEnd.length) return null;
   withEnd.sort((a,b) => (b.endTime||'').localeCompare(a.endTime||''));
   return withEnd[0].endTime;
@@ -8340,9 +8352,20 @@ function journalLastEndTimeForDate(dateIso){
 function openJournalEntry(entry){
   state.currentJournalEntry = entry
     ? {...entry}
-    : { id: 'j' + Date.now(), date: state.journalDate, startTime: journalLastEndTimeForDate(state.journalDate) || nowHHMM(), endTime: '', category: null, categories: [], text: '', person: '', noEndTime: false, unknown: false };
+    : { id: 'j' + Date.now(), date: state.journalDate, startTime: journalChainedStartTime(state.journalDate, '') || nowHHMM(), endTime: '', category: null, categories: [], text: '', person: '', noEndTime: false, unknown: false };
   state.screen = 'journalEntry';
   render();
+}
+
+function journalEntryIsNew(){
+  const e = state.currentJournalEntry;
+  return !!e && !state.journal.some(x => x.id === e.id);
+}
+
+function rechainJournalEntryStartTime(person){
+  if(!journalEntryIsNew()) return;
+  const chained = journalChainedStartTime(state.currentJournalEntry.date, person);
+  state.currentJournalEntry.startTime = chained || nowHHMM();
 }
 
 function toggleJournalEntryNoEndTime(checked){
@@ -8511,6 +8534,7 @@ async function toggleJournalEntryCategory(id){
 
 function setJournalEntryPerson(person){
   state.currentJournalEntry.person = person;
+  rechainJournalEntryStartTime(person);
   render();
 }
 
@@ -8524,6 +8548,7 @@ function promptJournalEntryOtherPerson(){
   const name = window.prompt(tr('journal_who_other_placeholder'), current);
   if(name === null) return;
   state.currentJournalEntry.person = name.trim();
+  rechainJournalEntryStartTime(state.currentJournalEntry.person);
   render();
 }
 
