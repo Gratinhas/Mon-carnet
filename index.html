@@ -812,7 +812,7 @@
   .sudoku-grid{ display:grid; grid-template-columns: repeat(9, 1fr); width:100%; max-width:420px; margin:0 auto; aspect-ratio:1; border:2px solid var(--ink); border-radius:6px; overflow:hidden; }
   .sudoku-cell{ display:flex; align-items:center; justify-content:center; font-family:'Quicksand', sans-serif; font-weight:600; font-size:1.05rem; color: var(--ink); background: var(--paper); border:1px solid var(--line); cursor:pointer; user-select:none; }
   .sudoku-cell.given{ color: var(--ink); font-weight:700; background: var(--paper-raised); cursor:default; }
-  .sudoku-cell.peer{ background: var(--paper-raised); }
+  .sudoku-cell.peer{ background: color-mix(in srgb, var(--crown-gold-light) 18%, var(--paper)); }
   .sudoku-cell.same-value{ background: var(--crown-gold-light); opacity:0.35; }
   .sudoku-cell.selected{ background: var(--crown-gold-light); color:#fff; }
   .sudoku-cell.selected.given{ background: var(--crown-gold-light); color:#fff; }
@@ -1148,9 +1148,35 @@
   .lightbox{
     position: fixed; inset: 0; background: rgba(20,19,17,.92);
     display:flex; align-items:center; justify-content:center; padding: 24px; z-index: 50;
+    overflow: hidden;
   }
-  .lightbox img{ max-width: 100%; max-height: 100%; border-radius: 8px; }
+  .lightbox img{ max-width: 100%; max-height: 100%; border-radius: 8px; touch-action: none; cursor: grab; user-select: none; }
   .lightbox video{ max-width: 100%; max-height: 100%; border-radius: 8px; }
+  .lightbox-close{
+    position: absolute; top: 14px; right: 14px; z-index: 51;
+    width: 40px; height: 40px; border-radius: 50%; border: none;
+    background: rgba(0,0,0,.55); color: #fff; font-size: 1.3rem; line-height: 1;
+    display:flex; align-items:center; justify-content:center; cursor: pointer;
+  }
+  .photo-crop-overlay{
+    position: fixed; inset: 0; background: rgba(0,0,0,.85);
+    display:flex; align-items:center; justify-content:center; padding: 16px; z-index: 60;
+  }
+  .photo-crop-card{
+    background: var(--paper); border-radius: var(--radius); padding: 16px;
+    max-width: 320px; width: 100%; display:flex; flex-direction:column; gap: 10px; align-items:center;
+  }
+  .photo-crop-title{ font-weight: 600; }
+  .photo-crop-hint{ font-size: 0.78rem; color: var(--ink-soft); text-align:center; }
+  .photo-crop-frame{
+    position: relative; overflow: hidden; border-radius: 8px; background: #000; touch-action: none;
+  }
+  .photo-crop-frame img{ position:absolute; top:50%; left:50%; cursor: grab; user-select:none; }
+  .photo-crop-zoom-row{ display:flex; align-items:center; gap: 8px; width: 100%; }
+  .photo-crop-zoom-row input[type=range]{ flex:1; }
+  .photo-crop-zoom-row button{ width: 32px; height: 32px; flex: none; }
+  .photo-crop-actions{ display:flex; gap: 8px; width: 100%; }
+  .photo-crop-actions button{ flex: 1; }
   .video-section{ margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
   .video-list{ display:flex; flex-direction:column; gap: 8px; margin-bottom: 10px; }
   .video-item{
@@ -1402,8 +1428,8 @@
     background: var(--paper-raised); border: 1px solid var(--line); border-radius: 16px;
     overflow:hidden; cursor:pointer;
   }
-  .recipe-grid-photo-wrap{ position:relative; width:100%; aspect-ratio: 1/1; background: var(--paper); }
-  .recipe-grid-photo{ width:100%; height:100%; object-fit:cover; display:block; }
+  .recipe-grid-photo-wrap{ position:relative; width:100%; aspect-ratio: 4/5; background: var(--paper); }
+  .recipe-grid-photo{ width:100%; height:100%; object-fit:cover; display:block; cursor: zoom-in; }
   .recipe-grid-photo-placeholder{
     width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size: 2.4rem;
     background: linear-gradient(160deg, var(--teal), var(--teal-deep)); opacity: 0.88;
@@ -1417,6 +1443,40 @@
   .recipe-grid-badges{ display:flex; flex-wrap:wrap; gap: 4px; margin-bottom: 6px; }
   .recipe-grid-name{ font-family: 'Quicksand', sans-serif; font-size: 0.92rem; line-height: 1.25; margin-bottom: 4px; }
   .recipe-grid-meta{ font-size: 0.7rem; color: var(--ink-soft); }
+  .recipe-folder-collage{
+    width:100%; aspect-ratio: 1/1; display:grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+    gap: 2px; background: var(--line); overflow:hidden;
+  }
+  .recipe-folder-collage-photo{ width:100%; height:100%; object-fit:cover; display:block; }
+  .recipe-folder-collage-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+    background: linear-gradient(160deg, var(--teal), var(--teal-deep)); opacity: 0.6;
+  }
+  .recipe-folder-actions{ display:flex; gap:8px; margin-top:6px; }
+  .recipe-folder-actions .row-delete-btn{ position:static; }
+  .recipe-grid-move{
+    position:absolute; top:8px; left:8px; background: white; border-radius: 50%; border:none;
+    width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-size:0.85rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2); cursor:pointer;
+  }
+  .recipe-folder-checkbox-list{
+    max-height:220px; overflow-y:auto; border:1px solid var(--line); border-radius: var(--radius);
+    padding:4px 10px; background: var(--paper-raised); margin-bottom:12px;
+  }
+  .recipe-folder-checkbox-row{
+    display:flex; align-items:center; gap:10px; padding:7px 0; cursor:pointer;
+    font-family:'Quicksand', sans-serif; font-size:0.85rem; color: var(--ink);
+  }
+  .recipe-folder-checkbox-row input[type="checkbox"]{ flex-shrink:0; }
+  .recipe-move-modal-card{ max-width:340px; width:100%; text-align:left; }
+  .recipe-folder-tabs{ display:flex; gap:8px; margin-bottom:14px; }
+  .recipe-folder-tab{
+    flex:1; text-align:center; padding:9px 6px; border-radius: 12px; border:1px solid var(--line);
+    background: var(--paper-raised); font-family:'Quicksand', sans-serif; font-weight:600; font-size:0.82rem;
+    cursor:pointer; color: var(--ink-soft);
+  }
+  .recipe-folder-tab.active{ background: var(--teal); color:#fff; border-color: var(--teal); }
+  .recipe-folder-section-label{ margin-top:18px; }
 
   /* ---------- FILMS & SERIES ---------- */
   .film-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
@@ -1770,16 +1830,19 @@
   .home-reminders-title{ font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
   .home-reminder-item{ font-size: 0.82rem; color: var(--ink); padding: 2px 0; display:flex; align-items:center; justify-content:space-between; gap: 10px; }
   .home-reminder-dismiss{ background:none; border:none; color: var(--ink-soft); font-size: 1rem; padding: 2px 6px; flex-shrink:0; }
-  .recipe-cover-photo{ width:100%; max-height:220px; object-fit:cover; border-radius: var(--radius); margin-bottom: 10px; }
-  .recipe-ing-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .recipe-cover-photo{ width:100%; max-height:320px; object-fit:cover; border-radius: var(--radius); margin-bottom: 10px; cursor: zoom-in; }
+  .recipe-ing-row-wrap{ margin-bottom:8px; }
+  .recipe-ing-row{ display:flex; gap:8px; align-items:center; margin-bottom:4px; }
+  .recipe-ing-brand-input{ font-size:0.78rem; color: var(--ink-soft); padding:6px 10px; margin-bottom:0; }
+  .recipe-view-ingredient-brand{ font-size:0.78rem; color: var(--ink-soft); font-style: italic; margin-top:2px; }
   .recipe-step-row, .recipe-view-step{ display:flex; gap:10px; margin-bottom:14px; }
   .recipe-step-num{
     width:26px; height:26px; border-radius:50%; background:var(--teal); color:white;
     display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:600; flex-shrink:0;
   }
-  .recipe-step-photo{ width:100%; max-height:160px; object-fit:cover; border-radius: var(--radius); margin-bottom:8px; }
+  .recipe-step-photo{ width:100%; max-height:200px; object-fit:cover; border-radius: var(--radius); margin-bottom:8px; cursor: zoom-in; }
   .recipe-view-ingredient{ padding:6px 0; border-top:1px solid var(--line); font-size:0.9rem; }
-  .ingredient-tap{ text-decoration: underline dotted; text-decoration-color: var(--teal); cursor:pointer; color: var(--teal-deep); font-weight:600; }
+  .ingredient-tap, .temperature-tap{ text-decoration: underline dotted; text-decoration-color: var(--teal); cursor:pointer; color: var(--teal-deep); font-weight:600; }
   .category-chip.new-category{ border-style: dashed; color: var(--ink-soft); }
   .category-chip-wrap{ position: relative; display:inline-flex; }
   .category-chip-x{
@@ -2357,6 +2420,7 @@ const STRINGS = {
     health_hydration_add: 'Ajouter une bouteille (1,5L)',
     health_hydration_hint: "Touche une bouteille pour indiquer ce qu'il reste dedans — elle se vide visuellement à chaque clic.",
     cat_home_title: 'Accueil',
+    cat_settings: 'Paramètres',
     weather_loading: 'Chargement de la météo…',
     weather_retry: 'Activer la météo',
     welcome_hello: 'Bonjour',
@@ -2407,6 +2471,30 @@ const STRINGS = {
     cat_divertissement: 'Divertissement',
     cat_movies_series: 'Films & Séries',
     cat_games: 'Jeux',
+    cat_learning: 'Apprentissage',
+    learning_domain_languages: 'Langues',
+    learning_domain_gardening: 'Jardinage',
+    learning_domain_diy: 'Bricolage',
+    learning_domain_cooking: 'Cuisine',
+    learning_tab_notes: 'Notes',
+    learning_tab_flashcards: 'Fiches',
+    learning_notes_empty: 'Aucune note pour le moment.',
+    learning_flashcards_empty: 'Aucune fiche pour le moment.',
+    learning_note_add: '+ Ajouter une note',
+    learning_flashcard_add: '+ Ajouter une fiche',
+    learning_review_button: 'Réviser',
+    learning_note_title_placeholder: 'Titre de la note',
+    learning_note_content_placeholder: 'Tes astuces, liens, étapes de projet...',
+    learning_flashcard_front_label: 'Recto',
+    learning_flashcard_front_placeholder: 'Question ou mot à apprendre',
+    learning_flashcard_back_label: 'Verso',
+    learning_flashcard_back_placeholder: 'Réponse ou traduction',
+    learning_review_flip: 'Retourner la carte',
+    learning_review_progress: (cur,total)=> `Carte ${cur} sur ${total}`,
+    learning_review_prev: '‹ Précédent',
+    learning_review_next: 'Suivant ›',
+    learning_review_exit: '‹ Quitter',
+    global_search_section_learning: 'Apprentissage',
     games_memory_title: 'Paires',
     games_memory_desc: 'Retrouve les paires. Le plateau s\'agrandit à chaque niveau, à l\'infini.',
     games_best_level: (n)=> `Meilleur niveau : ${n}`,
@@ -2539,6 +2627,21 @@ const STRINGS = {
     cosmetic_avatar_hedgehog: 'Hérisson',
     cosmetic_avatar_robot: 'Robot',
     cosmetic_avatar_ghost: 'Fantôme',
+    cosmetic_avatar_cat: 'Chat',
+    cosmetic_avatar_dog: 'Chien',
+    cosmetic_avatar_lion: 'Lion',
+    cosmetic_avatar_tiger: 'Tigre',
+    cosmetic_avatar_wolf: 'Loup',
+    cosmetic_avatar_raccoon: 'Raton laveur',
+    cosmetic_avatar_butterfly: 'Papillon',
+    cosmetic_avatar_octopus: 'Poulpe',
+    cosmetic_avatar_parrot: 'Perroquet',
+    cosmetic_avatar_flamingo: 'Flamant rose',
+    cosmetic_avatar_koala: 'Koala',
+    cosmetic_avatar_sloth: 'Paresseux',
+    cosmetic_avatar_dolphin: 'Dauphin',
+    cosmetic_avatar_shark: 'Requin',
+    cosmetic_avatar_whale: 'Baleine',
     cosmetic_theme_sunset: 'Coucher de soleil',
     cosmetic_theme_ocean: 'Océan',
     cosmetic_theme_forest: 'Forêt',
@@ -2549,6 +2652,18 @@ const STRINGS = {
     cosmetic_theme_berry: 'Baie',
     cosmetic_theme_slate: 'Ardoise',
     cosmetic_theme_mint: 'Menthe',
+    cosmetic_theme_coral: 'Corail',
+    cosmetic_theme_indigo: 'Indigo',
+    cosmetic_theme_crimson: 'Cramoisi',
+    cosmetic_theme_emerald: 'Émeraude',
+    cosmetic_theme_gold: 'Or',
+    cosmetic_theme_plum: 'Prune',
+    cosmetic_theme_sky: 'Ciel',
+    cosmetic_theme_coffee: 'Café',
+    cosmetic_theme_charcoal: 'Charbon',
+    cosmetic_theme_peach: 'Pêche',
+    cosmetic_theme_sage: 'Sauge',
+    cosmetic_theme_cobalt: 'Cobalt',
     cosmetic_wallpaper_dawn: 'Aube',
     cosmetic_wallpaper_meadow: 'Prairie',
     cosmetic_wallpaper_dusk: 'Crépuscule',
@@ -2557,6 +2672,16 @@ const STRINGS = {
     cosmetic_wallpaper_lagoon: 'Lagon',
     cosmetic_wallpaper_blossom: 'Éclosion',
     cosmetic_wallpaper_starlight: 'Nuit étoilée',
+    cosmetic_wallpaper_sakura: 'Sakura',
+    cosmetic_wallpaper_glacier: 'Glacier',
+    cosmetic_wallpaper_ember: 'Braise',
+    cosmetic_wallpaper_cosmos: 'Cosmos',
+    cosmetic_wallpaper_tide: 'Marée',
+    cosmetic_wallpaper_orchard: 'Verger',
+    cosmetic_wallpaper_twilight: 'Pénombre',
+    cosmetic_wallpaper_volcano: 'Volcan',
+    cosmetic_wallpaper_frost: 'Givre',
+    cosmetic_wallpaper_canyon: 'Canyon',
     player_roadmap_title: 'Parcours',
     player_customization_title: 'Personnalisation',
     player_points_label: (n) => `${n} éclats`,
@@ -2576,6 +2701,14 @@ const STRINGS = {
     badge_collection_wallpapers_desc: 'Débloquer tous les fonds d’écran',
     badge_collection_full_title: 'Collectionneur·se',
     badge_collection_full_desc: 'Débloquer tous les objets cosmétiques de la boutique',
+    badge_collection_avatars_halfway_title: 'Zoologiste',
+    badge_collection_avatars_halfway_desc: 'Débloquer 15 avatars',
+    badge_collection_themes_halfway_title: 'Arc-en-ciel',
+    badge_collection_themes_halfway_desc: 'Débloquer 12 thèmes de couleur',
+    badge_collection_wallpapers_halfway_title: 'Explorateur·rice de paysages',
+    badge_collection_wallpapers_halfway_desc: 'Débloquer 10 fonds d’écran',
+    badge_collection_total_25_title: 'Collectionneur·se en herbe',
+    badge_collection_total_25_desc: 'Débloquer 25 objets cosmétiques au total',
     badge_rank_reached_title: (rankTitleKey, level) => `${tr(rankTitleKey)} · Niveau ${level}`,
     badge_rank_reached_desc: (rankTitleKey, level) => `Atteindre le niveau ${level} et devenir ${tr(rankTitleKey)}`,
     prestige_marker_title: (n) => `Prestige ${n}`,
@@ -2962,7 +3095,7 @@ const STRINGS = {
     contact_cat_stepmother: 'Belle-mère', contact_cat_stepfather: 'Beau-père',
     contact_cat_sisterinlaw: 'Belle-sœur', contact_cat_brotherinlaw: 'Beau-frère',
     contact_cat_friend: 'Ami(e)', contact_cat_bestfriend: 'Meilleur(e) ami(e)',
-    contact_cat_acquaintance: 'Connaissance',
+    contact_cat_acquaintance: 'Connaissance', contact_cat_exfriend: 'Ex-ami(e)',
     contact_cat_partner: 'Partenaire', contact_cat_ex: 'Ex-partenaire',
     contact_cat_colleague: 'Collègue de travail', contact_cat_manager: 'Supérieur(e) hiérarchique',
     contact_cat_neighbor: 'Voisin(e)', contact_cat_doctor: 'Médecin',
@@ -2970,6 +3103,10 @@ const STRINGS = {
     contact_cat_other_placeholder: 'Précise la catégorie',
     directory_empty: 'Aucun contact pour l\'instant',
     directory_filter_all: 'Tous',
+    directory_filter_favorites: 'Favoris',
+    contact_favorite_toggle: 'Marquer comme favori',
+    contact_phone_mobile_label: 'Téléphone personnel',
+    contact_phone_landline: 'Téléphone fixe',
     life_preview_notes: (n)=> `${n} note${n>1?'s':''}`,
     life_preview_notes_empty: 'Aucune note',
     life_preview_journal: (d)=> `Dernière entrée : ${d}`,
@@ -3026,6 +3163,7 @@ const STRINGS = {
     life_preview_passwords_empty: 'Aucun mot de passe enregistré',
     life_preview_films: (n)=> `${n} film${n>1?'s':''} ou série${n>1?'s':''} noté${n>1?'s':''}`,
     life_preview_films_empty: 'Aucun film noté pour le moment',
+    life_preview_games_count: (n)=> `${n} jeu${n>1?'x':''} disponible${n>1?'s':''}`,
     life_preview_personal_info: 'Configurées',
     life_preview_personal_info_empty: 'Non configurées',
     life_preview_directory: (n)=> `${n} contact${n>1?'s':''}`,
@@ -3054,30 +3192,61 @@ const STRINGS = {
     recipe_no_profile: 'Complète Informations personnelles + Sport pour un tri personnalisé.',
     recipe_allergy_disclaimer: "Détection automatique par mot-clé dans les ingrédients — vérifie toujours toi-même, ce n'est pas infaillible.",
     recipe_cost_disclaimer: "Coûts des recettes pré-faites estimés à partir des tendances de prix actuelles en grande distribution (type Auchan/Carrefour) — pas des prix exacts scrapés en direct sur leurs sites, ni liés à tes prix réels.",
+    recipe_tab_folders: 'Dossiers',
+    recipe_tab_all: 'Toutes mes recettes',
+    recipe_folder_root: 'Recettes',
+    recipe_folder_new: '+ Nouveau dossier',
+    recipe_folder_name_prompt: 'Nom du dossier ?',
+    recipe_folder_rename_prompt: 'Nouveau nom du dossier :',
+    recipe_folder_rename: 'Renommer',
+    recipe_folder_delete: 'Supprimer',
+    recipe_folder_delete_confirm: 'Supprimer ce dossier ?',
+    recipe_folder_delete_confirm_nonempty: 'Supprimer ce dossier ? Les sous-dossiers et recettes qu\'il contient seront déplacés dans le dossier parent, pas supprimés.',
+    recipe_folder_count: (n)=> `${n} recette${n>1?'s':''}`,
+    recipe_folder_recipes_here: 'Recettes de ce dossier',
+    recipe_folder_unfiled: 'Recettes non classées',
+    recipe_folder_label: 'Dossiers',
+    recipe_folder_none: 'Aucun dossier',
+    recipe_folder_none_available: 'Aucun dossier pour l\'instant. Crée un dossier depuis l\'écran Recettes.',
+    recipe_move_tooltip: 'Déplacer dans des dossiers',
+    recipe_move_modal_title: (name)=> `Déplacer « ${name} »`,
+    recipe_move_modal_done: 'Terminé',
     recipe_back: '‹ Retour',
     recipe_delete: 'Supprimer',
     recipe_view_only: 'Recette pré-faite en lecture seule',
+    recipe_builtin_delete_confirm: 'Supprimer cette recette pré-faite de ton carnet ? Elle sera masquée (tu pourras annuler juste après).',
     recipe_cover_photo: 'Photo de présentation',
+    photo_crop_title: 'Ajuster la photo',
+    photo_crop_hint: 'Fais glisser pour repositionner, pince ou utilise le curseur pour zoomer',
+    photo_crop_cancel: 'Annuler',
+    photo_crop_confirm: 'Valider',
+    lightbox_close: 'Fermer',
     recipe_add_photo: 'Ajouter une photo',
     recipe_change_photo: 'Changer la photo',
     recipe_remove_photo: 'Retirer la photo',
-    recipe_prep_time: 'Préparation (min)',
-    recipe_cook_time: 'Cuisson (min)',
-    recipe_rest_time: 'Repos (min)',
+    recipe_prep_time: 'Préparation',
+    recipe_cook_time: 'Cuisson',
+    recipe_rest_time: 'Repos',
+    recipe_time_unit_min: 'min',
+    recipe_time_unit_h: 'h',
     recipe_ingredients_title: 'Ingrédients',
     recipe_ingredient_name_placeholder: 'Nom (ex : Œufs)',
     recipe_ingredient_amount_placeholder: 'Quantité',
     recipe_ingredient_unit_placeholder: 'Unité',
+    recipe_ingredient_brand_placeholder: 'Marque (optionnel) — ex : Philadelphia',
     recipe_add_ingredient: '+ Ajouter un ingrédient',
     recipe_steps_title: 'Étapes',
     recipe_step_placeholder: (n)=> `Étape ${n}...`,
     recipe_step_add_photo: 'Illustrer cette étape',
     recipe_add_step: '+ Ajouter une étape',
     recipe_servings_adjust: 'Portions souhaitées',
-    recipe_translate_button: 'Traduire en anglais',
+    recipe_translate_to: (lang)=> `Traduire en ${lang}`,
+    recipe_view_in: (lang)=> `Voir en ${lang}`,
+    recipe_temperature_converted: (orig, converted)=> `${orig} = ${converted}`,
     recipe_translating: 'Traduction en cours…',
-    recipe_show_original: 'Voir en français',
-    recipe_show_translation: 'Voir en anglais',
+    recipe_translate_partial: (n)=> `Traduction partielle : ${n} élément${n>1?'s':''} n'${n>1?'ont':'a'} pas pu être traduit${n>1?'s':''}. Réessaie pour compléter.`,
+    recipe_translate_error: 'La traduction a échoué. Réessaie plus tard.',
+    recipe_translation_incomplete: 'Cette traduction est peut-être incomplète : la recette a été modifiée depuis. Touche le bouton pour la compléter.',
     recipe_edit_button: 'Modifier',
     recipe_no_steps: 'Aucune étape renseignée.',
     recipe_no_ingredients: 'Aucun ingrédient renseigné.',
@@ -3380,6 +3549,7 @@ const STRINGS = {
     toast_note_deleted: 'Note supprimée',
     undo_button: 'Annuler',
     undo_deleted_generic: 'Élément supprimé',
+    toast_press_back_exit: 'Appuyez à nouveau sur retour pour quitter',
     save_button_label: 'Enregistrer',
     toast_backup_downloaded: 'Sauvegarde téléchargée',
     toast_backup_imported: 'Sauvegarde importée',
@@ -4526,6 +4696,7 @@ const STRINGS = {
     health_hydration_add: 'Add a bottle (1.5L)',
     health_hydration_hint: "Tap a bottle to show what's left in it — it empties visually with each tap.",
     cat_home_title: 'Home',
+    cat_settings: 'Settings',
     weather_loading: 'Loading weather…',
     weather_retry: 'Enable weather',
     welcome_hello: 'Hello',
@@ -4576,6 +4747,30 @@ const STRINGS = {
     cat_divertissement: 'Entertainment',
     cat_movies_series: 'Movies & Series',
     cat_games: 'Games',
+    cat_learning: 'Learning',
+    learning_domain_languages: 'Languages',
+    learning_domain_gardening: 'Gardening',
+    learning_domain_diy: 'DIY',
+    learning_domain_cooking: 'Cooking',
+    learning_tab_notes: 'Notes',
+    learning_tab_flashcards: 'Flashcards',
+    learning_notes_empty: 'No notes yet.',
+    learning_flashcards_empty: 'No flashcards yet.',
+    learning_note_add: '+ Add a note',
+    learning_flashcard_add: '+ Add a flashcard',
+    learning_review_button: 'Review',
+    learning_note_title_placeholder: 'Note title',
+    learning_note_content_placeholder: 'Your tips, links, project steps...',
+    learning_flashcard_front_label: 'Front',
+    learning_flashcard_front_placeholder: 'Question or word to learn',
+    learning_flashcard_back_label: 'Back',
+    learning_flashcard_back_placeholder: 'Answer or translation',
+    learning_review_flip: 'Flip card',
+    learning_review_progress: (cur,total)=> `Card ${cur} of ${total}`,
+    learning_review_prev: '‹ Previous',
+    learning_review_next: 'Next ›',
+    learning_review_exit: '‹ Exit',
+    global_search_section_learning: 'Learning',
     games_memory_title: 'Pairs',
     games_memory_desc: 'Find the pairs. The board grows bigger every level, endlessly.',
     games_best_level: (n)=> `Best level: ${n}`,
@@ -4708,6 +4903,21 @@ const STRINGS = {
     cosmetic_avatar_hedgehog: 'Hedgehog',
     cosmetic_avatar_robot: 'Robot',
     cosmetic_avatar_ghost: 'Ghost',
+    cosmetic_avatar_cat: 'Cat',
+    cosmetic_avatar_dog: 'Dog',
+    cosmetic_avatar_lion: 'Lion',
+    cosmetic_avatar_tiger: 'Tiger',
+    cosmetic_avatar_wolf: 'Wolf',
+    cosmetic_avatar_raccoon: 'Raccoon',
+    cosmetic_avatar_butterfly: 'Butterfly',
+    cosmetic_avatar_octopus: 'Octopus',
+    cosmetic_avatar_parrot: 'Parrot',
+    cosmetic_avatar_flamingo: 'Flamingo',
+    cosmetic_avatar_koala: 'Koala',
+    cosmetic_avatar_sloth: 'Sloth',
+    cosmetic_avatar_dolphin: 'Dolphin',
+    cosmetic_avatar_shark: 'Shark',
+    cosmetic_avatar_whale: 'Whale',
     cosmetic_theme_sunset: 'Sunset',
     cosmetic_theme_ocean: 'Ocean',
     cosmetic_theme_forest: 'Forest',
@@ -4718,6 +4928,18 @@ const STRINGS = {
     cosmetic_theme_berry: 'Berry',
     cosmetic_theme_slate: 'Slate',
     cosmetic_theme_mint: 'Mint',
+    cosmetic_theme_coral: 'Coral',
+    cosmetic_theme_indigo: 'Indigo',
+    cosmetic_theme_crimson: 'Crimson',
+    cosmetic_theme_emerald: 'Emerald',
+    cosmetic_theme_gold: 'Gold',
+    cosmetic_theme_plum: 'Plum',
+    cosmetic_theme_sky: 'Sky',
+    cosmetic_theme_coffee: 'Coffee',
+    cosmetic_theme_charcoal: 'Charcoal',
+    cosmetic_theme_peach: 'Peach',
+    cosmetic_theme_sage: 'Sage',
+    cosmetic_theme_cobalt: 'Cobalt',
     cosmetic_wallpaper_dawn: 'Dawn',
     cosmetic_wallpaper_meadow: 'Meadow',
     cosmetic_wallpaper_dusk: 'Dusk',
@@ -4726,6 +4948,16 @@ const STRINGS = {
     cosmetic_wallpaper_lagoon: 'Lagoon',
     cosmetic_wallpaper_blossom: 'Blossom',
     cosmetic_wallpaper_starlight: 'Starlight',
+    cosmetic_wallpaper_sakura: 'Sakura',
+    cosmetic_wallpaper_glacier: 'Glacier',
+    cosmetic_wallpaper_ember: 'Ember',
+    cosmetic_wallpaper_cosmos: 'Cosmos',
+    cosmetic_wallpaper_tide: 'Tide',
+    cosmetic_wallpaper_orchard: 'Orchard',
+    cosmetic_wallpaper_twilight: 'Twilight',
+    cosmetic_wallpaper_volcano: 'Volcano',
+    cosmetic_wallpaper_frost: 'Frost',
+    cosmetic_wallpaper_canyon: 'Canyon',
     player_roadmap_title: 'Roadmap',
     player_customization_title: 'Customization',
     player_points_label: (n) => `${n} shards`,
@@ -4745,6 +4977,14 @@ const STRINGS = {
     badge_collection_wallpapers_desc: 'Unlock every wallpaper',
     badge_collection_full_title: 'Completionist',
     badge_collection_full_desc: 'Unlock every cosmetic item in the shop',
+    badge_collection_avatars_halfway_title: 'Zoologist',
+    badge_collection_avatars_halfway_desc: 'Unlock 15 avatars',
+    badge_collection_themes_halfway_title: 'Rainbow',
+    badge_collection_themes_halfway_desc: 'Unlock 12 theme colors',
+    badge_collection_wallpapers_halfway_title: 'Landscape Explorer',
+    badge_collection_wallpapers_halfway_desc: 'Unlock 10 wallpapers',
+    badge_collection_total_25_title: 'Budding Collector',
+    badge_collection_total_25_desc: 'Unlock 25 cosmetic items in total',
     badge_rank_reached_title: (rankTitleKey, level) => `${tr(rankTitleKey)} · Level ${level}`,
     badge_rank_reached_desc: (rankTitleKey, level) => `Reach level ${level} and become ${tr(rankTitleKey)}`,
     prestige_marker_title: (n) => `Prestige ${n}`,
@@ -5131,7 +5371,7 @@ const STRINGS = {
     contact_cat_stepmother: 'Stepmother', contact_cat_stepfather: 'Stepfather',
     contact_cat_sisterinlaw: 'Sister-in-law', contact_cat_brotherinlaw: 'Brother-in-law',
     contact_cat_friend: 'Friend', contact_cat_bestfriend: 'Best friend',
-    contact_cat_acquaintance: 'Acquaintance',
+    contact_cat_acquaintance: 'Acquaintance', contact_cat_exfriend: 'Ex-friend',
     contact_cat_partner: 'Partner', contact_cat_ex: 'Ex-partner',
     contact_cat_colleague: 'Coworker', contact_cat_manager: 'Manager',
     contact_cat_neighbor: 'Neighbor', contact_cat_doctor: 'Doctor',
@@ -5139,6 +5379,10 @@ const STRINGS = {
     contact_cat_other_placeholder: 'Specify the category',
     directory_empty: 'No contacts yet',
     directory_filter_all: 'All',
+    directory_filter_favorites: 'Favorites',
+    contact_favorite_toggle: 'Mark as favorite',
+    contact_phone_mobile_label: 'Personal phone',
+    contact_phone_landline: 'Landline phone',
     life_preview_notes: (n)=> `${n} note${n>1?'s':''}`,
     life_preview_notes_empty: 'No notes',
     life_preview_journal: (d)=> `Last entry: ${d}`,
@@ -5195,6 +5439,7 @@ const STRINGS = {
     life_preview_passwords_empty: 'No passwords saved',
     life_preview_films: (n)=> `${n} movie${n>1?'s':''} or show${n>1?'s':''} rated`,
     life_preview_films_empty: 'No movies rated yet',
+    life_preview_games_count: (n)=> `${n} game${n>1?'s':''} available`,
     life_preview_personal_info: 'Set up',
     life_preview_personal_info_empty: 'Not set up',
     life_preview_directory: (n)=> `${n} contact${n>1?'s':''}`,
@@ -5223,30 +5468,61 @@ const STRINGS = {
     recipe_no_profile: 'Complete Personal information + Sport for personalized sorting.',
     recipe_allergy_disclaimer: "Automatic keyword detection in ingredients — always double-check yourself, it isn't foolproof.",
     recipe_cost_disclaimer: 'Built-in recipe costs estimated from current French supermarket price trends (Auchan/Carrefour-like) — not exact live-scraped prices from their sites, and not tied to your real prices.',
+    recipe_tab_folders: 'Folders',
+    recipe_tab_all: 'All my recipes',
+    recipe_folder_root: 'Recipes',
+    recipe_folder_new: '+ New folder',
+    recipe_folder_name_prompt: 'Folder name?',
+    recipe_folder_rename_prompt: 'New folder name:',
+    recipe_folder_rename: 'Rename',
+    recipe_folder_delete: 'Delete',
+    recipe_folder_delete_confirm: 'Delete this folder?',
+    recipe_folder_delete_confirm_nonempty: 'Delete this folder? Its subfolders and recipes will be moved to the parent folder, not deleted.',
+    recipe_folder_count: (n)=> `${n} recipe${n>1?'s':''}`,
+    recipe_folder_recipes_here: 'Recipes in this folder',
+    recipe_folder_unfiled: 'Unfiled recipes',
+    recipe_folder_label: 'Folders',
+    recipe_folder_none: 'No folder',
+    recipe_folder_none_available: 'No folders yet. Create one from the Recipes screen.',
+    recipe_move_tooltip: 'Move to folders',
+    recipe_move_modal_title: (name)=> `Move "${name}"`,
+    recipe_move_modal_done: 'Done',
     recipe_back: '‹ Back',
     recipe_delete: 'Delete',
     recipe_view_only: 'Read-only built-in recipe',
+    recipe_builtin_delete_confirm: 'Delete this built-in recipe from your notebook? It will be hidden (you can undo right after).',
     recipe_cover_photo: 'Cover photo',
+    photo_crop_title: 'Adjust photo',
+    photo_crop_hint: 'Drag to reposition, pinch or use the slider to zoom',
+    photo_crop_cancel: 'Cancel',
+    photo_crop_confirm: 'Confirm',
+    lightbox_close: 'Close',
     recipe_add_photo: 'Add a photo',
     recipe_change_photo: 'Change photo',
     recipe_remove_photo: 'Remove photo',
-    recipe_prep_time: 'Prep time (min)',
-    recipe_cook_time: 'Cook time (min)',
-    recipe_rest_time: 'Rest time (min)',
+    recipe_prep_time: 'Prep time',
+    recipe_cook_time: 'Cook time',
+    recipe_rest_time: 'Rest time',
+    recipe_time_unit_min: 'min',
+    recipe_time_unit_h: 'h',
     recipe_ingredients_title: 'Ingredients',
     recipe_ingredient_name_placeholder: 'Name (e.g.: Eggs)',
     recipe_ingredient_amount_placeholder: 'Amount',
     recipe_ingredient_unit_placeholder: 'Unit',
+    recipe_ingredient_brand_placeholder: 'Brand (optional) — e.g. Philadelphia',
     recipe_add_ingredient: '+ Add an ingredient',
     recipe_steps_title: 'Steps',
     recipe_step_placeholder: (n)=> `Step ${n}...`,
     recipe_step_add_photo: 'Illustrate this step',
     recipe_add_step: '+ Add a step',
     recipe_servings_adjust: 'Desired servings',
-    recipe_translate_button: 'Translate to English',
+    recipe_translate_to: (lang)=> `Translate to ${lang}`,
+    recipe_view_in: (lang)=> `View in ${lang}`,
+    recipe_temperature_converted: (orig, converted)=> `${orig} = ${converted}`,
     recipe_translating: 'Translating…',
-    recipe_show_original: 'View in French',
-    recipe_show_translation: 'View in English',
+    recipe_translate_partial: (n)=> `Partial translation: ${n} item${n>1?'s':''} could not be translated. Tap again to finish.`,
+    recipe_translate_error: 'Translation failed. Please try again later.',
+    recipe_translation_incomplete: 'This translation may be incomplete: the recipe was edited since. Tap the button to fill it in.',
     recipe_edit_button: 'Edit',
     recipe_no_steps: 'No steps added yet.',
     recipe_no_ingredients: 'No ingredients added yet.',
@@ -5549,6 +5825,7 @@ const STRINGS = {
     toast_note_deleted: 'Note deleted',
     undo_button: 'Undo',
     undo_deleted_generic: 'Item deleted',
+    toast_press_back_exit: 'Press back again to exit',
     save_button_label: 'Save',
     toast_backup_downloaded: 'Backup downloaded',
     toast_backup_imported: 'Backup imported',
@@ -6726,8 +7003,14 @@ function renderBreadcrumb(){
   `;
 }
 
+// IMPORTANT: "Paramètres"/"Settings" (id:'settings') is appended at the very end of this
+// function, after `baseCategories`, on purpose — it's a direct shortcut to the existing
+// Settings screen, and it must always appear as the LAST section everywhere this structure
+// is used (home grid, bottom nav), no matter how many sections exist. Any new section added
+// in the future must go inside `baseCategories` below (never after it), so it naturally stays
+// ahead of Settings without needing to touch this comment or the settings entry itself.
 function getCategoryStructure(){
-  return [
+  const baseCategories = [
     { id:'life', title: tr('cat_life'), icon:'catLife', subcats: [
       { id:'memory', title: tr('nav_notes'), screen:'home' },
       { id:'journal', title: tr('nav_journal'), screen:'journal' },
@@ -6769,7 +7052,16 @@ function getCategoryStructure(){
       { id:'movies_series', title: tr('cat_movies_series'), screen:'films' },
       { id:'games', title: tr('cat_games'), screen:'gamesHome' },
     ]},
+    { id:'learning', title: tr('cat_learning'), icon:'catLearning', subcats: [
+      { id:'languages', title: tr('learning_domain_languages'), screen:'learningLanguages' },
+      { id:'gardening', title: tr('learning_domain_gardening'), screen:'learningGardening' },
+      { id:'diy', title: tr('learning_domain_diy'), screen:'learningDiy' },
+      { id:'cooking', title: tr('learning_domain_cooking'), screen:'learningCooking' },
+    ]},
   ];
+  // Settings shortcut — always last, see comment above getCategoryStructure().
+  const settingsCategory = { id:'settings', title: tr('cat_settings'), icon:'catSettings', subcats: [], isShortcut: true };
+  return [...baseCategories, settingsCategory];
 }
 
 function toggleCategory(id){
@@ -7229,6 +7521,7 @@ const state = {
   contacts: [],
   currentContact: null,
   directoryFilter: null,
+  directoryFavoritesOnly: false,
   assistantApiKey: '',
   tmdbApiKey: '',
   assistantModel: 'claude-sonnet-5',
@@ -7253,6 +7546,13 @@ const state = {
   passwordSearchQuery: '',
   passwordCategoryFilter: null,
   revealedPasswordIds: {},
+  learningNotes: [],
+  currentLearningNote: null,
+  learningFlashcards: [],
+  currentLearningFlashcard: null,
+  currentLearningDomain: 'languages',
+  learningView: 'notes',
+  learningReview: null,
   globalSearchQuery: '',
   foodPickerQuery: '',
   expandedFoodDays: {},
@@ -7260,6 +7560,11 @@ const state = {
   healthCategory: null,
   dismissedReminders: {},
   recipeFilter: null,
+  recipeFolders: [],
+  currentRecipeFolderId: null,
+  recipeShowAll: false,
+  hiddenBuiltinRecipeIds: [],
+  recipeMoveModalRecipeId: null,
   shoppingList: [],
   shoppingTemplates: [],
   shoppingCategoryPickerFor: null,
@@ -7645,6 +7950,8 @@ function svgIcon(name){
     catFinances: '<svg viewBox="0 0 40 40" fill="none"><path d="M20 8 C28 14 28 26 20 32 C12 26 12 14 20 8Z" stroke="#6E9169" stroke-width="1.8"/><line x1="20" y1="11" x2="20" y2="29" stroke="#4F6E4B" stroke-width="1"/><circle cx="27" cy="25" r="6" fill="var(--paper-raised)" stroke="none"/><circle cx="27" cy="25" r="5" stroke="#D9A027" stroke-width="1.3"/><text x="27" y="27.5" text-anchor="middle" font-size="6" fill="#D9A027" stroke="none">€</text></svg>',
     catNutrition: '<svg viewBox="0 0 40 40" fill="none"><path d="M20 14 C13 12 9 17 9 23 C9 29 14 33 19 33 C20 33 20 32 21 32 C22 32 22 33 23 33 C28 33 33 29 33 23 C33 17 29 12 22 14" stroke="#D9A027" stroke-width="1.8"/><path d="M20 14 C19 11 19 9 21 7" stroke="#6E9169" stroke-width="1.5" stroke-linecap="round"/><path d="M20 10 C22 8 24 8 25 10" stroke="#6E9169" stroke-width="1.3"/></svg>',
     catVault: '<svg viewBox="0 0 40 40" fill="none"><rect x="7" y="16" width="26" height="16" rx="2" stroke="#5C4530" stroke-width="1.8"/><line x1="7" y1="22" x2="33" y2="22" stroke="#5C4530" stroke-width="1.5"/><rect x="17" y="19" width="6" height="6" rx="1" stroke="#D9A027" stroke-width="1.4"/></svg>',
+    catSettings: '<svg viewBox="0 0 40 40" fill="none"><g stroke="#5B6B7A" stroke-width="1.8"><circle cx="20" cy="20" r="6.2"/><path d="M20 7.5v4.5M20 28v4.5M7.5 20h4.5M28 20h4.5M11.4 11.4l3.2 3.2M25.4 25.4l3.2 3.2M28.6 11.4l-3.2 3.2M14.6 25.4l-3.2 3.2"/></g></svg>',
+    catLearning: '<svg viewBox="0 0 40 40" fill="none"><path d="M20 13 C17 10.5 12 10 8 11 V29 C12 28 17 28.5 20 31 C23 28.5 28 28 32 29 V11 C28 10 23 10.5 20 13Z" stroke="#5C4530" stroke-width="1.8" stroke-linejoin="round"/><line x1="20" y1="13" x2="20" y2="31" stroke="#5C4530" stroke-width="1.3"/><path d="M20 10 C20 7 21 5.5 23 5" stroke="#6E9169" stroke-width="1.5" stroke-linecap="round"/><circle cx="23.3" cy="4.7" r="1.4" fill="#6E9169" stroke="none"/></svg>',
     healthDrop: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6 C26 15 30 20 30 26 C30 32 25.5 35 20 35 C14.5 35 10 32 10 26 C10 20 14 15 20 6Z"/><path d="M15 26 C15 29 17 31 20 31" stroke-width="1.3" stroke-linecap="round"/></svg>',
     healthPulseCloud: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 24 C8 24 6 21 6 18 C6 14.5 9 12 12.5 12.3 C13.5 8.5 17 6 20.5 6.6 C24 7.2 26.5 10 26.5 13.5 C30 13 33 15.7 33 19 C33 22.5 30 25 26.5 25 L12 25Z"/><polyline points="9,25 14,25 16.5,19 20,29 22.5,25 30,25" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     healthMedicalCross: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="7" width="26" height="26" rx="9"/><path d="M20 14v12M14 20h12" stroke-width="2.2" stroke-linecap="round"/></svg>',
@@ -7668,7 +7975,7 @@ const SENSITIVE_KEYS = ['notes','noteCategories','events','journal','journalCate
   'hydration','hydrationGoal','bathroomLog','periodDays','sleepLog','pendingSleepStart','height','weightLog','goalWeight',
   'activityLog','foodLog','relationInfo','personalInfo','contacts','recipes','fitnessLevel','trainingGoal',
   'assistantApiKey','tmdbApiKey','assistantModel','assistantHistory','assistantWindowDays','doctorHistory',
-  'coachConstraints','coachProgram','aiSpendTotalUsd','passwordEntries','dismissedReminders','shoppingList'];
+  'coachConstraints','coachProgram','aiSpendTotalUsd','passwordEntries','dismissedReminders','shoppingList','learningNotes','learningFlashcards'];
 let cryptoKey = null;
 
 function bytesToBase64(bytes){
@@ -7957,10 +8264,25 @@ let badgeToastShowing = false;
 function showBadgeUnlockToast(badges){
   if(!badges || !badges.length) return;
   badgeToastQueue.push(...badges);
-  processBadgeToastQueue();
+  // Deliberately NOT calling processBadgeToastQueue() here: this runs before the game's own
+  // completion render() has painted its win/lose overlay (awardGameXp/checkAllGameBadges are
+  // always called *before* that render(), not after), so checking for an open modal right now
+  // would always see none yet and show over it a moment too early. render()'s own trailing
+  // call to processBadgeToastQueue() (see render()) is what actually surfaces this queue, and
+  // every caller that can unlock a badge already calls render() shortly after — see
+  // processLevelUpCeremonyQueue for the same reasoning (that one caused a real stuck-screen bug).
 }
 function processBadgeToastQueue(){
   if(badgeToastShowing || !badgeToastQueue.length) return;
+  // Never pop in on top of a game's own win/lose/rules/confirm modal (every one of those
+  // shares the .memory-win-overlay class): the player is mid-interaction with a specific
+  // button on that card, and a toast arriving a split second later would be fine, but the
+  // *ceremony* overlay below jumping the queue here would otherwise cover that exact button
+  // with a taller card whose own button sits elsewhere — see processLevelUpCeremonyQueue.
+  // Kept consistent here too so achievement toasts never compete with an open modal for
+  // attention. render() retries both queues after every repaint, so this just waits for the
+  // next one (typically the very next render when the modal is dismissed).
+  if(document.querySelector('.memory-win-overlay')) return;
   const container = document.getElementById('badgeToastContainer');
   if(!container) return;
   badgeToastShowing = true;
@@ -8163,6 +8485,44 @@ const COSMETIC_REWARDS = [
   { level: 46, category: 'wallpaper', id: 'starlight', nameKey: 'cosmetic_wallpaper_starlight', gradient: 'linear-gradient(160deg, #0A0F2C 0%, #1B2A5E 55%, #33397A 100%)' },
   { level: 47, category: 'wallpaper', id: 'midnight', nameKey: 'cosmetic_wallpaper_midnight', gradient: 'linear-gradient(160deg, #232030 0%, #3A3454 100%)' },
   { level: 50, category: 'avatar',    id: 'unicorn',  nameKey: 'cosmetic_avatar_unicorn',  icon: '🦄' },
+  // ---- expanded catalog (added in bulk) ----
+  { level: 3,  category: 'avatar',    id: 'cat',       nameKey: 'cosmetic_avatar_cat',       icon: '🐱' },
+  { level: 4,  category: 'wallpaper', id: 'sakura',    nameKey: 'cosmetic_wallpaper_sakura',   gradient: 'linear-gradient(160deg, #FFE4EC 0%, #FFD1DC 50%, #F7B8C4 100%)' },
+  { level: 5,  category: 'avatar',    id: 'dog',       nameKey: 'cosmetic_avatar_dog',       icon: '🐶' },
+  { level: 6,  category: 'theme',     id: 'coral',     nameKey: 'cosmetic_theme_coral',     color: '#E8806B' },
+  { level: 7,  category: 'wallpaper', id: 'glacier',   nameKey: 'cosmetic_wallpaper_glacier',  gradient: 'linear-gradient(160deg, #E3F6FB 0%, #B8E2EE 50%, #8FC7DE 100%)' },
+  { level: 10, category: 'theme',    id: 'indigo',    nameKey: 'cosmetic_theme_indigo',    color: '#4B4E9E' },
+  { level: 12, category: 'avatar',    id: 'lion',      nameKey: 'cosmetic_avatar_lion',      icon: '🦁' },
+  { level: 13, category: 'wallpaper', id: 'ember',     nameKey: 'cosmetic_wallpaper_ember',    gradient: 'linear-gradient(160deg, #3B1F1A 0%, #7A2E1E 50%, #D9622B 100%)' },
+  { level: 14, category: 'avatar',    id: 'tiger',     nameKey: 'cosmetic_avatar_tiger',     icon: '🐯' },
+  { level: 15, category: 'theme',    id: 'crimson',   nameKey: 'cosmetic_theme_crimson',   color: '#B13B3B' },
+  { level: 18, category: 'avatar',    id: 'wolf',      nameKey: 'cosmetic_avatar_wolf',      icon: '🐺' },
+  { level: 19, category: 'theme',    id: 'emerald',   nameKey: 'cosmetic_theme_emerald',   color: '#2E9B6B' },
+  { level: 20, category: 'wallpaper', id: 'cosmos',    nameKey: 'cosmetic_wallpaper_cosmos',   gradient: 'linear-gradient(160deg, #0B0B2E 0%, #311B4D 50%, #6A2C70 100%)' },
+  { level: 21, category: 'avatar',    id: 'raccoon',   nameKey: 'cosmetic_avatar_raccoon',   icon: '🦝' },
+  { level: 23, category: 'avatar',    id: 'butterfly', nameKey: 'cosmetic_avatar_butterfly', icon: '🦋' },
+  { level: 23, category: 'theme',    id: 'gold',      nameKey: 'cosmetic_theme_gold',      color: '#C9A227' },
+  { level: 24, category: 'wallpaper', id: 'tide',      nameKey: 'cosmetic_wallpaper_tide',     gradient: 'linear-gradient(160deg, #D7F0F0 0%, #8FD3C6 50%, #3E8E8A 100%)' },
+  { level: 26, category: 'theme',    id: 'plum',      nameKey: 'cosmetic_theme_plum',      color: '#6B3F6B' },
+  { level: 27, category: 'avatar',    id: 'octopus',   nameKey: 'cosmetic_avatar_octopus',   icon: '🐙' },
+  { level: 29, category: 'wallpaper', id: 'orchard',   nameKey: 'cosmetic_wallpaper_orchard',  gradient: 'linear-gradient(160deg, #FFF6E0 0%, #F3D9A6 50%, #D98E5B 100%)' },
+  { level: 30, category: 'theme',    id: 'sky',       nameKey: 'cosmetic_theme_sky',       color: '#5B9BD9' },
+  { level: 31, category: 'avatar',    id: 'parrot',    nameKey: 'cosmetic_avatar_parrot',    icon: '🦜' },
+  { level: 33, category: 'theme',    id: 'coffee',    nameKey: 'cosmetic_theme_coffee',    color: '#6F4E37' },
+  { level: 34, category: 'avatar',    id: 'flamingo',  nameKey: 'cosmetic_avatar_flamingo',  icon: '🦩' },
+  { level: 35, category: 'wallpaper', id: 'twilight',  nameKey: 'cosmetic_wallpaper_twilight', gradient: 'linear-gradient(160deg, #2B2752 0%, #5C3A6E 50%, #A85C8C 100%)' },
+  { level: 36, category: 'theme',    id: 'charcoal',  nameKey: 'cosmetic_theme_charcoal',  color: '#3A3F44' },
+  { level: 37, category: 'avatar',    id: 'koala',     nameKey: 'cosmetic_avatar_koala',     icon: '🐨' },
+  { level: 39, category: 'theme',    id: 'peach',     nameKey: 'cosmetic_theme_peach',     color: '#E8B08A' },
+  { level: 40, category: 'wallpaper', id: 'volcano',   nameKey: 'cosmetic_wallpaper_volcano',  gradient: 'linear-gradient(160deg, #1A0E0E 0%, #5C1A1A 50%, #D9472B 100%)' },
+  { level: 41, category: 'avatar',    id: 'sloth',     nameKey: 'cosmetic_avatar_sloth',     icon: '🦥' },
+  { level: 42, category: 'theme',    id: 'sage',      nameKey: 'cosmetic_theme_sage',      color: '#87A878' },
+  { level: 44, category: 'avatar',    id: 'dolphin',   nameKey: 'cosmetic_avatar_dolphin',   icon: '🐬' },
+  { level: 45, category: 'wallpaper', id: 'frost',     nameKey: 'cosmetic_wallpaper_frost',    gradient: 'linear-gradient(160deg, #F3FAFD 0%, #D6ECF0 100%)' },
+  { level: 47, category: 'avatar',    id: 'shark',     nameKey: 'cosmetic_avatar_shark',     icon: '🦈' },
+  { level: 48, category: 'theme',    id: 'cobalt',    nameKey: 'cosmetic_theme_cobalt',    color: '#2C4C8C' },
+  { level: 48, category: 'wallpaper', id: 'canyon',    nameKey: 'cosmetic_wallpaper_canyon',   gradient: 'linear-gradient(160deg, #F2D9B8 0%, #D98E5B 50%, #A8502E 100%)' },
+  { level: 49, category: 'avatar',    id: 'whale',     nameKey: 'cosmetic_avatar_whale',     icon: '🐳' },
 ];
 // Shop price curve: derived from the item's old rarity tier (its `level` field) so cheap
 // starter-tier items stay cheap and rare high-tier items stay expensive, just player-choosable
@@ -8221,6 +8581,17 @@ const GAME_BADGES_COLLECTION = [
     unlocked: pp => pp.unlockedCosmetics.wallpapers.length >= COSMETIC_REWARDS.filter(r => r.category === 'wallpaper').length },
   { id:'full_collection', icon:'🏆', titleKey:'badge_collection_full_title', descKey:'badge_collection_full_desc',
     unlocked: pp => (pp.unlockedCosmetics.themes.length + pp.unlockedCosmetics.avatars.length + pp.unlockedCosmetics.wallpapers.length) >= COSMETIC_REWARDS.length },
+  // Incremental milestones below the full-collection thresholds, added once the catalog grew
+  // large enough that "all or nothing" felt too far off. Unlike the _complete badges above,
+  // these use fixed round numbers on purpose (same pattern as the games' lvl10/lvl20/... badges).
+  { id:'avatars_halfway', icon:'🐻', titleKey:'badge_collection_avatars_halfway_title', descKey:'badge_collection_avatars_halfway_desc',
+    unlocked: pp => pp.unlockedCosmetics.avatars.length >= 15 },
+  { id:'themes_halfway', icon:'🌈', titleKey:'badge_collection_themes_halfway_title', descKey:'badge_collection_themes_halfway_desc',
+    unlocked: pp => pp.unlockedCosmetics.themes.length >= 12 },
+  { id:'wallpapers_halfway', icon:'🏞️', titleKey:'badge_collection_wallpapers_halfway_title', descKey:'badge_collection_wallpapers_halfway_desc',
+    unlocked: pp => pp.unlockedCosmetics.wallpapers.length >= 10 },
+  { id:'total_25', icon:'💎', titleKey:'badge_collection_total_25_title', descKey:'badge_collection_total_25_desc',
+    unlocked: pp => (pp.unlockedCosmetics.themes.length + pp.unlockedCosmetics.avatars.length + pp.unlockedCosmetics.wallpapers.length) >= 25 },
   // One badge per rank tier shown on the progression roadmap (the "paliers" on the XP bar),
   // derived directly from PLAYER_RANKS so it always matches whatever tiers are actually displayed.
   ...PLAYER_RANKS.map(r => ({
@@ -8278,10 +8649,30 @@ async function awardGameXp(baseAmount, opts){
 
 function queueLevelUpCeremony(fromLevel, toLevel, levelsGained){
   levelUpCeremonyQueue.push({ fromLevel, toLevel, levelsGained });
-  processLevelUpCeremonyQueue();
+  // Deliberately NOT calling processLevelUpCeremonyQueue() here — see its own comment: this
+  // runs from inside awardGameXp(), which every game calls *before* the render() that paints
+  // its own win/lose overlay, so a .memory-win-overlay check right now would never see it yet
+  // and the ceremony would show a render too early, right on top of (and blocking) the game's
+  // own "next level" button. render()'s trailing call to processLevelUpCeremonyQueue() is what
+  // actually surfaces this queue, once the win/lose overlay (if any) is genuinely in the DOM
+  // or genuinely gone.
 }
 function processLevelUpCeremonyQueue(){
   if(levelUpCeremonyShowing || !levelUpCeremonyQueue.length) return;
+  // ROOT CAUSE FIX: every game's completion handler calls awardGameXp() (which queues this
+  // ceremony) *before* the render() that actually paints that game's own win/lose overlay
+  // (.memory-win-overlay, shared by all games) — so without this guard, the very first
+  // render after finishing a level could insert this full-screen, higher-z-index
+  // (#levelUpCeremonyContainer is z-index:1000 vs .memory-win-overlay's z-index:500),
+  // pointer-events:auto ceremony card ON TOP of the win card the player is about to tap.
+  // Its card is a different height/layout with its own "Fermer" button in a different spot
+  // and (unlike every other modal in this app) no backdrop tap-to-dismiss, so a tap at the
+  // *previous* card's button position (e.g. "Niveau suivant") landed on dead backdrop and
+  // did nothing — indistinguishable, to the player, from the whole screen being frozen.
+  // Deferring until no win/lose/rules/confirm modal is showing, and retrying after every
+  // render() (see render()'s end), means the ceremony only ever appears once the player has
+  // actually dismissed whatever they were already looking at.
+  if(document.querySelector('.memory-win-overlay')) return;
   const container = document.getElementById('levelUpCeremonyContainer');
   if(!container) return;
   levelUpCeremonyShowing = true;
@@ -8654,7 +9045,28 @@ async function removeFromObjectWithUndo(objectKey, storageKey, key, message, com
   showUndoToast(message || tr('undo_deleted_generic'));
 }
 
+window.addEventListener('popstate', function(){
+  if(navStack.length > 0){
+    const prevScreen = navStack.pop();
+    isHandlingPopstate = true;
+    state.screen = prevScreen;
+    render();
+    try{ history.pushState({navDepth: navStack.length}, '', ''); }catch(e){}
+  }else{
+    const now = Date.now();
+    if(now - lastExitPressAt < 2000){
+      // Second back-press within the grace window: don't intercept again,
+      // let the browser's own navigation proceed (natural exit).
+    }else{
+      lastExitPressAt = now;
+      showToast(tr('toast_press_back_exit'));
+      try{ history.pushState({navDepth: 0}, '', ''); }catch(e){}
+    }
+  }
+});
+
 async function init(){
+  try{ history.pushState({navDepth: 0}, '', ''); }catch(e){}
   const savedLang = await storageGet('lang');
   state.lang = LANGS.includes(savedLang) ? savedLang : (LANGS.includes(navigator.language?.slice(0,2)) ? navigator.language.slice(0,2) : 'fr');
   const savedDarkMode = await storageGet('darkMode');
@@ -8730,7 +9142,14 @@ async function loadEncryptedAppData(){
   state.aiSpendTotalUsd = (await storageGet('aiSpendTotalUsd')) || 0;
   state.passwordEntries = (await storageGet('passwordEntries')) || [];
   state.dismissedReminders = (await storageGet('dismissedReminders')) || {};
-  state.recipes = (await storageGet('recipes')) || [];
+  state.learningNotes = (await storageGet('learningNotes')) || [];
+  state.learningFlashcards = (await storageGet('learningFlashcards')) || [];
+  const savedRecipes = (await storageGet('recipes')) || [];
+  const recipesNeedMigration = savedRecipes.some(r => !Array.isArray(r.folderIds) || !Array.isArray(r.categories));
+  state.recipes = migrateRecipeCategories(migrateRecipeFolderIds(savedRecipes));
+  if(recipesNeedMigration) await storageSet('recipes', state.recipes);
+  state.recipeFolders = (await storageGet('recipeFolders')) || [];
+  state.hiddenBuiltinRecipeIds = (await storageGet('hiddenBuiltinRecipeIds')) || [];
   state.shoppingList = (await storageGet('shoppingList')) || [];
   state.shoppingTemplates = (await storageGet('shoppingTemplates')) || [];
   state.bathroomLog = (await storageGet('bathroomLog')) || [];
@@ -10725,6 +11144,22 @@ async function setPartnerName(){
   render();
 }
 
+// The Journal shows a separate, independently-editable label for the partner (set via
+// setJournalPartnerName below) so renaming it there never touches the name shown in
+// Relation. It defaults to Relation's partnerName until overridden.
+function journalPartnerName(){
+  if(!state.relationInfo) return '';
+  return state.relationInfo.journalPartnerName || state.relationInfo.partnerName || '';
+}
+async function setJournalPartnerName(){
+  const raw = window.prompt(tr('relation_name_prompt'), journalPartnerName());
+  if(raw === null) return;
+  state.relationInfo.journalPartnerName = raw.trim();
+  await storageSet('relationInfo', state.relationInfo);
+  triggerAutoSync();
+  render();
+}
+
 async function setMyCountry(value){
   state.relationInfo.myCountry = value;
   await storageSet('relationInfo', state.relationInfo);
@@ -10764,8 +11199,253 @@ function ageFromBirthDate(iso){
 }
 
 /* ---------- RECIPES ---------- */
+function visibleBuiltinRecipes(){
+  return BUILTIN_RECIPES.filter(r => !state.hiddenBuiltinRecipeIds.includes(r.id));
+}
 function allRecipes(){
-  return [...BUILTIN_RECIPES, ...state.recipes];
+  return [...visibleBuiltinRecipes(), ...state.recipes];
+}
+
+// One-time migration: old recipes had a single nullable `folderId` string; recipes can
+// now belong to several folders at once via `folderIds` (an array, [] meaning unfiled).
+function migrateRecipeFolderIds(arr){
+  return (arr || []).map(r => {
+    if(Array.isArray(r.folderIds)) return r;
+    const { folderId, ...rest } = r;
+    return { ...rest, folderIds: folderId ? [folderId] : [] };
+  });
+}
+
+// One-time migration: old (custom) recipes had a single `category` string; recipes can
+// now belong to several categories at once via `categories` (an array). BUILTIN_RECIPES
+// are never migrated/mutated — they keep their legacy singular `category` field forever,
+// and recipeCategoryList() below handles reading both shapes.
+function migrateRecipeCategories(arr){
+  return (arr || []).map(r => {
+    if(Array.isArray(r.categories)) return r;
+    return { ...r, categories: r.category ? [r.category] : [] };
+  });
+}
+
+// Reads a recipe's category/categories regardless of shape: a new-style `categories`
+// array (custom recipes going forward) or a legacy singular `category` string
+// (BUILTIN_RECIPES, and any custom recipe not yet migrated). Use this everywhere a
+// recipe's category is read — never read `r.category`/`r.categories` directly.
+function recipeCategoryList(r){
+  if(Array.isArray(r.categories) && r.categories.length) return r.categories;
+  return r.category ? [r.category] : [];
+}
+
+/* ---------- RECIPE FOLDERS ---------- */
+function recipeFolderById(id){
+  return state.recipeFolders.find(f => f.id === id);
+}
+function recipeFolderChildren(parentId){
+  return state.recipeFolders.filter(f => (f.parentId || null) === (parentId || null));
+}
+function customRecipesInFolder(folderId){
+  if(!folderId) return state.recipes.filter(r => !(r.folderIds && r.folderIds.length));
+  return state.recipes.filter(r => Array.isArray(r.folderIds) && r.folderIds.includes(folderId));
+}
+function recipeFolderDescendantIds(folderId){
+  const ids = [folderId];
+  recipeFolderChildren(folderId).forEach(child => {
+    ids.push(...recipeFolderDescendantIds(child.id));
+  });
+  return ids;
+}
+// Recipes under this folder or any of its subfolders, each counted/listed only once even
+// when it also belongs to one or more sibling/descendant folders in this subtree.
+function recipesInFolderRecursive(folderId){
+  const ids = recipeFolderDescendantIds(folderId);
+  const seen = new Set();
+  const result = [];
+  state.recipes.forEach(r => {
+    if(!Array.isArray(r.folderIds) || seen.has(r.id)) return;
+    if(r.folderIds.some(fid => ids.includes(fid))){
+      seen.add(r.id);
+      result.push(r);
+    }
+  });
+  return result;
+}
+function recipeFolderPath(folderId){
+  const path = [];
+  let cur = recipeFolderById(folderId);
+  while(cur){
+    path.unshift(cur);
+    cur = cur.parentId ? recipeFolderById(cur.parentId) : null;
+  }
+  return path;
+}
+function recipeFolderCollagePhotos(folderId){
+  const recipes = recipesInFolderRecursive(folderId).slice().reverse();
+  return recipes.map(r => r.coverPhoto).filter(Boolean).slice(0, 4);
+}
+function recipeFolderTreeOptions(excludeIds){
+  const excl = excludeIds || [];
+  const options = [];
+  function walk(parentId, depth){
+    recipeFolderChildren(parentId).forEach(f => {
+      if(excl.includes(f.id)) return;
+      options.push({ id: f.id, name: f.name, depth });
+      walk(f.id, depth + 1);
+    });
+  }
+  walk(null, 0);
+  return options;
+}
+
+// Shared tree-of-checkboxes markup used both by the full recipe-edit form's folder
+// picker and by the compact quick-move modal opened from a recipe card.
+function renderRecipeFolderCheckboxList(selectedIds, toggleFnName){
+  const options = recipeFolderTreeOptions();
+  if(!options.length){
+    return `<div class="translate-disclaimer">${tr('recipe_folder_none_available')}</div>`;
+  }
+  return `
+    <div class="recipe-folder-checkbox-list">
+      ${options.map(f => `
+        <label class="recipe-folder-checkbox-row" style="padding-left:${f.depth*18}px">
+          <input type="checkbox" ${selectedIds.includes(f.id)?'checked':''} onchange="${toggleFnName}('${f.id}')">
+          <span>${escapeHtml(f.name)}</span>
+        </label>
+      `).join('')}
+    </div>
+  `;
+}
+
+// Toggles a folder membership while editing a recipe in the full entry form — purely
+// local to state.currentRecipe until the form is saved, like its other fields.
+function toggleRecipeEntryFolder(folderId){
+  const r = state.currentRecipe;
+  const ids = Array.isArray(r.folderIds) ? r.folderIds : [];
+  r.folderIds = ids.includes(folderId) ? ids.filter(x => x !== folderId) : [...ids, folderId];
+  render();
+}
+
+// Toggles category membership while editing a recipe — mirrors toggleRecipeEntryFolder's
+// array-toggle shape, but for the recipe's (custom-only) `categories` array.
+function toggleRecipeEntryCategory(cat){
+  const r = state.currentRecipe;
+  const cats = Array.isArray(r.categories) ? r.categories : [];
+  r.categories = cats.includes(cat) ? cats.filter(c => c !== cat) : [...cats, cat];
+  render();
+}
+
+// --- Recipe prep/cook/rest time: stored ALWAYS as total minutes (unchanged storage
+// format, compatible with BUILTIN_RECIPES and existing custom recipes). The optional
+// `<field>Unit` ('min'|'h') is a pure display/editing convenience remembering which unit
+// the user last entered that field in, so reopening the edit form doesn't force them back
+// to a converted minutes value. It defaults to 'min' when absent, harmlessly, for all
+// existing data (including builtins, which aren't edited anyway).
+function recipeTimeUnit(r, field){
+  return r[field + 'Unit'] === 'h' ? 'h' : 'min';
+}
+function recipeTimeDisplayValue(r, field){
+  const raw = r[field];
+  if(raw === '' || raw === undefined || raw === null) return '';
+  const mins = Number(raw) || 0;
+  return recipeTimeUnit(r, field) === 'h' ? (mins / 60) : mins;
+}
+function updateRecipeTimeValue(field, value){
+  const r = state.currentRecipe;
+  if(value === '' || value === null || value === undefined){ r[field] = ''; return; }
+  const n = parseFloat(String(value).replace(',', '.'));
+  if(isNaN(n)){ r[field] = ''; return; }
+  r[field] = recipeTimeUnit(r, field) === 'h' ? Math.round(n * 60) : n;
+}
+function updateRecipeTimeUnit(field, unit){
+  state.currentRecipe[field + 'Unit'] = (unit === 'h') ? 'h' : 'min';
+  render();
+}
+
+function openRecipeMoveModal(id){
+  state.recipeMoveModalRecipeId = id;
+  render();
+}
+function closeRecipeMoveModal(){
+  state.recipeMoveModalRecipeId = null;
+  render();
+}
+// Toggles a folder membership from the quick-move modal — saved immediately, since this
+// is meant as a fast path that doesn't require opening the full recipe editor.
+async function toggleRecipeMoveFolder(folderId){
+  const r = state.recipes.find(x => x.id === state.recipeMoveModalRecipeId);
+  if(!r) return;
+  const ids = Array.isArray(r.folderIds) ? r.folderIds : [];
+  r.folderIds = ids.includes(folderId) ? ids.filter(x => x !== folderId) : [...ids, folderId];
+  await storageSet('recipes', state.recipes);
+  triggerAutoSync();
+  render();
+}
+function renderRecipeMoveModal(){
+  const id = state.recipeMoveModalRecipeId;
+  if(!id) return '';
+  const r = state.recipes.find(x => x.id === id);
+  if(!r) return '';
+  const ids = Array.isArray(r.folderIds) ? r.folderIds : [];
+  return `
+    <div class="memory-win-overlay" onclick="if(event.target===this) closeRecipeMoveModal()">
+      <div class="memory-win-card recipe-move-modal-card">
+        <div class="memory-win-title">${tr('recipe_move_modal_title', r.name)}</div>
+        ${renderRecipeFolderCheckboxList(ids, 'toggleRecipeMoveFolder')}
+        <button type="button" class="settings-btn-full budget-add-btn" onclick="closeRecipeMoveModal()">${tr('recipe_move_modal_done')}</button>
+      </div>
+    </div>
+  `;
+}
+
+function openRecipeFolder(id){
+  state.currentRecipeFolderId = id;
+  state.recipeShowAll = false;
+  render();
+}
+function setRecipeShowAll(v){
+  state.recipeShowAll = v;
+  render();
+}
+
+async function addRecipeFolder(){
+  const name = window.prompt(tr('recipe_folder_name_prompt'));
+  if(!name || !name.trim()) return;
+  const folder = { id: 'rcf' + Date.now(), name: name.trim(), parentId: state.currentRecipeFolderId || null };
+  state.recipeFolders.push(folder);
+  await storageSet('recipeFolders', state.recipeFolders);
+  triggerAutoSync();
+  render();
+}
+
+async function renameRecipeFolder(id){
+  const folder = recipeFolderById(id);
+  if(!folder) return;
+  const name = window.prompt(tr('recipe_folder_rename_prompt'), folder.name);
+  if(!name || !name.trim()) return;
+  folder.name = name.trim();
+  await storageSet('recipeFolders', state.recipeFolders);
+  triggerAutoSync();
+  render();
+}
+
+async function deleteRecipeFolder(id){
+  const folder = recipeFolderById(id);
+  if(!folder) return;
+  const hasChildren = recipeFolderChildren(id).length > 0 || customRecipesInFolder(id).length > 0;
+  const ok = window.confirm(hasChildren ? tr('recipe_folder_delete_confirm_nonempty') : tr('recipe_folder_delete_confirm'));
+  if(!ok) return;
+  const parentId = folder.parentId || null;
+  recipeFolderChildren(id).forEach(child => { child.parentId = parentId; });
+  customRecipesInFolder(id).forEach(r => {
+    const ids = (r.folderIds || []).filter(fid => fid !== id);
+    if(parentId && !ids.includes(parentId)) ids.push(parentId);
+    r.folderIds = ids;
+  });
+  state.recipeFolders = state.recipeFolders.filter(f => f.id !== id);
+  await storageSet('recipeFolders', state.recipeFolders);
+  await storageSet('recipes', state.recipes);
+  triggerAutoSync();
+  if(state.currentRecipeFolderId === id) state.currentRecipeFolderId = parentId;
+  render();
 }
 
 function recipeIngredientsText(recipe){
@@ -10813,6 +11493,75 @@ const UNIT_CONVERSIONS = {
   l: { base:'vol', factor: 1000 },
 };
 
+// ---------- Cooking-unit abbreviation dictionary (FR<->EN) ----------
+// The generic machine-translation API handles full unit WORDS reasonably well
+// ("cuillère à soupe" -> "tablespoon") but mangles the short abbreviations recipes
+// actually use ("càs", "c.à.s.", "cas", "CS"...). This dictionary matches those
+// abbreviations directly, case/accent/punctuation-insensitively, and is tried BEFORE
+// the generic API in translateRecipe(). For cuillère à soupe/café specifically, only the
+// ABBREVIATED forms are registered below (skipFull) - the full word already translates fine
+// through the generic API, so it's deliberately left to go through that existing path.
+const COOKING_UNIT_ENTRIES = [
+  { skipFull:true, fr:{ abbrev:'càs', full:'cuillère à soupe', aliases:['c.à.s','c.a.s','cas','cs','c à s'] },
+    en:{ abbrev:'tbsp', full:'tablespoon', aliases:['tbs','tbl','tbsp.','tbs.'] } },
+  { skipFull:true, fr:{ abbrev:'càc', full:'cuillère à café', aliases:['c.à.c','c.a.c','cac','cc','c à c'] },
+    en:{ abbrev:'tsp', full:'teaspoon', aliases:['tsp.'] } },
+  { fr:{ abbrev:'pincée', full:'pincée', aliases:['pincee','pincées','pincees'] },
+    en:{ abbrev:'pinch', full:'pinch', aliases:['pinches'] } },
+  { fr:{ abbrev:'verre', full:'verre', aliases:['verres'] },
+    en:{ abbrev:'glass', full:'glass', aliases:['glasses'] } },
+  { fr:{ abbrev:'tasse', full:'tasse', aliases:['tasses'] },
+    en:{ abbrev:'cup', full:'cup', aliases:['c.','cups'] } },
+  { fr:{ abbrev:'sachet', full:'sachet', aliases:['sachets'] },
+    en:{ abbrev:'packet', full:'packet', aliases:['pkt','pkt.','packets','sachet','sachets'] } },
+  { fr:{ abbrev:'gousse', full:"gousse d'ail", aliases:['gousses','gousse d ail',"gousses d'ail",'gousses d ail'] },
+    en:{ abbrev:'clove', full:'clove', aliases:['cloves'] } },
+  { fr:{ abbrev:'tranche', full:'tranche', aliases:['tranches'] },
+    en:{ abbrev:'slice', full:'slice', aliases:['slices'] } },
+  { fr:{ abbrev:'pot', full:'pot', aliases:['pots'] },
+    en:{ abbrev:'tub', full:'tub', aliases:['tubs','jar','jars'] } },
+];
+// Units already identical in both languages (metric) or English-only abbreviations with no
+// meaningful French short form (oz/lb/pt/qt) - these pass through unchanged rather than being
+// sent to the generic translator, which can otherwise mangle a bare single/double letter unit.
+const COOKING_UNIT_IDENTITY = ['g','kg','mg','ml','l','cl','oz','lb','lbs','pt','qt'];
+
+function normalizeUnitKey(s){
+  return (s || '').toString().trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '') // strip accents
+    .replace(/[.\s]/g, ''); // strip dots/spaces so "c.à.s." / "càs" / "c a s" all converge
+}
+
+const COOKING_UNIT_LOOKUP = new Map();
+function registerUnitAlias(alias, payload){
+  const key = normalizeUnitKey(alias);
+  if(key && !COOKING_UNIT_LOOKUP.has(key)) COOKING_UNIT_LOOKUP.set(key, payload);
+}
+COOKING_UNIT_ENTRIES.forEach(entry => {
+  registerUnitAlias(entry.fr.abbrev, { entry, level:'abbrev' });
+  registerUnitAlias(entry.en.abbrev, { entry, level:'abbrev' });
+  (entry.fr.aliases||[]).forEach(a => registerUnitAlias(a, { entry, level:'abbrev' }));
+  (entry.en.aliases||[]).forEach(a => registerUnitAlias(a, { entry, level:'abbrev' }));
+  if(!entry.skipFull){
+    registerUnitAlias(entry.fr.full, { entry, level:'full' });
+    registerUnitAlias(entry.en.full, { entry, level:'full' });
+  }
+});
+COOKING_UNIT_IDENTITY.forEach(u => registerUnitAlias(u, { identity:true, canonical:u }));
+
+// Looks up a cooking-unit abbreviation/term in the dictionary above. Returns the translated
+// unit (matching the source's abbreviated-vs-full-word style) when recognized, or null to
+// signal "not a known cooking unit — fall through to the generic translation API".
+function translateCookingUnitAbbreviation(unit, fromLang, toLang){
+  const key = normalizeUnitKey(unit);
+  if(!key) return null;
+  const hit = COOKING_UNIT_LOOKUP.get(key);
+  if(!hit) return null;
+  if(hit.identity) return hit.canonical;
+  const target = toLang === 'en' ? hit.entry.en : hit.entry.fr;
+  return hit.level === 'full' ? target.full : target.abbrev;
+}
+
 function formatSmartQuantity(amount, unit){
   const key = (unit || '').toLowerCase().trim();
   const conv = UNIT_CONVERSIONS[key];
@@ -10830,6 +11579,23 @@ function formatSmartQuantity(amount, unit){
   }
   return `${formatScaledAmount(amount)}${unit ? unit : ''}`;
 }
+// Returns true when an ingredient's amount was never actually typed by the user (empty
+// string/null/undefined), as opposed to a deliberately-entered "0" - used to avoid showing
+// a misleading "0g" etc. next to ingredients the user left unquantified.
+function isIngredientAmountUnset(amount){
+  return amount === '' || amount === null || amount === undefined;
+}
+// Builds the display string for an ingredient's scaled quantity + name, omitting the leading
+// quantity entirely when the amount was never set (see isIngredientAmountUnset), so an
+// ingredient with no specified amount just shows its unit (if any) and name.
+function formatIngredientQuantityLabel(ing, scaled){
+  if(isIngredientAmountUnset(ing.amount)){
+    const unit = (ing.unit || '').trim();
+    return unit ? `${unit} ${ing.name}`.trim() : ing.name;
+  }
+  return `${formatSmartQuantity(scaled, ing.unit)} ${ing.name}`.trim();
+}
+
 function linkifyIngredientsInStep(text, ingredients, baseServings, desiredServings){
   let html = escapeHtml(text || '');
   (ingredients||[]).forEach(ing => {
@@ -10837,9 +11603,64 @@ function linkifyIngredientsInStep(text, ingredients, baseServings, desiredServin
     const escaped = ing.name.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(escaped, 'gi');
     const scaled = scaleIngredientAmount(Number(ing.amount)||0, baseServings, desiredServings);
-    const qty = `${formatSmartQuantity(scaled, ing.unit)} ${ing.name}`.trim();
+    const qty = formatIngredientQuantityLabel(ing, scaled);
     html = html.replace(regex, (m) => `<span class="ingredient-tap" onclick="event.stopPropagation(); showToast('${qty.replace(/'/g,"\\'")}')">${m}</span>`);
   });
+  return html;
+}
+
+// Matches a temperature mention like "200°C", "200 °C", "200C", "200 F", "180°f" - a number
+// (optionally decimal) followed by an optional degree symbol/space and a C/F unit letter, with
+// a word boundary after so it doesn't swallow part of a longer token. Deliberately requires the
+// C/F to be immediately adjacent (with only an optional degree sign/space between), so it won't
+// false-positive on unrelated numbers followed by unrelated capital letters elsewhere in a step.
+const TEMPERATURE_REGEX = /(\d+(?:[.,]\d+)?)\s?°?\s?([CcFf])\b/g;
+
+function convertTemperature(value, unit){
+  const n = Number(value.replace(',', '.'));
+  if(unit === 'C' || unit === 'c'){
+    return { value: Math.round(n * 9 / 5 + 32), unit: 'F' };
+  }
+  return { value: Math.round((n - 32) * 5 / 9), unit: 'C' };
+}
+
+// Two-stage-safe composition of temperature-tap and ingredient-tap linkification for a recipe
+// step's text. Running both linkifications as sequential .replace() passes directly on the same
+// mutating HTML string would risk one pass's regex matching inside markup the other pass already
+// inserted (e.g. an ingredient name appearing inside a temperature toast's onclick attribute, or
+// vice versa). To avoid that category of bug entirely:
+//   1. Run the temperature regex over the RAW escaped text FIRST, replacing each match with a
+//      unique inert placeholder token (\u0000TEMP<i>\u0000) and stashing the real <span> markup
+//      for that match in an array.
+//   2. Run the existing ingredient-linkification passes on the text-with-placeholders - the
+//      placeholders contain no letters a-z/A-Z so they can never match (or be matched by) an
+//      ingredient-name regex, and they're inert to HTML escaping since this runs after escaping.
+//   3. Substitute each placeholder back for its stashed temperature <span> markup at the very end,
+//      once no further regex passes will run over the string.
+// This guarantees neither pass can ever corrupt or double-process the other's inserted markup.
+function linkifyTemperaturesAndIngredientsInStep(text, ingredients, baseServings, desiredServings){
+  const escaped = escapeHtml(text || '');
+  const placeholders = [];
+  const withPlaceholders = escaped.replace(TEMPERATURE_REGEX, (m, numStr, unitLetter) => {
+    const converted = convertTemperature(numStr, unitLetter);
+    const origLabel = `${numStr}°${unitLetter.toUpperCase()}`;
+    const convertedLabel = `${converted.value}°${converted.unit}`;
+    const toastMsg = tr('recipe_temperature_converted', origLabel, convertedLabel);
+    const span = `<span class="temperature-tap" onclick="event.stopPropagation(); showToast('${toastMsg.replace(/'/g,"\\'")}')">${m}</span>`;
+    const idx = placeholders.length;
+    placeholders.push(span);
+    return `\u0000TEMP${idx}\u0000`;
+  });
+  let html = withPlaceholders;
+  (ingredients||[]).forEach(ing => {
+    if(!ing.name || !ing.name.trim()) return;
+    const ingEscaped = ing.name.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(ingEscaped, 'gi');
+    const scaled = scaleIngredientAmount(Number(ing.amount)||0, baseServings, desiredServings);
+    const qty = formatIngredientQuantityLabel(ing, scaled);
+    html = html.replace(regex, (m) => `<span class="ingredient-tap" onclick="event.stopPropagation(); showToast('${qty.replace(/'/g,"\\'")}')">${m}</span>`);
+  });
+  html = html.replace(/\u0000TEMP(\d+)\u0000/g, (m, idx) => placeholders[Number(idx)]);
   return html;
 }
 
@@ -10848,7 +11669,7 @@ function viewCustomRecipe(id){
   if(!r) return;
   state.currentRecipe = r;
   state.recipeViewServings = r.servings || 1;
-  state.recipeViewLang = 'fr';
+  state.recipeViewLang = recipeOriginalLang(r);
   state.screen = 'recipeViewCustom';
   render();
 }
@@ -10863,18 +11684,35 @@ function toggleRecipeViewLang(){
   render();
 }
 
+function recipeOriginalLang(r){
+  return (r && r.originalLang) || 'fr';
+}
+
+// True when r.translations[lang] exists but doesn't cover every current ingredient/step id
+// (i.e. the recipe was edited since it was last translated into that language).
+function recipeTranslationNeedsUpdate(r, lang){
+  const t = r && r.translations && r.translations[lang];
+  if(!t) return true;
+  const idsIng = new Set((t.ingredients||[]).map(x => x.id));
+  const idsStep = new Set((t.steps||[]).map(x => x.id));
+  const missingIng = (r.ingredients||[]).some(i => !idsIng.has(i.id));
+  const missingStep = (r.steps||[]).some(s => !idsStep.has(s.id));
+  return missingIng || missingStep;
+}
+
 function getEffectiveRecipeContent(r, lang){
-  if(lang === 'en' && r.translations && r.translations.en){
-    const en = r.translations.en;
+  const origLang = recipeOriginalLang(r);
+  if(lang && lang !== origLang && r.translations && r.translations[lang]){
+    const t = r.translations[lang];
     const ingredients = (r.ingredients||[]).map(orig => {
-      const match = (en.ingredients||[]).find(x => x.id === orig.id);
+      const match = (t.ingredients||[]).find(x => x.id === orig.id);
       return { ...orig, name: match ? match.name : orig.name, unit: match && match.unit ? match.unit : orig.unit };
     });
     const steps = (r.steps||[]).map(orig => {
-      const match = (en.steps||[]).find(x => x.id === orig.id);
+      const match = (t.steps||[]).find(x => x.id === orig.id);
       return { ...orig, content: match ? match.content : orig.content };
     });
-    return { name: en.name || r.name, ingredients, steps };
+    return { name: t.name || r.name, ingredients, steps };
   }
   return { name: r.name, ingredients: r.ingredients||[], steps: r.steps||[] };
 }
@@ -10899,29 +11737,109 @@ async function addRecipeIngredientsToShoppingList(){
   showToast(tr('shopping_recipe_added', added));
 }
 
+// Translates a single piece of text, with one retry attempt before giving up.
+// Returns the translated text, or null if it failed even after retrying (never throws).
+async function translateWithRetry(text, from, to){
+  if(!text || !text.trim()) return '';
+  try{
+    return await myMemoryTranslate(text, from, to);
+  }catch(e){
+    console.warn('translation attempt failed, retrying once', e);
+    try{
+      return await myMemoryTranslate(text, from, to);
+    }catch(e2){
+      console.warn('translation failed after retry, leaving item untranslated', e2);
+      return null;
+    }
+  }
+}
+
 async function translateRecipe(){
   const r = state.currentRecipe;
+  if(!r) return;
+  const origLang = recipeOriginalLang(r);
+  const viewLang = state.recipeViewLang || origLang;
+  // If a (possibly stale) translation is currently being viewed, fix/fill THAT language in
+  // place from the pristine original rather than spinning off yet another direction. Otherwise
+  // (viewing the original), translate forward to the other language, as usual.
+  let sourceLang, targetLang;
+  if(viewLang !== origLang){
+    sourceLang = origLang;
+    targetLang = viewLang;
+  } else {
+    sourceLang = viewLang;
+    targetLang = viewLang === 'en' ? 'fr' : 'en';
+  }
   state.recipeTranslating = true;
   render();
+  let failCount = 0;
   try{
-    const name = await myMemoryTranslate(r.name, 'fr', 'en');
-    const ingredientNames = await Promise.all((r.ingredients||[]).map(i => myMemoryTranslate(i.name, 'fr', 'en')));
-    const ingredientUnits = await Promise.all((r.ingredients||[]).map(i => i.unit ? myMemoryTranslate(i.unit, 'fr', 'en') : ''));
-    const stepContents = await Promise.all((r.steps||[]).map(s => myMemoryTranslate(s.content, 'fr', 'en')));
+    const sourceContent = getEffectiveRecipeContent(r, sourceLang);
     r.translations = r.translations || {};
-    r.translations.en = {
-      name,
-      ingredients: (r.ingredients||[]).map((ing,idx) => ({ id: ing.id, name: ingredientNames[idx], unit: ingredientUnits[idx] })),
-      steps: (r.steps||[]).map((s,idx) => ({ id: s.id, content: stepContents[idx] })),
-    };
+    // Keep whatever is already cached for the target language so a retranslation only has to
+    // fill in missing/new items instead of redoing (and risking) everything from scratch.
+    const existing = r.translations[targetLang] || { name: '', ingredients: [], steps: [] };
+    const existingIngMap = new Map((existing.ingredients||[]).map(x => [x.id, x]));
+    const existingStepMap = new Map((existing.steps||[]).map(x => [x.id, x]));
+
+    let name = existing.name;
+    if(!name){
+      const translatedName = await translateWithRetry(sourceContent.name, sourceLang, targetLang);
+      if(translatedName === null){ failCount++; name = sourceContent.name; }
+      else name = translatedName;
+    }
+
+    const ingredientResults = await Promise.allSettled((sourceContent.ingredients||[]).map(async ing => {
+      if(existingIngMap.has(ing.id)) return existingIngMap.get(ing.id);
+      // Try the cooking-unit abbreviation dictionary first; only hit the generic translation
+      // API for the unit when the dictionary doesn't recognize it.
+      const dictUnit = ing.unit ? translateCookingUnitAbbreviation(ing.unit, sourceLang, targetLang) : null;
+      const [tname, tunit] = await Promise.all([
+        translateWithRetry(ing.name || '', sourceLang, targetLang),
+        dictUnit != null ? Promise.resolve(dictUnit) : (ing.unit ? translateWithRetry(ing.unit, sourceLang, targetLang) : ''),
+      ]);
+      if(tname === null || tunit === null) throw new Error('ingredient translation failed');
+      return { id: ing.id, name: tname, unit: tunit };
+    }));
+
+    const stepResults = await Promise.allSettled((sourceContent.steps||[]).map(async s => {
+      if(existingStepMap.has(s.id)) return existingStepMap.get(s.id);
+      const tcontent = await translateWithRetry(s.content || '', sourceLang, targetLang);
+      if(tcontent === null) throw new Error('step translation failed');
+      return { id: s.id, content: tcontent };
+    }));
+
+    const mergedIngredients = [...(existing.ingredients||[])];
+    ingredientResults.forEach(res => {
+      if(res.status === 'fulfilled'){
+        const idx = mergedIngredients.findIndex(x => x.id === res.value.id);
+        if(idx >= 0) mergedIngredients[idx] = res.value; else mergedIngredients.push(res.value);
+      } else {
+        failCount++;
+      }
+    });
+    const mergedSteps = [...(existing.steps||[])];
+    stepResults.forEach(res => {
+      if(res.status === 'fulfilled'){
+        const idx = mergedSteps.findIndex(x => x.id === res.value.id);
+        if(idx >= 0) mergedSteps[idx] = res.value; else mergedSteps.push(res.value);
+      } else {
+        failCount++;
+      }
+    });
+
+    r.translations[targetLang] = { name: name || sourceContent.name, ingredients: mergedIngredients, steps: mergedSteps };
     const idx2 = state.recipes.findIndex(x => x.id === r.id);
     if(idx2 >= 0) state.recipes[idx2] = r;
     await storageSet('recipes', state.recipes);
     triggerAutoSync();
-    state.recipeViewLang = 'en';
+    state.recipeViewLang = targetLang;
+    if(failCount > 0){
+      showToast(tr('recipe_translate_partial', failCount));
+    }
   }catch(e){
     console.error('recipe translation error', e);
-    showToast(tr('translate_error'));
+    showToast(tr('recipe_translate_error'));
   }
   state.recipeTranslating = false;
   render();
@@ -10929,7 +11847,7 @@ async function translateRecipe(){
 
 function addRecipeIngredient(){
   if(!state.currentRecipe.ingredients) state.currentRecipe.ingredients = [];
-  state.currentRecipe.ingredients.push({ id: 'ing' + Date.now() + Math.random().toString(36).slice(2,5), name:'', amount:'', unit:'' });
+  state.currentRecipe.ingredients.push({ id: 'ing' + Date.now() + Math.random().toString(36).slice(2,5), name:'', amount:'', unit:'', brandNote:'' });
   render();
 }
 function removeRecipeIngredient(id){
@@ -10955,36 +11873,27 @@ function updateRecipeStepContent(id, value){
   if(st) st.content = value;
 }
 
-async function handleRecipeCoverPhotoInput(input){
+function handleRecipeCoverPhotoInput(input){
   const file = (input.files || [])[0];
-  if(!file) return;
-  try{
-    state.currentRecipe.coverPhoto = await fileToCompressedDataUrl(file, 1100, 0.72);
-  }catch(e){
-    console.error('recipe cover photo error', e);
-    showToast(tr('toast_photo_failed'));
-  }
   input.value = '';
-  render();
+  if(!file) return;
+  openPhotoCropModal(file, 4/5, 1100, 0.72, (dataUrl) => {
+    state.currentRecipe.coverPhoto = dataUrl;
+  });
 }
 function removeRecipeCoverPhoto(){
   state.currentRecipe.coverPhoto = '';
   render();
 }
 
-async function handleRecipeStepPhotoInput(input, stepId){
+function handleRecipeStepPhotoInput(input, stepId){
   const file = (input.files || [])[0];
+  input.value = '';
   if(!file) return;
-  try{
-    const dataUrl = await fileToCompressedDataUrl(file, 900, 0.68);
+  openPhotoCropModal(file, 4/5, 900, 0.68, (dataUrl) => {
     const st = state.currentRecipe.steps.find(s => s.id === stepId);
     if(st) st.photo = dataUrl;
-  }catch(e){
-    console.error('recipe step photo error', e);
-    showToast(tr('toast_photo_failed'));
-  }
-  input.value = '';
-  render();
+  });
 }
 function removeRecipeStepPhoto(stepId){
   const st = state.currentRecipe.steps.find(s => s.id === stepId);
@@ -10995,7 +11904,7 @@ function removeRecipeStepPhoto(stepId){
 function openRecipeEntry(entry){
   state.currentRecipe = entry
     ? {...entry, ingredients: (entry.ingredients || []).map(i=>({...i})), steps: (entry.steps || []).map(s=>({...s}))}
-    : { id: 'rc' + Date.now(), name:'', servings:4, prepTime:'', cookTime:'', restTime:'', coverPhoto:'', category:'', ingredients:[], steps:[], cost:'', calories:'', protein:'', carbs:'', fat:'', sugar:'', fiber:'', sodium:'', potassium:'', saturatedFat:'', cholesterol:'', source:'custom', translations:{} };
+    : { id: 'rc' + Date.now(), name:'', servings:4, prepTime:'', cookTime:'', restTime:'', prepTimeUnit:'min', cookTimeUnit:'min', restTimeUnit:'min', coverPhoto:'', categories:[], folderIds: (!state.recipeShowAll && state.currentRecipeFolderId) ? [state.currentRecipeFolderId] : [], ingredients:[], steps:[], cost:'', calories:'', protein:'', carbs:'', fat:'', sugar:'', fiber:'', sodium:'', potassium:'', saturatedFat:'', cholesterol:'', source:'custom', translations:{}, originalLang: state.lang === 'en' ? 'en' : 'fr' };
   state.screen = 'recipeEntry';
   render();
 }
@@ -11009,9 +11918,11 @@ function duplicateRecipeForEditing(id){
   state.currentRecipe = {
     ...original, id: 'rc' + Date.now(), source: 'custom',
     ingredients, steps: [], coverPhoto: '', cookTime: '', restTime: '', cholesterol: '', saturatedFat: original.saturatedFat || '',
-    translations: {},
+    categories: original.category ? [original.category] : [],
+    folderIds: [], translations: {},
   };
   delete state.currentRecipe.ingredientsList;
+  delete state.currentRecipe.category;
   state.screen = 'recipeEntry';
   render();
 }
@@ -11019,6 +11930,26 @@ function duplicateRecipeForEditing(id){
 function viewBuiltinRecipe(id){
   state.currentRecipe = BUILTIN_RECIPES.find(r => r.id === id);
   state.screen = 'recipeView';
+  render();
+}
+
+// Builtin recipes are a hardcoded, shared array and can't be mutated or removed per-user —
+// "deleting" one just adds its id to a per-user hidden list that filters it out everywhere.
+async function deleteBuiltinRecipe(id){
+  const ok = window.confirm(tr('recipe_builtin_delete_confirm'));
+  if(!ok) return;
+  if(!state.hiddenBuiltinRecipeIds.includes(id)) state.hiddenBuiltinRecipeIds.push(id);
+  await storageSet('hiddenBuiltinRecipeIds', state.hiddenBuiltinRecipeIds);
+  triggerAutoSync();
+  pendingUndoRestore = async () => {
+    state.hiddenBuiltinRecipeIds = state.hiddenBuiltinRecipeIds.filter(x => x !== id);
+    await storageSet('hiddenBuiltinRecipeIds', state.hiddenBuiltinRecipeIds);
+    triggerAutoSync();
+    render();
+  };
+  showUndoToast(tr('undo_deleted_generic'));
+  state.currentRecipe = null;
+  state.screen = 'recipes';
   render();
 }
 
@@ -11066,7 +11997,7 @@ async function backFromRecipeEntry(){
 
 const CONTACT_CATEGORY_GROUPS = [
   { group: 'family', ids: ['mother','father','sister','brother','daughter','son','grandmother','grandfather','aunt','uncle','cousin','stepmother','stepfather','sisterinlaw','brotherinlaw'] },
-  { group: 'friends', ids: ['friend','bestfriend','acquaintance'] },
+  { group: 'friends', ids: ['friend','bestfriend','acquaintance','exfriend'] },
   { group: 'love', ids: ['partner','ex'] },
   { group: 'work', ids: ['colleague','manager'] },
   { group: 'other', ids: ['neighbor','doctor','other'] },
@@ -11076,7 +12007,7 @@ const CONTACT_CATEGORY_GROUPS = [
 function openContactEntry(entry){
   state.currentContact = entry
     ? {...entry}
-    : { id: 'ct' + Date.now(), firstName: '', lastName: '', postalAddress: '', email: '', phone: '', category: '', categoryOther: '' };
+    : { id: 'ct' + Date.now(), firstName: '', lastName: '', postalAddress: '', email: '', phone: '', landlinePhone: '', category: '', categoryOther: '', favorite: false };
   state.screen = 'contactEntry';
   render();
 }
@@ -12226,8 +13157,8 @@ function toggleJournalEntryUnknown(checked){
   if(checked){
     state.currentJournalEntry.noEndTime = false;
     if(!state.currentJournalEntry.endTime) state.currentJournalEntry.endTime = nowHHMM();
-    if(!state.currentJournalEntry.person && state.relationInfo && state.relationInfo.partnerName){
-      state.currentJournalEntry.person = state.relationInfo.partnerName;
+    if(!state.currentJournalEntry.person && journalPartnerName()){
+      state.currentJournalEntry.person = journalPartnerName();
     }
   }
   render();
@@ -12392,6 +13323,68 @@ function journalEntryHasDormirCategory(e){
   const dormirCat = findDormirJournalCategory();
   if(!dormirCat) return false;
   return journalEntryCategories(e).includes(dormirCat.id);
+}
+
+/* ---------- JOURNAL "SE RÉVEILLER" AUTO-ENTRY ----------
+   A journal entry tagged "dormir"/"sommeil" with both a start AND end time automatically
+   gets a linked "Se réveiller" entry created at that exact wake-up instant (startTime ===
+   endTime), so the user always has a precise, editable "woke up at" marker without having
+   to add it by hand. Unlike the sleep-log sync above, this is journal-only bookkeeping and
+   applies no matter who the Dormir entry is tagged to (owner, partner, or "together"). */
+function isSeReveillerCategoryName(name){
+  const n = (name || '').trim().toLowerCase();
+  const stripped = n.normalize ? n.normalize('NFD').replace(/[̀-ͯ]/g, '') : n;
+  return n === 'se réveiller' || n === 'réveil' || stripped === 'se reveiller' || stripped === 'reveil';
+}
+
+function findSeReveillerJournalCategory(){
+  return state.journalCategories.find(c => isSeReveillerCategoryName(c.name)) || null;
+}
+
+async function ensureSeReveillerJournalCategory(){
+  let cat = findSeReveillerJournalCategory();
+  if(cat) return cat;
+  const id = 'jc' + Date.now();
+  const color = JOURNAL_PALETTE[state.journalCategories.length % JOURNAL_PALETTE.length];
+  cat = { id, name: 'Se réveiller', color };
+  state.journalCategories.push(cat);
+  await storageSet('journalCategories', state.journalCategories);
+  return cat;
+}
+
+// Called (with the Dormir entry's TRUE final date/end time already resolved for an overnight,
+// midnight-split entry — see withTrueFinalJournalEntryTime) after a journal entry is saved.
+// Creates/updates/removes the linked "Se réveiller" entry to match the Dormir entry's current
+// wake-up instant. `person` is copied over (not restricted to the owner, unlike the sleep sync).
+async function syncDormirEntryToWakeEntry(entry){
+  const eligible = journalEntryHasDormirCategory(entry) && entry.startTime && entry.endTime && !entry.noEndTime && !entry.unknown;
+  if(!eligible){
+    if(entry.linkedWakeEntryId){
+      state.journal = state.journal.filter(j => j.id !== entry.linkedWakeEntryId);
+      delete entry.linkedWakeEntryId;
+      await storageSet('journal', state.journal);
+    }
+    return;
+  }
+  const wakeCat = await ensureSeReveillerJournalCategory();
+  let wakeEntry = entry.linkedWakeEntryId ? state.journal.find(j => j.id === entry.linkedWakeEntryId) : null;
+  if(wakeEntry){
+    wakeEntry.date = entry.date;
+    wakeEntry.startTime = entry.endTime;
+    wakeEntry.endTime = entry.endTime;
+    wakeEntry.person = entry.person || '';
+    const cats = journalEntryCategories(wakeEntry);
+    if(!cats.includes(wakeCat.id)){
+      wakeEntry.categories = [...cats, wakeCat.id];
+      wakeEntry.category = wakeEntry.categories[0] || null;
+    }
+    await storageSet('journal', state.journal);
+  }else{
+    wakeEntry = { id: 'j' + Date.now() + Math.random().toString(36).slice(2,7), date: entry.date, startTime: entry.endTime, endTime: entry.endTime, category: wakeCat.id, categories: [wakeCat.id], text: '', person: entry.person || '', noEndTime: false, unknown: false, linkedDormirEntryId: entry.id };
+    state.journal.push(wakeEntry);
+    entry.linkedWakeEntryId = wakeEntry.id;
+    await storageSet('journal', state.journal);
+  }
 }
 
 // Called after a journal entry is saved: if it's tagged "dormir"/"sommeil", has both a
@@ -12839,11 +13832,14 @@ async function buildBackupPayload(){
     personalInfo: state.personalInfo,
     contacts: state.contacts,
     recipes: state.recipes,
+    recipeFolders: state.recipeFolders,
+    hiddenBuiltinRecipeIds: state.hiddenBuiltinRecipeIds,
     assistantHistory: state.assistantHistory,
     doctorHistory: state.doctorHistory,
     psychologistHistory: state.psychologistHistory,
     aiContextNotes: state.aiContextNotes,
     coachConstraints: state.coachConstraints, coachProgram: state.coachProgram, coachProgramHistory: state.coachProgramHistory, aiSpendTotalUsd: state.aiSpendTotalUsd, passwordEntries: state.passwordEntries, dismissedReminders: state.dismissedReminders, shoppingList: state.shoppingList, shoppingTemplates: state.shoppingTemplates,
+    learningNotes: state.learningNotes, learningFlashcards: state.learningFlashcards,
   };
 }
 
@@ -12941,7 +13937,9 @@ async function driveRestoreBackup(){
     state.relationInfo = data.relationInfo || { partnerName: '', myCountry: '', partnerCountry: '', startDate: '' };
     state.personalInfo = data.personalInfo || { firstName:'', lastName:'', birthDate:'', birthCity:'', sex:'', bloodType:'', emergencyContactName:'', emergencyContactPhone:'', postalAddress:'', email:'', phone:'' };
     state.contacts = data.contacts || [];
-    state.recipes = data.recipes || [];
+    state.recipes = migrateRecipeCategories(migrateRecipeFolderIds(data.recipes || []));
+    state.recipeFolders = data.recipeFolders || [];
+    state.hiddenBuiltinRecipeIds = data.hiddenBuiltinRecipeIds || [];
     state.assistantHistory = data.assistantHistory || [];
     state.doctorHistory = data.doctorHistory || [];
     state.psychologistHistory = data.psychologistHistory || [];
@@ -12952,6 +13950,8 @@ async function driveRestoreBackup(){
     state.aiSpendTotalUsd = data.aiSpendTotalUsd || 0;
     state.passwordEntries = data.passwordEntries || [];
     state.dismissedReminders = data.dismissedReminders || {};
+    state.learningNotes = data.learningNotes || [];
+    state.learningFlashcards = data.learningFlashcards || [];
     state.shoppingList = data.shoppingList || [];
     state.shoppingTemplates = data.shoppingTemplates || [];
     state.bathroomLog = data.bathroomLog || [];
@@ -13000,6 +14000,8 @@ async function driveRestoreBackup(){
     await storageSet('personalInfo', state.personalInfo);
     await storageSet('contacts', state.contacts);
     await storageSet('recipes', state.recipes);
+    await storageSet('recipeFolders', state.recipeFolders);
+    await storageSet('hiddenBuiltinRecipeIds', state.hiddenBuiltinRecipeIds);
     await storageSet('assistantHistory', state.assistantHistory);
     await storageSet('doctorHistory', state.doctorHistory);
     await storageSet('psychologistHistory', state.psychologistHistory);
@@ -13010,6 +14012,8 @@ async function driveRestoreBackup(){
     await storageSet('aiSpendTotalUsd', state.aiSpendTotalUsd);
     await storageSet('passwordEntries', state.passwordEntries);
     await storageSet('dismissedReminders', state.dismissedReminders);
+    await storageSet('learningNotes', state.learningNotes);
+    await storageSet('learningFlashcards', state.learningFlashcards);
     await storageSet('shoppingList', state.shoppingList);
     await storageSet('bathroomLog', state.bathroomLog);
     await storageSet('periodDays', state.periodDays);
@@ -13063,38 +14067,78 @@ async function saveCurrentJournalEntry(){
   else state.journal.push(...parts);
   await storageSet('journal', state.journal);
   await syncSplitJournalEntryToSleep(parts);
+  await syncSplitJournalEntryToWake(parts);
   triggerAutoSync();
 }
 
-// When an overnight entry got split at midnight into two journal entries, the sleep log
-// must still be synced with the TRUE original bed time and wake time (parts[0]'s real
-// start time and the last part's real end time) — not the truncated 23:00->00:00 first
-// half — otherwise the sleep log would only ever record ~1 hour of sleep instead of the
-// whole night. The linkage (linkedSleepId) is kept on parts[0], since that's the entry
-// that keeps the original id and the one the sleep-log's linkedJournalId points back to.
-async function syncSplitJournalEntryToSleep(parts){
+// When an overnight entry got split at midnight into two journal entries, a linked sync
+// (sleep log, or the "Se réveiller" wake entry) must still be run against the TRUE original
+// start time and TRUE final end time (parts[0]'s real start time and the last part's real
+// end time) — not the truncated 23:00->00:00 first half — otherwise the sleep log would only
+// ever record ~1 hour of sleep, and the wake entry would land at 00:00 on the wrong date.
+// `patchDate` additionally swaps parts[0].date to the last part's (true final) date while
+// `fn` runs — needed for the wake entry (which must land on the true wake-up date) but not
+// for the sleep log (whose `date` field means the bedtime's date, which never changes here).
+// The linkage ids are kept on parts[0], since that's the entry that keeps the original id.
+async function withTrueFinalJournalEntryTime(parts, fn, { patchDate = false } = {}){
   const first = parts[0];
   if(parts.length > 1){
     const truncatedEndTime = first.endTime;
+    const truncatedDate = first.date;
     first.endTime = parts[parts.length - 1].endTime;
-    await syncJournalEntryToSleep(first);
+    if(patchDate) first.date = parts[parts.length - 1].date;
+    await fn(first);
     first.endTime = truncatedEndTime;
+    if(patchDate) first.date = truncatedDate;
     await storageSet('journal', state.journal);
   }else{
-    await syncJournalEntryToSleep(first);
+    await fn(first);
   }
+}
+
+async function syncSplitJournalEntryToSleep(parts){
+  await withTrueFinalJournalEntryTime(parts, syncJournalEntryToSleep);
+}
+
+async function syncSplitJournalEntryToWake(parts){
+  await withTrueFinalJournalEntryTime(parts, syncDormirEntryToWakeEntry, { patchDate: true });
 }
 
 async function deleteCurrentJournalEntry(){
   const linkedId = state.currentJournalEntry.linkedSleepId;
+  const linkedWakeId = state.currentJournalEntry.linkedWakeEntryId;
+  const linkedDormirId = state.currentJournalEntry.linkedDormirEntryId;
   if(linkedId){
     const s = state.sleepLog.find(x => x.id === linkedId);
     if(s){ delete s.linkedJournalId; await storageSet('sleepLog', state.sleepLog); }
+  }
+  // The linked "Se réveiller" entry only exists because of this Dormir entry, so it's fully
+  // removed too (not just unlinked) — but kept around in closure so the undo below (one
+  // toast, for the Dormir deletion) can restore it as well, instead of a second undo toast.
+  let removedWakeEntry = null, removedWakeIdx = -1;
+  if(linkedWakeId){
+    removedWakeIdx = state.journal.findIndex(x => x.id === linkedWakeId);
+    if(removedWakeIdx >= 0){
+      [removedWakeEntry] = state.journal.splice(removedWakeIdx, 1);
+      await storageSet('journal', state.journal);
+    }
+  }
+  // Conversely, deleting a standalone "Se réveiller" entry is a normal deletion — just clear
+  // the back-link on its Dormir entry so a future save recreates a fresh wake entry for it.
+  if(linkedDormirId){
+    const d = state.journal.find(x => x.id === linkedDormirId);
+    if(d){ delete d.linkedWakeEntryId; await storageSet('journal', state.journal); }
   }
   await removeFromArrayWithUndo('journal', 'journal', state.currentJournalEntry.id, tr('undo_deleted_generic'), async (restoredJournalEntry) => {
     if(linkedId){
       const s = state.sleepLog.find(x => x.id === linkedId);
       if(s){ s.linkedJournalId = restoredJournalEntry.id; await storageSet('sleepLog', state.sleepLog); }
+    }
+    if(removedWakeEntry){
+      removedWakeEntry.linkedDormirEntryId = restoredJournalEntry.id;
+      state.journal.splice(removedWakeIdx, 0, removedWakeEntry);
+      restoredJournalEntry.linkedWakeEntryId = removedWakeEntry.id;
+      await storageSet('journal', state.journal);
     }
   });
   state.currentJournalEntry = null;
@@ -13111,12 +14155,285 @@ async function backFromJournalEntry(){
 
 function viewPhoto(dataUrl){
   state.viewingPhoto = dataUrl;
+  state.lightboxZoom = { scale: 1, tx: 0, ty: 0 };
   render();
 }
 
 function closeLightbox(){
   state.viewingPhoto = null;
+  state.lightboxZoom = null;
   render();
+}
+
+function renderLightbox(){
+  if(!state.viewingPhoto) return '';
+  const z = state.lightboxZoom || { scale: 1, tx: 0, ty: 0 };
+  return `
+    <div class="lightbox" onclick="lightboxBackdropClick(event)">
+      <button type="button" class="lightbox-close" onclick="event.stopPropagation(); closeLightbox()" aria-label="${tr('lightbox_close')}">×</button>
+      <img id="lightboxImg" src="${state.viewingPhoto}" style="transform:translate(${z.tx}px,${z.ty}px) scale(${z.scale});" onpointerdown="lightboxPointerDown(event)" ondblclick="lightboxDoubleClick(event)" onwheel="lightboxWheel(event)" draggable="false">
+    </div>
+  `;
+}
+
+function lightboxBackdropClick(e){
+  if(e.target && e.target.id === 'lightboxImg') return;
+  closeLightbox();
+}
+
+let _lbDrag = null;
+function lightboxPointerDown(e){
+  e.preventDefault();
+  if(!state.viewingPhoto) return;
+  if(!state.lightboxZoom) state.lightboxZoom = { scale: 1, tx: 0, ty: 0 };
+  if(!_lbDrag) _lbDrag = { pointers: new Map() };
+  _lbDrag.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if(_lbDrag.pointers.size === 1){
+    _lbDrag.mode = 'pan';
+    _lbDrag.startX = e.clientX; _lbDrag.startY = e.clientY;
+    _lbDrag.startTx = state.lightboxZoom.tx; _lbDrag.startTy = state.lightboxZoom.ty;
+  }else if(_lbDrag.pointers.size === 2){
+    _lbDrag.mode = 'pinch';
+    const pts = Array.from(_lbDrag.pointers.values());
+    _lbDrag.startDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+    _lbDrag.startScale = state.lightboxZoom.scale;
+  }
+  document.addEventListener('pointermove', lightboxPointerMove);
+  document.addEventListener('pointerup', lightboxPointerUp);
+  document.addEventListener('pointercancel', lightboxPointerUp);
+}
+function lightboxPointerMove(e){
+  if(!_lbDrag || !state.lightboxZoom) return;
+  if(_lbDrag.pointers.has(e.pointerId)) _lbDrag.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if(_lbDrag.mode === 'pan' && _lbDrag.pointers.size === 1){
+    const dx = e.clientX - _lbDrag.startX;
+    const dy = e.clientY - _lbDrag.startY;
+    state.lightboxZoom.tx = _lbDrag.startTx + dx;
+    state.lightboxZoom.ty = _lbDrag.startTy + dy;
+    lightboxUpdateDom();
+  }else if(_lbDrag.mode === 'pinch' && _lbDrag.pointers.size === 2){
+    const pts = Array.from(_lbDrag.pointers.values());
+    const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+    const ratio = dist / _lbDrag.startDist;
+    state.lightboxZoom.scale = Math.min(5, Math.max(1, _lbDrag.startScale * ratio));
+    if(state.lightboxZoom.scale <= 1){ state.lightboxZoom.tx = 0; state.lightboxZoom.ty = 0; }
+    lightboxUpdateDom();
+  }
+}
+function lightboxPointerUp(e){
+  if(!_lbDrag) return;
+  _lbDrag.pointers.delete(e.pointerId);
+  if(_lbDrag.pointers.size === 0){
+    document.removeEventListener('pointermove', lightboxPointerMove);
+    document.removeEventListener('pointerup', lightboxPointerUp);
+    document.removeEventListener('pointercancel', lightboxPointerUp);
+    _lbDrag = null;
+  }
+}
+function lightboxWheel(e){
+  e.preventDefault();
+  if(!state.viewingPhoto) return;
+  if(!state.lightboxZoom) state.lightboxZoom = { scale: 1, tx: 0, ty: 0 };
+  const delta = e.deltaY > 0 ? -0.15 : 0.15;
+  state.lightboxZoom.scale = Math.min(5, Math.max(1, state.lightboxZoom.scale + delta));
+  if(state.lightboxZoom.scale <= 1){ state.lightboxZoom.tx = 0; state.lightboxZoom.ty = 0; }
+  lightboxUpdateDom();
+}
+function lightboxDoubleClick(e){
+  e.stopPropagation();
+  if(!state.lightboxZoom) state.lightboxZoom = { scale: 1, tx: 0, ty: 0 };
+  if(state.lightboxZoom.scale > 1){
+    state.lightboxZoom.scale = 1; state.lightboxZoom.tx = 0; state.lightboxZoom.ty = 0;
+  }else{
+    state.lightboxZoom.scale = 2.5;
+  }
+  lightboxUpdateDom();
+}
+function lightboxUpdateDom(){
+  const img = document.getElementById('lightboxImg');
+  if(img && state.lightboxZoom) img.style.transform = `translate(${state.lightboxZoom.tx}px,${state.lightboxZoom.ty}px) scale(${state.lightboxZoom.scale})`;
+}
+
+/* ---------- Reusable photo crop modal (pan/zoom before saving) ---------- */
+function openPhotoCropModal(file, aspectRatio, maxDim, quality, onConfirm){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const frameW = 260;
+      const frameH = Math.round(frameW / aspectRatio);
+      const imgAspect = img.naturalWidth / img.naturalHeight;
+      let baseW, baseH;
+      if(imgAspect > aspectRatio){ baseH = frameH; baseW = frameH * imgAspect; }
+      else{ baseW = frameW; baseH = frameW / imgAspect; }
+      state.photoCrop = {
+        dataUrl: reader.result, imgEl: img,
+        natW: img.naturalWidth, natH: img.naturalHeight,
+        aspectRatio, frameW, frameH, baseW, baseH,
+        scale: 1, minScale: 1, maxScale: 4,
+        offsetX: 0, offsetY: 0,
+        maxDim, quality, onConfirm
+      };
+      render();
+    };
+    img.onerror = () => showToast(tr('toast_photo_failed'));
+    img.src = reader.result;
+  };
+  reader.onerror = () => showToast(tr('toast_photo_failed'));
+  reader.readAsDataURL(file);
+}
+
+function closePhotoCropModal(){
+  state.photoCrop = null;
+  render();
+}
+
+function confirmPhotoCropModal(){
+  const c = state.photoCrop;
+  if(!c) return;
+  const pxPerNat = c.baseW / c.natW;
+  const pxPerNatCur = pxPerNat * c.scale;
+  const dispW = c.baseW * c.scale, dispH = c.baseH * c.scale;
+  const imgTopLeftX = c.frameW / 2 + c.offsetX - dispW / 2;
+  const imgTopLeftY = c.frameH / 2 + c.offsetY - dispH / 2;
+  let srcW = c.frameW / pxPerNatCur;
+  let srcH = c.frameH / pxPerNatCur;
+  let srcX = (-imgTopLeftX) / pxPerNatCur;
+  let srcY = (-imgTopLeftY) / pxPerNatCur;
+  srcX = Math.max(0, Math.min(srcX, c.natW - srcW));
+  srcY = Math.max(0, Math.min(srcY, c.natH - srcH));
+  const outH = c.maxDim;
+  const outW = Math.round(c.maxDim * c.aspectRatio);
+  const canvas = document.createElement('canvas');
+  canvas.width = outW; canvas.height = outH;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(c.imgEl, srcX, srcY, srcW, srcH, 0, 0, outW, outH);
+  const dataUrl = canvas.toDataURL('image/jpeg', c.quality);
+  const onConfirm = c.onConfirm;
+  state.photoCrop = null;
+  if(onConfirm) onConfirm(dataUrl);
+  render();
+}
+
+function photoCropClamp(c, scale, offsetX, offsetY){
+  const dispW = c.baseW * scale, dispH = c.baseH * scale;
+  const maxX = Math.max(0, (dispW - c.frameW) / 2);
+  const maxY = Math.max(0, (dispH - c.frameH) / 2);
+  return { offsetX: Math.min(maxX, Math.max(-maxX, offsetX)), offsetY: Math.min(maxY, Math.max(-maxY, offsetY)) };
+}
+function photoCropApplyOffset(ox, oy){
+  const c = state.photoCrop; if(!c) return;
+  const clamped = photoCropClamp(c, c.scale, ox, oy);
+  c.offsetX = clamped.offsetX; c.offsetY = clamped.offsetY;
+  photoCropUpdateDom();
+}
+function photoCropApplyScale(scale){
+  const c = state.photoCrop; if(!c) return;
+  c.scale = Math.min(c.maxScale, Math.max(c.minScale, scale));
+  const clamped = photoCropClamp(c, c.scale, c.offsetX, c.offsetY);
+  c.offsetX = clamped.offsetX; c.offsetY = clamped.offsetY;
+  photoCropUpdateDom();
+  photoCropSyncSlider();
+}
+function photoCropZoomBy(delta){
+  if(!state.photoCrop) return;
+  photoCropApplyScale(state.photoCrop.scale + delta);
+}
+function photoCropSetScale(v){
+  photoCropApplyScale(parseFloat(v));
+}
+function photoCropSyncSlider(){
+  const el = document.querySelector('.photo-crop-zoom-row input[type=range]');
+  if(el && state.photoCrop) el.value = state.photoCrop.scale;
+}
+function photoCropUpdateDom(){
+  const c = state.photoCrop; if(!c) return;
+  const img = document.getElementById('photoCropImg');
+  if(img){
+    img.style.width = Math.round(c.baseW * c.scale) + 'px';
+    img.style.height = Math.round(c.baseH * c.scale) + 'px';
+    img.style.transform = `translate(-50%,-50%) translate(${c.offsetX}px,${c.offsetY}px)`;
+  }
+}
+
+let _cropDrag = null;
+function photoCropPointerDown(e){
+  e.preventDefault();
+  if(!state.photoCrop) return;
+  if(!_cropDrag) _cropDrag = { pointers: new Map() };
+  _cropDrag.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  const c = state.photoCrop;
+  if(_cropDrag.pointers.size === 1){
+    _cropDrag.mode = 'pan';
+    _cropDrag.startX = e.clientX; _cropDrag.startY = e.clientY;
+    _cropDrag.startOffsetX = c.offsetX; _cropDrag.startOffsetY = c.offsetY;
+  }else if(_cropDrag.pointers.size === 2){
+    _cropDrag.mode = 'pinch';
+    const pts = Array.from(_cropDrag.pointers.values());
+    _cropDrag.startDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+    _cropDrag.startScale = c.scale;
+  }
+  document.addEventListener('pointermove', photoCropPointerMove);
+  document.addEventListener('pointerup', photoCropPointerUp);
+  document.addEventListener('pointercancel', photoCropPointerUp);
+}
+function photoCropPointerMove(e){
+  if(!_cropDrag || !state.photoCrop) return;
+  if(_cropDrag.pointers.has(e.pointerId)) _cropDrag.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if(_cropDrag.mode === 'pan' && _cropDrag.pointers.size === 1){
+    const dx = e.clientX - _cropDrag.startX;
+    const dy = e.clientY - _cropDrag.startY;
+    photoCropApplyOffset(_cropDrag.startOffsetX + dx, _cropDrag.startOffsetY + dy);
+  }else if(_cropDrag.mode === 'pinch' && _cropDrag.pointers.size === 2){
+    const pts = Array.from(_cropDrag.pointers.values());
+    const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+    const ratio = dist / _cropDrag.startDist;
+    photoCropApplyScale(_cropDrag.startScale * ratio);
+  }
+}
+function photoCropPointerUp(e){
+  if(!_cropDrag) return;
+  _cropDrag.pointers.delete(e.pointerId);
+  if(_cropDrag.pointers.size === 0){
+    document.removeEventListener('pointermove', photoCropPointerMove);
+    document.removeEventListener('pointerup', photoCropPointerUp);
+    document.removeEventListener('pointercancel', photoCropPointerUp);
+    _cropDrag = null;
+  }
+}
+function photoCropWheel(e){
+  e.preventDefault();
+  if(!state.photoCrop) return;
+  const delta = e.deltaY > 0 ? -0.08 : 0.08;
+  photoCropApplyScale(state.photoCrop.scale + delta);
+}
+
+function renderPhotoCropModal(){
+  const c = state.photoCrop;
+  if(!c) return '';
+  const dispW = Math.round(c.baseW * c.scale);
+  const dispH = Math.round(c.baseH * c.scale);
+  return `
+    <div class="photo-crop-overlay">
+      <div class="photo-crop-card">
+        <div class="photo-crop-title">${tr('photo_crop_title')}</div>
+        <div class="photo-crop-frame" id="photoCropFrame" style="width:${c.frameW}px;height:${c.frameH}px;" onpointerdown="photoCropPointerDown(event)" onwheel="photoCropWheel(event)">
+          <img id="photoCropImg" src="${c.dataUrl}" style="width:${dispW}px;height:${dispH}px;transform:translate(-50%,-50%) translate(${c.offsetX}px,${c.offsetY}px);" draggable="false">
+        </div>
+        <div class="photo-crop-hint">${tr('photo_crop_hint')}</div>
+        <div class="photo-crop-zoom-row">
+          <button type="button" class="icon-btn" onclick="photoCropZoomBy(-0.2)" aria-label="-">−</button>
+          <input type="range" min="${c.minScale}" max="${c.maxScale}" step="0.01" value="${c.scale}" oninput="photoCropSetScale(this.value)">
+          <button type="button" class="icon-btn" onclick="photoCropZoomBy(0.2)" aria-label="+">+</button>
+        </div>
+        <div class="photo-crop-actions">
+          <button type="button" class="settings-btn-full secondary" onclick="closePhotoCropModal()">${tr('photo_crop_cancel')}</button>
+          <button type="button" class="settings-btn-full" onclick="confirmPhotoCropModal()">${tr('photo_crop_confirm')}</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function openSettings(){
@@ -13153,11 +14470,14 @@ async function exportData(){
     personalInfo: state.personalInfo,
     contacts: state.contacts,
     recipes: state.recipes,
+    recipeFolders: state.recipeFolders,
+    hiddenBuiltinRecipeIds: state.hiddenBuiltinRecipeIds,
     assistantHistory: state.assistantHistory,
     doctorHistory: state.doctorHistory,
     psychologistHistory: state.psychologistHistory,
     aiContextNotes: state.aiContextNotes,
     coachConstraints: state.coachConstraints, coachProgram: state.coachProgram, coachProgramHistory: state.coachProgramHistory, aiSpendTotalUsd: state.aiSpendTotalUsd, passwordEntries: state.passwordEntries, dismissedReminders: state.dismissedReminders, shoppingList: state.shoppingList, shoppingTemplates: state.shoppingTemplates,
+    learningNotes: state.learningNotes, learningFlashcards: state.learningFlashcards,
   };
   const encrypted = await encryptBackupPayload(payload);
   const blob = new Blob([encrypted], { type: 'text/plain' });
@@ -13314,8 +14634,16 @@ async function handleImportFile(input){
       await storageSet('contacts', state.contacts);
     }
     if(Array.isArray(data.recipes)){
-      state.recipes = data.recipes;
+      state.recipes = migrateRecipeCategories(migrateRecipeFolderIds(data.recipes));
       await storageSet('recipes', state.recipes);
+    }
+    if(Array.isArray(data.recipeFolders)){
+      state.recipeFolders = data.recipeFolders;
+      await storageSet('recipeFolders', state.recipeFolders);
+    }
+    if(Array.isArray(data.hiddenBuiltinRecipeIds)){
+      state.hiddenBuiltinRecipeIds = data.hiddenBuiltinRecipeIds;
+      await storageSet('hiddenBuiltinRecipeIds', state.hiddenBuiltinRecipeIds);
     }
     if(Array.isArray(data.assistantHistory)){
       state.assistantHistory = data.assistantHistory;
@@ -13352,6 +14680,14 @@ async function handleImportFile(input){
     if(Array.isArray(data.passwordEntries)){
       state.passwordEntries = data.passwordEntries;
       await storageSet('passwordEntries', state.passwordEntries);
+    }
+    if(Array.isArray(data.learningNotes)){
+      state.learningNotes = data.learningNotes;
+      await storageSet('learningNotes', state.learningNotes);
+    }
+    if(Array.isArray(data.learningFlashcards)){
+      state.learningFlashcards = data.learningFlashcards;
+      await storageSet('learningFlashcards', state.learningFlashcards);
     }
     if(data.dismissedReminders && typeof data.dismissedReminders === 'object'){
       state.dismissedReminders = data.dismissedReminders;
@@ -13935,8 +15271,15 @@ function renderRecipes(){
   const remainingCal = targets ? Math.max(0, Math.round(targets.calories - (todayTotals.calories||0))) : null;
   const remainingBudget = totalBudgetTopups() - sumAmounts(state.expenses);
 
-  let list = allRecipes()
-    .filter(r => !state.recipeFilter || r.category === state.recipeFilter)
+  const showAll = state.recipeShowAll;
+  const folderId = showAll ? null : (state.currentRecipeFolderId || null);
+  const subfolders = showAll ? [] : recipeFolderChildren(folderId);
+  const baseRecipes = showAll
+    ? allRecipes()
+    : (folderId ? customRecipesInFolder(folderId) : [...visibleBuiltinRecipes(), ...customRecipesInFolder(null)]);
+
+  let list = baseRecipes
+    .filter(r => !state.recipeFilter || recipeCategoryList(r).includes(state.recipeFilter))
     .map(r => {
       const perServing = recipePerServing(r);
       const conflicts = recipeAllergyMatches(r);
@@ -13946,6 +15289,46 @@ function renderRecipes(){
     if(a.conflicts.length !== b.conflicts.length) return a.conflicts.length - b.conflicts.length;
     return a.diff - b.diff;
   });
+
+  const tabs = `
+    <div class="recipe-folder-tabs">
+      <button type="button" class="recipe-folder-tab ${!showAll?'active':''}" onclick="setRecipeShowAll(false)">${tr('recipe_tab_folders')}</button>
+      <button type="button" class="recipe-folder-tab ${showAll?'active':''}" onclick="setRecipeShowAll(true)">${tr('recipe_tab_all')}</button>
+    </div>
+  `;
+
+  const folderPath = showAll ? '' : `
+    <div class="breadcrumb" style="margin-bottom:10px">
+      <button type="button" class="breadcrumb-item" onclick="openRecipeFolder(null)">${tr('recipe_folder_root')}</button>
+      ${recipeFolderPath(folderId).map((f, idx, arr) => `
+        <span class="breadcrumb-sep">›</span>
+        ${idx === arr.length - 1
+          ? `<span class="breadcrumb-current">${escapeHtml(f.name)}</span>`
+          : `<button type="button" class="breadcrumb-item" onclick="openRecipeFolder('${f.id}')">${escapeHtml(f.name)}</button>`}
+      `).join('')}
+    </div>
+  `;
+
+  const folderCards = subfolders.map(f => {
+    const count = recipesInFolderRecursive(f.id).length;
+    const photos = recipeFolderCollagePhotos(f.id);
+    const slots = [0,1,2,3].map(i => photos[i]
+      ? `<img src="${photos[i]}" class="recipe-folder-collage-photo">`
+      : `<div class="recipe-folder-collage-placeholder">🍽️</div>`).join('');
+    return `
+      <div class="recipe-grid-card recipe-folder-card" onclick="openRecipeFolder('${f.id}')">
+        <div class="recipe-folder-collage">${slots}</div>
+        <div class="recipe-grid-body">
+          <div class="recipe-grid-name">📁 ${escapeHtml(f.name)}</div>
+          <div class="recipe-grid-meta">${tr('recipe_folder_count', count)}</div>
+          <div class="recipe-folder-actions">
+            <button type="button" class="row-delete-btn" title="${tr('recipe_folder_rename')}" onclick="event.stopPropagation(); renameRecipeFolder('${f.id}')">✎</button>
+            <button type="button" class="row-delete-btn" title="${tr('recipe_folder_delete')}" onclick="event.stopPropagation(); deleteRecipeFolder('${f.id}')">×</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 
   const filterChips = `
     <div class="category-picker" style="margin-bottom:14px">
@@ -13963,13 +15346,14 @@ function renderRecipes(){
   const cards = list.map(({r, perServing, conflicts}) => `
     <div class="recipe-grid-card" onclick="${r.source==='builtin' ? `viewBuiltinRecipe('${r.id}')` : `viewCustomRecipe('${r.id}')`}">
       <div class="recipe-grid-photo-wrap">
-        ${r.coverPhoto ? `<img src="${r.coverPhoto}" class="recipe-grid-photo">` : `<div class="recipe-grid-photo-placeholder">🍽️</div>`}
+        ${r.coverPhoto ? `<img src="${r.coverPhoto}" class="recipe-grid-photo" onclick="event.stopPropagation(); viewPhoto('${r.coverPhoto}')">` : `<div class="recipe-grid-photo-placeholder">🍽️</div>`}
+        ${r.source!=='builtin' ? `<button type="button" class="recipe-grid-move" title="${tr('recipe_move_tooltip')}" onclick="event.stopPropagation(); openRecipeMoveModal('${r.id}')">📁</button>` : ''}
         ${conflicts.length ? `<span class="recipe-grid-allergy" title="${tr('recipe_allergy_warning', conflicts.join(', '))}">⚠️</span>` : ''}
       </div>
       <div class="recipe-grid-body">
         <div class="recipe-grid-badges">
           <span class="recipe-badge ${r.source}">${r.source==='builtin' ? tr('recipe_builtin_badge') : tr('recipe_custom_badge')}</span>
-          ${r.category ? `<span class="recipe-badge custom">${tr('food_cat_' + r.category)}</span>` : ''}
+          ${recipeCategoryList(r).map(c => `<span class="recipe-badge custom">${tr('food_cat_' + c)}</span>`).join('')}
         </div>
         <div class="recipe-grid-name">${escapeHtml(r.name)}</div>
         <div class="recipe-grid-meta">${Math.round(perServing.calories)} kcal · ${perServing.cost.toFixed(2)}€</div>
@@ -13990,13 +15374,22 @@ function renderRecipes(){
         <div class="summary-row"><span class="summary-name">${tr('recipe_remaining_budget', formatMoney(remainingBudget))}</span></div>
         ${targets ? `<div class="summary-row"><span class="summary-name">${tr('recipe_remaining_calories', remainingCal)}</span></div>` : `<div class="translate-disclaimer">${tr('recipe_no_profile')}</div>`}
       </div>
+      ${tabs}
+      ${folderPath}
+      ${!showAll ? `
+        <div class="recipe-grid">${folderCards}</div>
+        <button type="button" class="settings-btn-full secondary budget-add-btn" onclick="addRecipeFolder()">${tr('recipe_folder_new')}</button>
+        <div class="photo-section-label recipe-folder-section-label">${folderId ? tr('recipe_folder_recipes_here') : tr('recipe_folder_unfiled')}</div>
+      ` : ''}
       ${filterChips}
       <div class="recipe-grid">${cards}</div>
       <button class="settings-btn-full budget-add-btn" onclick="openRecipeEntry(null)">${tr('recipe_add')}</button>
       <div class="translate-disclaimer" style="margin-top:12px">${tr('recipe_allergy_disclaimer')}</div>
       <div class="translate-disclaimer">${tr('recipe_cost_disclaimer')}</div>
     </div>
+    ${renderRecipeMoveModal()}
     ${renderBottomNav()}
+    ${renderLightbox()}
   `;
 }
 
@@ -14006,11 +15399,14 @@ function renderRecipeEntry(){
   const steps = r.steps || [];
 
   const ingredientRows = ingredients.map(ing => `
-    <div class="recipe-ing-row">
-      <input type="text" class="cloud-client-input" placeholder="${tr('recipe_ingredient_name_placeholder')}" value="${escapeAttr(ing.name)}" onchange="updateRecipeIngredientField('${ing.id}','name',this.value)" style="flex:2">
-      <input type="text" inputmode="decimal" class="cloud-client-input" placeholder="${tr('recipe_ingredient_amount_placeholder')}" value="${escapeAttr(String(ing.amount!==undefined?ing.amount:''))}" onchange="updateRecipeIngredientField('${ing.id}','amount',this.value)" style="flex:1">
-      <input type="text" class="cloud-client-input" placeholder="${tr('recipe_ingredient_unit_placeholder')}" value="${escapeAttr(ing.unit||'')}" onchange="updateRecipeIngredientField('${ing.id}','unit',this.value)" style="flex:1">
-      <button type="button" class="row-delete-btn" onclick="removeRecipeIngredient('${ing.id}')">×</button>
+    <div class="recipe-ing-row-wrap">
+      <div class="recipe-ing-row">
+        <input type="text" class="cloud-client-input" placeholder="${tr('recipe_ingredient_name_placeholder')}" value="${escapeAttr(ing.name)}" onchange="updateRecipeIngredientField('${ing.id}','name',this.value)" style="flex:2">
+        <input type="text" inputmode="decimal" class="cloud-client-input" placeholder="${tr('recipe_ingredient_amount_placeholder')}" value="${escapeAttr(String(ing.amount!==undefined?ing.amount:''))}" onchange="updateRecipeIngredientField('${ing.id}','amount',this.value)" style="flex:1">
+        <input type="text" class="cloud-client-input" placeholder="${tr('recipe_ingredient_unit_placeholder')}" value="${escapeAttr(ing.unit||'')}" onchange="updateRecipeIngredientField('${ing.id}','unit',this.value)" style="flex:1">
+        <button type="button" class="row-delete-btn" onclick="removeRecipeIngredient('${ing.id}')">×</button>
+      </div>
+      <input type="text" class="cloud-client-input recipe-ing-brand-input" placeholder="${tr('recipe_ingredient_brand_placeholder')}" value="${escapeAttr(ing.brandNote||'')}" onchange="updateRecipeIngredientField('${ing.id}','brandNote',this.value)">
     </div>
   `).join('');
 
@@ -14060,24 +15456,29 @@ function renderRecipeEntry(){
         <label class="cloud-field-label">${tr('food_cat_label')}</label>
         <div class="category-picker">
           ${['starter','main','snack','dessert'].map(c => `
-            <button type="button" class="category-chip ${r.category===c?'active':''}" style="--chip-color:var(--teal)" onclick="state.currentRecipe.category='${c}'; render();">
+            <button type="button" class="category-chip ${recipeCategoryList(r).includes(c)?'active':''}" style="--chip-color:var(--teal)" onclick="toggleRecipeEntryCategory('${c}')">
               <span class="category-dot"></span>${tr('food_cat_' + c)}
             </button>
           `).join('')}
         </div>
 
+        <label class="cloud-field-label">${tr('recipe_folder_label')}</label>
+        ${renderRecipeFolderCheckboxList(Array.isArray(r.folderIds) ? r.folderIds : [], 'toggleRecipeEntryFolder')}
+
         <div class="event-time-row">
           <label>${tr('recipe_servings_label')}</label>
           <input type="number" min="1" value="${r.servings}" onchange="state.currentRecipe.servings=this.value" style="width:70px">
         </div>
-        <div class="event-time-row">
-          <label>${tr('recipe_prep_time')}</label>
-          <input type="number" min="0" value="${r.prepTime}" onchange="state.currentRecipe.prepTime=this.value" style="width:70px">
-          <label>${tr('recipe_cook_time')}</label>
-          <input type="number" min="0" value="${r.cookTime}" onchange="state.currentRecipe.cookTime=this.value" style="width:70px">
-          <label>${tr('recipe_rest_time')}</label>
-          <input type="number" min="0" value="${r.restTime}" onchange="state.currentRecipe.restTime=this.value" style="width:70px">
-        </div>
+        ${['prepTime','cookTime','restTime'].map(field => `
+          <div class="event-time-row">
+            <label>${tr('recipe_' + field.replace('Time','_time'))}</label>
+            <input type="number" min="0" step="any" value="${escapeAttr(String(recipeTimeDisplayValue(r, field)))}" onchange="updateRecipeTimeValue('${field}', this.value)" style="width:70px">
+            <select onchange="updateRecipeTimeUnit('${field}', this.value)" style="width:64px">
+              <option value="min" ${recipeTimeUnit(r, field)==='min'?'selected':''}>${tr('recipe_time_unit_min')}</option>
+              <option value="h" ${recipeTimeUnit(r, field)==='h'?'selected':''}>${tr('recipe_time_unit_h')}</option>
+            </select>
+          </div>
+        `).join('')}
 
         <div class="photo-section-label" style="margin-top:16px">${tr('recipe_ingredients_title')}</div>
         ${ingredientRows}
@@ -14109,34 +15510,65 @@ function renderRecipeEntry(){
       </div>
         ${renderSaveBar('backFromRecipeEntry()')}
       </div>
+    ${renderPhotoCropModal()}
 `;
 }
 
 function renderRecipeViewCustom(){
   const r = state.currentRecipe;
   const desired = state.recipeViewServings || r.servings || 1;
-  const content = getEffectiveRecipeContent(r, state.recipeViewLang);
+  const origLang = recipeOriginalLang(r);
+  const viewLang = state.recipeViewLang || origLang;
+  const content = getEffectiveRecipeContent(r, viewLang);
   const conflicts = recipeAllergyMatches(r);
+  const viewingTranslation = viewLang !== origLang;
+  const currentIsStale = viewingTranslation && recipeTranslationNeedsUpdate(r, viewLang);
+  const showStaleNotice = currentIsStale && !state.recipeTranslating;
+  // What the translate/view button targets and whether clicking it needs an API call:
+  // - viewing a (complete) translation: the "other language" relative to what's shown is the
+  //   original — always free to switch back to.
+  // - viewing a translation that's gone stale (recipe edited since): fix/fill THAT language in
+  //   place from the pristine original, instead of navigating away from the problem.
+  // - viewing the original: the "other language" is whatever it hasn't been translated to yet
+  //   (or needs completing).
+  let buttonTargetLang, buttonNeedsApi;
+  if(viewingTranslation){
+    buttonTargetLang = currentIsStale ? viewLang : origLang;
+    buttonNeedsApi = currentIsStale;
+  } else {
+    buttonTargetLang = viewLang === 'en' ? 'fr' : 'en';
+    buttonNeedsApi = recipeTranslationNeedsUpdate(r, buttonTargetLang);
+  }
+  const buttonAction = buttonNeedsApi ? 'translateRecipe()' : 'toggleRecipeViewLang()';
+  const buttonLabel = buttonNeedsApi ? tr('recipe_translate_to', langLabel(buttonTargetLang)) : tr('recipe_view_in', langLabel(buttonTargetLang));
 
   const ingredientRows = content.ingredients.length ? content.ingredients.map(ing => {
     const scaled = scaleIngredientAmount(Number(ing.amount)||0, r.servings || 1, desired);
-    return `<div class="recipe-view-ingredient"><strong>${escapeHtml(formatSmartQuantity(scaled, ing.unit))}</strong> ${escapeHtml(ing.name)}</div>`;
+    const brandLine = ing.brandNote && ing.brandNote.trim() ? `<div class="recipe-view-ingredient-brand">${escapeHtml(ing.brandNote)}</div>` : '';
+    let qtyLabel;
+    if(isIngredientAmountUnset(ing.amount)){
+      const unit = (ing.unit || '').trim();
+      qtyLabel = unit ? `<strong>${escapeHtml(unit)}</strong> ` : '';
+    } else {
+      qtyLabel = `<strong>${escapeHtml(formatSmartQuantity(scaled, ing.unit))}</strong> `;
+    }
+    return `<div class="recipe-view-ingredient">${qtyLabel}${escapeHtml(ing.name)}${brandLine}</div>`;
   }).join('') : `<div class="translate-disclaimer">${tr('recipe_no_ingredients')}</div>`;
 
   const stepRows = content.steps.length ? content.steps.map((s, idx) => `
     <div class="recipe-view-step">
       <div class="recipe-step-num">${idx+1}</div>
       <div style="flex:1">
-        ${s.photo ? `<img src="${s.photo}" class="recipe-step-photo">` : ''}
-        <div>${linkifyIngredientsInStep(s.content, content.ingredients, r.servings || 1, desired)}</div>
+        ${s.photo ? `<img src="${s.photo}" class="recipe-step-photo" onclick="viewPhoto('${s.photo}')">` : ''}
+        <div>${linkifyTemperaturesAndIngredientsInStep(s.content, content.ingredients, r.servings || 1, desired)}</div>
       </div>
     </div>
   `).join('') : `<div class="translate-disclaimer">${tr('recipe_no_steps')}</div>`;
 
   const timeParts = [];
-  if(r.prepTime) timeParts.push(`${tr('recipe_prep_time')}: ${r.prepTime}`);
-  if(r.cookTime) timeParts.push(`${tr('recipe_cook_time')}: ${r.cookTime}`);
-  if(r.restTime) timeParts.push(`${tr('recipe_rest_time')}: ${r.restTime}`);
+  if(r.prepTime) timeParts.push(`${tr('recipe_prep_time')}: ${formatDuration(Math.round(r.prepTime))}`);
+  if(r.cookTime) timeParts.push(`${tr('recipe_cook_time')}: ${formatDuration(Math.round(r.cookTime))}`);
+  if(r.restTime) timeParts.push(`${tr('recipe_rest_time')}: ${formatDuration(Math.round(r.restTime))}`);
 
   return `
     <div class="editor">
@@ -14145,14 +15577,15 @@ function renderRecipeViewCustom(){
         <button class="icon-btn" onclick="openRecipeEntry(state.currentRecipe)">${tr('recipe_edit_button')}</button>
       </div>
       <div class="editor-body">
-        ${r.coverPhoto ? `<img src="${r.coverPhoto}" class="recipe-cover-photo">` : ''}
+        ${r.coverPhoto ? `<img src="${r.coverPhoto}" class="recipe-cover-photo" onclick="viewPhoto('${r.coverPhoto}')">` : ''}
         <span class="recipe-badge custom">${tr('recipe_custom_badge')}</span>
         <h2 class="day-view-title" style="margin-top:10px">${escapeHtml(content.name)}</h2>
         ${conflicts.length ? `<div class="recipe-allergy-flag" style="display:block; margin-bottom:8px">${tr('recipe_allergy_warning', conflicts.join(', '))}</div>` : ''}
         ${timeParts.length ? `<div class="translate-disclaimer">${timeParts.join(' · ')}</div>` : ''}
+        ${showStaleNotice ? `<div class="translate-disclaimer">${tr('recipe_translation_incomplete')}</div>` : ''}
 
-        <button class="settings-btn-full secondary budget-add-btn" style="margin-top:12px" onclick="${state.recipeViewLang==='en' ? 'toggleRecipeViewLang()' : (r.translations && r.translations.en ? 'toggleRecipeViewLang()' : 'translateRecipe()')}" ${state.recipeTranslating ? 'disabled' : ''}>
-          ${state.recipeTranslating ? tr('recipe_translating') : (state.recipeViewLang==='en' ? tr('recipe_show_original') : tr('recipe_translate_button'))}
+        <button class="settings-btn-full secondary budget-add-btn" style="margin-top:12px" onclick="${buttonAction}" ${state.recipeTranslating ? 'disabled' : ''}>
+          ${state.recipeTranslating ? tr('recipe_translating') : buttonLabel}
         </button>
 
         <div class="photo-section-label" style="margin-top:16px">${tr('recipe_servings_adjust')}</div>
@@ -14173,6 +15606,7 @@ function renderRecipeViewCustom(){
         </div>
       </div>
     </div>
+    ${renderLightbox()}
   `;
 }
 
@@ -14184,6 +15618,7 @@ function renderRecipeView(){
     <div class="editor">
       <div class="editor-bar">
         <button class="icon-btn" onclick="state.screen='recipes'; render();">${tr('recipe_back')}</button>
+        <button class="icon-btn delete" onclick="deleteBuiltinRecipe('${r.id}')">${tr('recipe_delete')}</button>
       </div>
       <div class="editor-body">
         <span class="recipe-badge builtin">${tr('recipe_builtin_badge')}</span>
@@ -14214,6 +15649,16 @@ function contactGroupForCategory(categoryId){
 
 function setDirectoryFilter(group){
   state.directoryFilter = state.directoryFilter === group ? null : group;
+  render();
+}
+
+function toggleDirectoryFavoritesOnly(){
+  state.directoryFavoritesOnly = !state.directoryFavoritesOnly;
+  render();
+}
+
+function toggleCurrentContactFavorite(){
+  state.currentContact.favorite = !state.currentContact.favorite;
   render();
 }
 
@@ -14342,6 +15787,7 @@ function buildAssistantDataContext(){
     const parts = [];
     if(cat) parts.push(cat);
     if(c.phone) parts.push('tél : ' + c.phone);
+    if(c.landlinePhone) parts.push('fixe : ' + c.landlinePhone);
     if(c.email) parts.push('email : ' + c.email);
     if(c.postalAddress) parts.push('adresse : ' + c.postalAddress.replace(/\n/g, ', '));
     lines.push(`${name}${parts.length ? ' — ' + parts.join(', ') : ''}`);
@@ -15108,6 +16554,7 @@ function openGamesStats(){
   render();
 }
 
+const GAMES_AVAILABLE_COUNT = 13; // Memory, Sudoku, Minesweeper, Mastermind, Quiz, MotMystère, 2048, Calcul, WordSearch, Stroop, Simon, Anagrammes, Suite logique
 function renderGamesHome(){
   const mp = ensureMemoryPairsStats();
   const sp = ensureSudokuStats();
@@ -33524,14 +34971,16 @@ function renderGlobalSearchResults(query){
   const q = query.trim().toLowerCase();
   const locale = state.lang === 'en' ? 'en-GB' : 'fr-FR';
 
-  let notesResults = [], journalResults = [], contactResults = [], recipeResults = [];
+  let notesResults = [], journalResults = [], contactResults = [], recipeResults = [], learningNoteResults = [], learningFlashcardResults = [];
   if(q){
     notesResults = state.notes.filter(n => !n.archived && !noteIsLocked(n) && ((n.title||'').toLowerCase().includes(q) || (n.richText ? stripHtmlToText(n.content) : (n.content||'')).toLowerCase().includes(q) || (n.items||[]).some(i => (i.text||'').toLowerCase().includes(q)) || (n.tags||[]).some(t => t.toLowerCase().includes(q))));
     journalResults = state.journal.filter(e => (e.text||'').toLowerCase().includes(q)).sort((a,b)=>(b.date+((b.startTime)||'')).localeCompare(a.date+((a.startTime)||'')));
-    contactResults = state.contacts.filter(c => (c.firstName||'').toLowerCase().includes(q) || (c.lastName||'').toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q) || (c.phone||'').toLowerCase().includes(q));
+    contactResults = state.contacts.filter(c => (c.firstName||'').toLowerCase().includes(q) || (c.lastName||'').toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q) || (c.phone||'').toLowerCase().includes(q) || (c.landlinePhone||'').toLowerCase().includes(q));
     recipeResults = allRecipes().filter(r => (r.name||'').toLowerCase().includes(q) || recipeIngredientsText(r).toLowerCase().includes(q));
+    learningNoteResults = state.learningNotes.filter(n => (n.title||'').toLowerCase().includes(q) || (n.content||'').toLowerCase().includes(q));
+    learningFlashcardResults = state.learningFlashcards.filter(c => (c.front||'').toLowerCase().includes(q) || (c.back||'').toLowerCase().includes(q));
   }
-  const totalResults = notesResults.length + journalResults.length + contactResults.length + recipeResults.length;
+  const totalResults = notesResults.length + journalResults.length + contactResults.length + recipeResults.length + learningNoteResults.length + learningFlashcardResults.length;
 
   const section = (title, rows) => rows.length ? `
     <div class="photo-section-label" style="margin-top:16px">${title}</div>
@@ -33565,7 +35014,7 @@ function renderGlobalSearchResults(query){
     <div class="budget-row" onclick='openContactEntry(${JSON.stringify(c).replace(/'/g, "&#39;")})'>
       <div class="budget-row-desc">
         <div>${escapeHtml((c.firstName + ' ' + c.lastName).trim() || tr('untitled'))}</div>
-        <div class="budget-row-date">${[contactCategoryLabel(c), c.phone || c.email].filter(Boolean).join(' · ')}</div>
+        <div class="budget-row-date">${[contactCategoryLabel(c), c.phone || c.landlinePhone || c.email].filter(Boolean).join(' · ')}</div>
       </div>
     </div>
   `);
@@ -33579,6 +35028,24 @@ function renderGlobalSearchResults(query){
     </div>
   `);
 
+  const learningNotesHtml = learningNoteResults.map(n => `
+    <div class="budget-row" onclick='openLearningNoteEntry("${n.domain}", ${JSON.stringify(n).replace(/'/g, "&#39;")})'>
+      <div class="budget-row-desc">
+        <div>${n.title ? escapeHtml(n.title) : tr('untitled')}</div>
+        <div class="budget-row-date">${tr('learning_domain_' + n.domain)}</div>
+      </div>
+    </div>
+  `);
+
+  const learningFlashcardsHtml = learningFlashcardResults.map(c => `
+    <div class="budget-row" onclick='openLearningFlashcardEntry("${c.domain}", ${JSON.stringify(c).replace(/'/g, "&#39;")})'>
+      <div class="budget-row-desc">
+        <div>${escapeHtml(c.front || tr('untitled'))}</div>
+        <div class="budget-row-date">${tr('learning_domain_' + c.domain)}</div>
+      </div>
+    </div>
+  `);
+
   if(!q) return '';
   if(totalResults === 0) return `<div class="translate-disclaimer" style="margin-top:10px">${tr('search_no_results')}</div>`;
   return `
@@ -33586,6 +35053,7 @@ function renderGlobalSearchResults(query){
     ${section(tr('global_search_section_journal'), journalHtml)}
     ${section(tr('global_search_section_directory'), contactsHtml)}
     ${section(tr('global_search_section_recipes'), recipesHtml)}
+    ${section(tr('global_search_section_learning'), learningNotesHtml.concat(learningFlashcardsHtml))}
   `;
 }
 
@@ -33676,6 +35144,7 @@ function renderPasswords(){
       <button class="settings-btn" onclick="openSettings()" aria-label="${tr('settings_title')}">${svgIcon('settings')}</button>
     </div>
     <div class="content">
+      <button class="settings-btn-full budget-add-btn" style="margin-bottom:12px" onclick="openPasswordEntry(null)">${tr('pwd_add')}</button>
       <input type="text" id="passwordSearchInput" class="search-input" placeholder="${tr('search_placeholder')}" value="${escapeAttr(state.passwordSearchQuery)}" oninput="state.passwordSearchQuery=this.value; debounceRender();">
       ${(presentCategories.length || hasUncategorized) ? filterChips : ''}
       <div class="budget-block">
@@ -33823,18 +35292,28 @@ function renderPasswordEntry(){
 }
 
 function renderDirectory(){
-  const filtered = state.contacts.filter(c => !state.directoryFilter || contactGroupForCategory(c.category) === state.directoryFilter);
-  const sorted = [...filtered].sort((a,b) => (a.firstName + ' ' + a.lastName).trim().localeCompare((b.firstName + ' ' + b.lastName).trim(), 'fr'));
+  const filtered = state.contacts.filter(c =>
+    (!state.directoryFilter || contactGroupForCategory(c.category) === state.directoryFilter) &&
+    (!state.directoryFavoritesOnly || !!c.favorite)
+  );
+  const sorted = [...filtered].sort((a,b) => {
+    const favDiff = (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0);
+    if(favDiff) return favDiff;
+    return (a.firstName + ' ' + a.lastName).trim().localeCompare((b.firstName + ' ' + b.lastName).trim(), 'fr');
+  });
   const rows = sorted.map(c => `
     <div class="budget-row" onclick='openContactEntry(${JSON.stringify(c).replace(/'/g, "&#39;")})'>
       <div class="budget-row-desc">
-        <div>${escapeHtml((c.firstName + ' ' + c.lastName).trim() || tr('untitled'))}</div>
-        <div class="budget-row-date">${[contactCategoryLabel(c), c.phone || c.email].filter(Boolean).join(' · ')}</div>
+        <div>${c.favorite ? '★ ' : ''}${escapeHtml((c.firstName + ' ' + c.lastName).trim() || tr('untitled'))}</div>
+        <div class="budget-row-date">${[contactCategoryLabel(c), c.phone || c.landlinePhone || c.email].filter(Boolean).join(' · ')}</div>
       </div>
     </div>
   `).join('');
   const filterChips = `
     <div class="category-picker" style="margin-bottom:14px">
+      <button type="button" class="category-chip ${state.directoryFavoritesOnly?'active':''}" style="--chip-color:#D9A027" onclick="toggleDirectoryFavoritesOnly()">
+        <span class="category-dot"></span>★ ${tr('directory_filter_favorites')}
+      </button>
       <button type="button" class="category-chip ${!state.directoryFilter?'active':''}" style="--chip-color:var(--teal)" onclick="setDirectoryFilter(null)">
         <span class="category-dot"></span>${tr('directory_filter_all')}
       </button>
@@ -33876,6 +35355,7 @@ function renderContactEntry(){
         <input type="text" class="cloud-client-input" value="${escapeAttr(c.firstName)}" oninput="state.currentContact.firstName=this.value">
         <label class="cloud-field-label">${tr('pi_last_name')}</label>
         <input type="text" class="cloud-client-input" value="${escapeAttr(c.lastName)}" oninput="state.currentContact.lastName=this.value">
+        <button type="button" onclick="toggleCurrentContactFavorite()" aria-label="${tr('contact_favorite_toggle')}" style="background:none; border:none; font-size:1.3rem; color:${c.favorite ? '#D9A027' : 'var(--ink-soft)'}; cursor:pointer; padding:4px 0; display:flex; align-items:center; gap:6px;">${c.favorite ? '★' : '☆'} <span style="font-size:0.8rem; font-family:'Quicksand', sans-serif;">${tr('directory_filter_favorites')}</span></button>
         <label class="cloud-field-label">${tr('contact_category_label')}</label>
         <select class="cloud-client-input" onchange="state.currentContact.category=this.value; render();">
           <option value="" ${!c.category?'selected':''}>${tr('pi_no_data')}</option>
@@ -33892,8 +35372,10 @@ function renderContactEntry(){
         <textarea class="editor-content" style="min-height:60px; background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px;" oninput="state.currentContact.postalAddress=this.value">${escapeHtml(c.postalAddress || '')}</textarea>
         <label class="cloud-field-label" style="margin-top:10px">${tr('pi_email')}</label>
         <input type="email" class="cloud-client-input" value="${escapeAttr(c.email)}" oninput="state.currentContact.email=this.value">
-        <label class="cloud-field-label">${tr('pi_phone')}</label>
+        <label class="cloud-field-label">${tr('contact_phone_mobile_label')}</label>
         <input type="tel" class="cloud-client-input" value="${escapeAttr(c.phone)}" oninput="state.currentContact.phone=this.value">
+        <label class="cloud-field-label">${tr('contact_phone_landline')}</label>
+        <input type="tel" class="cloud-client-input" value="${escapeAttr(c.landlinePhone)}" oninput="state.currentContact.landlinePhone=this.value">
       </div>
         ${renderSaveBar('backFromContactEntry()')}
       </div>
@@ -34337,7 +35819,16 @@ const CATEGORY_ACCENT_COLORS = {
   vault: 'var(--crown-leaf-deep)',
   assistant: 'var(--lock-pink)',
   entertainment: 'var(--crown-red)',
+  learning: 'var(--teal)',
+  settings: 'var(--ink-soft)',
 };
+
+// Shortcut click handler for a category tile/tab: Settings has no subcats to drill into,
+// it jumps straight to the existing Settings screen; every other category behaves as before.
+function openCategoryOrSettings(catId){
+  if(catId === 'settings') openSettings();
+  else openCategoryDetail(catId);
+}
 
 function svgFlowerO(){
   return `<svg viewBox="0 0 20 20"><g fill="none" stroke="var(--crown-gold-light)" stroke-width="1.6"><circle cx="10" cy="4.5" r="4"/><circle cx="15.5" cy="10" r="4"/><circle cx="10" cy="15.5" r="4"/><circle cx="4.5" cy="10" r="4"/></g><circle cx="10" cy="10" r="2.6" fill="var(--crown-gold-light)"/></svg>`;
@@ -34412,7 +35903,7 @@ function renderCategoryHome(){
       ` : ''}
       <div class="category-grid">
         ${categories.map(cat => `
-          <button class="category-tile" style="border-color:${CATEGORY_ACCENT_COLORS[cat.id] || 'var(--line)'}; color:${CATEGORY_ACCENT_COLORS[cat.id] || 'var(--teal-deep)'};" onclick="openCategoryDetail('${cat.id}')">
+          <button class="category-tile" style="border-color:${CATEGORY_ACCENT_COLORS[cat.id] || 'var(--line)'}; color:${CATEGORY_ACCENT_COLORS[cat.id] || 'var(--teal-deep)'};" onclick="openCategoryOrSettings('${cat.id}')">
             ${svgIcon(cat.icon)}
             <span>${cat.title}</span>
           </button>
@@ -34702,9 +36193,10 @@ function getVaultSubcatMeta(){
 
 function getEntertainmentSubcatMeta(){
   const filmCount = state.filmEntries.length;
+  const gamesCount = GAMES_AVAILABLE_COUNT;
   return {
     movies_series: { preview: filmCount ? tr('life_preview_films', filmCount) : tr('life_preview_films_empty') },
-    games: { preview: tr('games_best_level', (state.gamesStats.memory_pairs && state.gamesStats.memory_pairs.bestLevel) || 1) },
+    games: { preview: tr('life_preview_games_count', gamesCount) },
   };
 }
 
@@ -36122,6 +37614,234 @@ async function backFromPasswordEntry(){
   if(!ok){ showToast(tr('required_pwd_site')); return; }
   state.currentPasswordEntry = null;
   state.screen = 'passwords';
+  render();
+}
+
+/* ---------- LEARNING (notes + flashcards, per domain: languages/gardening/diy/cooking) ---------- */
+const LEARNING_DOMAIN_SCREENS = { languages:'learningLanguages', gardening:'learningGardening', diy:'learningDiy', cooking:'learningCooking' };
+function learningDomainScreen(domain){
+  return LEARNING_DOMAIN_SCREENS[domain] || 'learningLanguages';
+}
+
+function setLearningView(view){
+  state.learningView = view;
+  render();
+}
+
+function renderLearningDomainHome(domain){
+  state.currentLearningDomain = domain;
+  const view = state.learningView || 'notes';
+  const notes = state.learningNotes.filter(n => n.domain === domain);
+  const cards = state.learningFlashcards.filter(c => c.domain === domain);
+
+  const notesHtml = notes.length ? notes.map(n => `
+    <div class="budget-row" onclick='openLearningNoteEntry("${domain}", ${JSON.stringify(n).replace(/'/g, "&#39;")})'>
+      <div class="budget-row-desc">
+        <div>${n.title ? escapeHtml(n.title) : tr('untitled')}</div>
+        <div class="budget-row-date">${escapeHtml((n.content||'').slice(0,60))}</div>
+      </div>
+    </div>
+  `).join('') : `<div class="translate-disclaimer">${tr('learning_notes_empty')}</div>`;
+
+  const cardsHtml = cards.length ? cards.map(c => `
+    <div class="budget-row" onclick='openLearningFlashcardEntry("${domain}", ${JSON.stringify(c).replace(/'/g, "&#39;")})'>
+      <div class="budget-row-desc">
+        <div>${escapeHtml(c.front || tr('untitled'))}</div>
+        <div class="budget-row-date">${escapeHtml((c.back||'').slice(0,60))}</div>
+      </div>
+    </div>
+  `).join('') : `<div class="translate-disclaimer">${tr('learning_flashcards_empty')}</div>`;
+
+  return `
+    <div class="top-bar">
+      <div class="top-bar-left">
+        ${renderBreadcrumb()}
+      </div>
+      <button class="settings-btn" onclick="openSettings()" aria-label="${tr('settings_title')}">${svgIcon('settings')}</button>
+    </div>
+    <div class="content">
+      <div class="c-chips" style="display:flex; gap:6px; margin-bottom:12px;">
+        <button type="button" class="category-chip ${view==='notes'?'active':''}" style="--chip-color:var(--teal)" onclick="setLearningView('notes')">
+          <span class="category-dot"></span>${tr('learning_tab_notes')} (${notes.length})
+        </button>
+        <button type="button" class="category-chip ${view==='flashcards'?'active':''}" style="--chip-color:var(--teal)" onclick="setLearningView('flashcards')">
+          <span class="category-dot"></span>${tr('learning_tab_flashcards')} (${cards.length})
+        </button>
+      </div>
+      ${view === 'notes' ? `
+        <button class="settings-btn-full budget-add-btn" style="margin-bottom:12px" onclick='openLearningNoteEntry("${domain}", null)'>${tr('learning_note_add')}</button>
+        <div class="budget-block">${notesHtml}</div>
+      ` : `
+        <button class="settings-btn-full budget-add-btn" style="margin-bottom:12px" onclick='openLearningFlashcardEntry("${domain}", null)'>${tr('learning_flashcard_add')}</button>
+        ${cards.length ? `<button class="settings-btn-full secondary budget-add-btn" style="margin-bottom:12px" onclick="startLearningReview('${domain}')">${tr('learning_review_button')}</button>` : ''}
+        <div class="budget-block">${cardsHtml}</div>
+      `}
+    </div>
+    ${renderBottomNav()}
+  `;
+}
+
+function openLearningNoteEntry(domain, note){
+  state.currentLearningNote = note
+    ? {...note}
+    : { id: 'ln' + Date.now(), domain, title: '', content: '', created: Date.now(), updated: Date.now() };
+  state.currentLearningDomain = domain;
+  state.screen = 'learningNoteEntry';
+  render();
+}
+
+function renderLearningNoteEntry(){
+  const n = state.currentLearningNote;
+  const isExisting = state.learningNotes.some(x => x.id === n.id);
+  return `
+    <div class="editor">
+      <div class="editor-bar">
+        <button class="icon-btn" onclick="backFromLearningNoteEntry()">${tr('health_entry_back')}</button>
+        ${isExisting ? `<button class="icon-btn delete" onclick="deleteLearningNoteEntry()">${tr('health_entry_delete')}</button>` : ''}
+      </div>
+      <div class="editor-body">
+        <input class="editor-title" type="text" placeholder="${tr('learning_note_title_placeholder')}" value="${escapeAttr(n.title)}" oninput="state.currentLearningNote.title=this.value">
+        <textarea class="editor-content" placeholder="${tr('learning_note_content_placeholder')}" oninput="state.currentLearningNote.content=this.value">${escapeHtml(n.content || '')}</textarea>
+      </div>
+      ${renderSaveBar('backFromLearningNoteEntry()')}
+    </div>
+  `;
+}
+
+async function saveLearningNoteEntry(){
+  const n = state.currentLearningNote;
+  if(!n.title.trim() && !n.content.trim()) return;
+  n.updated = Date.now();
+  const idx = state.learningNotes.findIndex(x => x.id === n.id);
+  if(idx >= 0) state.learningNotes[idx] = n;
+  else state.learningNotes.push(n);
+  await storageSet('learningNotes', state.learningNotes);
+  triggerAutoSync();
+}
+
+async function backFromLearningNoteEntry(){
+  await saveLearningNoteEntry();
+  const domain = state.currentLearningNote.domain;
+  state.currentLearningNote = null;
+  state.screen = learningDomainScreen(domain);
+  render();
+}
+
+async function deleteLearningNoteEntry(){
+  const domain = state.currentLearningNote.domain;
+  await removeFromArrayWithUndo('learningNotes', 'learningNotes', state.currentLearningNote.id, tr('undo_deleted_generic'));
+  state.currentLearningNote = null;
+  state.screen = learningDomainScreen(domain);
+  render();
+}
+
+function openLearningFlashcardEntry(domain, card){
+  state.currentLearningFlashcard = card
+    ? {...card}
+    : { id: 'lf' + Date.now(), domain, front: '', back: '', created: Date.now() };
+  state.currentLearningDomain = domain;
+  state.screen = 'learningFlashcardEntry';
+  render();
+}
+
+function renderLearningFlashcardEntry(){
+  const c = state.currentLearningFlashcard;
+  const isExisting = state.learningFlashcards.some(x => x.id === c.id);
+  return `
+    <div class="editor">
+      <div class="editor-bar">
+        <button class="icon-btn" onclick="backFromLearningFlashcardEntry()">${tr('health_entry_back')}</button>
+        ${isExisting ? `<button class="icon-btn delete" onclick="deleteLearningFlashcardEntry()">${tr('health_entry_delete')}</button>` : ''}
+      </div>
+      <div class="editor-body">
+        <label class="cloud-field-label">${tr('learning_flashcard_front_label')}</label>
+        <textarea class="editor-content" style="min-height:70px; background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px;" placeholder="${tr('learning_flashcard_front_placeholder')}" oninput="state.currentLearningFlashcard.front=this.value">${escapeHtml(c.front || '')}</textarea>
+        <label class="cloud-field-label" style="margin-top:10px">${tr('learning_flashcard_back_label')}</label>
+        <textarea class="editor-content" style="min-height:70px; background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px;" placeholder="${tr('learning_flashcard_back_placeholder')}" oninput="state.currentLearningFlashcard.back=this.value">${escapeHtml(c.back || '')}</textarea>
+      </div>
+      ${renderSaveBar('backFromLearningFlashcardEntry()')}
+    </div>
+  `;
+}
+
+async function saveLearningFlashcardEntry(){
+  const c = state.currentLearningFlashcard;
+  if(!c.front.trim() && !c.back.trim()) return;
+  const idx = state.learningFlashcards.findIndex(x => x.id === c.id);
+  if(idx >= 0) state.learningFlashcards[idx] = c;
+  else state.learningFlashcards.push(c);
+  await storageSet('learningFlashcards', state.learningFlashcards);
+  triggerAutoSync();
+}
+
+async function backFromLearningFlashcardEntry(){
+  await saveLearningFlashcardEntry();
+  const domain = state.currentLearningFlashcard.domain;
+  state.currentLearningFlashcard = null;
+  state.screen = learningDomainScreen(domain);
+  render();
+}
+
+async function deleteLearningFlashcardEntry(){
+  const domain = state.currentLearningFlashcard.domain;
+  await removeFromArrayWithUndo('learningFlashcards', 'learningFlashcards', state.currentLearningFlashcard.id, tr('undo_deleted_generic'));
+  state.currentLearningFlashcard = null;
+  state.screen = learningDomainScreen(domain);
+  render();
+}
+
+function startLearningReview(domain){
+  const deck = shuffleArray(state.learningFlashcards.filter(c => c.domain === domain));
+  if(!deck.length) return;
+  state.learningReview = { domain, deck, index: 0, showBack: false };
+  state.screen = 'learningReview';
+  render();
+}
+
+function renderLearningReview(){
+  const r = state.learningReview;
+  const card = r.deck[r.index];
+  const isFirst = r.index === 0;
+  const isLast = r.index >= r.deck.length - 1;
+  return `
+    <div class="editor">
+      <div class="editor-bar">
+        <button class="icon-btn" onclick="exitLearningReview()">${tr('learning_review_exit')}</button>
+        <span style="font-size:0.85rem; color:var(--ink-soft); font-family:'Quicksand', sans-serif;">${tr('learning_review_progress', r.index+1, r.deck.length)}</span>
+      </div>
+      <div class="editor-body" style="display:flex; flex-direction:column; align-items:center; gap:16px; padding-top:20px;">
+        <div class="settings-section journal-summary" style="width:100%; min-height:160px; display:flex; align-items:center; justify-content:center; text-align:center; font-size:1.05rem; margin:0; padding:24px; box-sizing:border-box; cursor:pointer;" onclick="toggleLearningReviewFlip()">
+          ${escapeHtml(r.showBack ? (card.back || '') : (card.front || ''))}
+        </div>
+        <button type="button" class="settings-btn-full secondary budget-add-btn" onclick="toggleLearningReviewFlip()">${tr('learning_review_flip')}</button>
+        <div style="display:flex; gap:10px; width:100%;">
+          <button type="button" class="settings-btn-full secondary budget-add-btn" style="flex:1; opacity:${isFirst?0.5:1}" ${isFirst?'disabled':''} onclick="learningReviewPrev()">${tr('learning_review_prev')}</button>
+          <button type="button" class="settings-btn-full secondary budget-add-btn" style="flex:1; opacity:${isLast?0.5:1}" ${isLast?'disabled':''} onclick="learningReviewNext()">${tr('learning_review_next')}</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleLearningReviewFlip(){
+  state.learningReview.showBack = !state.learningReview.showBack;
+  render();
+}
+
+function learningReviewPrev(){
+  const r = state.learningReview;
+  if(r.index > 0){ r.index--; r.showBack = false; render(); }
+}
+
+function learningReviewNext(){
+  const r = state.learningReview;
+  if(r.index < r.deck.length - 1){ r.index++; r.showBack = false; render(); }
+}
+
+function exitLearningReview(){
+  const domain = state.learningReview.domain;
+  state.learningReview = null;
+  state.screen = learningDomainScreen(domain);
   render();
 }
 
@@ -38444,7 +40164,7 @@ function renderJournal(){
     .sort((a,b) => (a.startTime||'').localeCompare(b.startTime||''));
 
   const filter = state.journalFilter || 'all';
-  const partnerLabel = (state.relationInfo && state.relationInfo.partnerName) ? state.relationInfo.partnerName : tr('journal_col_other');
+  const partnerLabel = journalPartnerName() || tr('journal_col_other');
 
   const filterTabs = `
     <div class="journal-filter-row">
@@ -38527,7 +40247,7 @@ function renderJournal(){
     list = `
       <div class="journal-two-col-header">
         <div class="journal-two-col-header-label">${tr('journal_col_me')}</div>
-        <div class="journal-two-col-header-label journal-two-col-header-label-editable" onclick="setPartnerName()">${escapeHtml(partnerLabel)}</div>
+        <div class="journal-two-col-header-label journal-two-col-header-label-editable" onclick="setJournalPartnerName()">${escapeHtml(partnerLabel)}</div>
       </div>
       <div class="journal-two-col">
         ${entries.map(miniCard).join('')}
@@ -38619,6 +40339,7 @@ async function switchJournalActivity(entryId){
   state.journal.splice(idx, 1, ...parts);
   await storageSet('journal', state.journal);
   await syncSplitJournalEntryToSleep(parts);
+  await syncSplitJournalEntryToWake(parts);
   triggerAutoSync();
   state.journalQuickStartPerson = entry.person || '';
   state.screen = 'journalQuickStart';
@@ -38665,7 +40386,7 @@ async function startJournalActivity(catId){
 
 function renderJournalQuickStart(){
   const person = state.journalQuickStartPerson || '';
-  const partnerName = state.relationInfo && state.relationInfo.partnerName;
+  const partnerName = journalPartnerName();
   const isOtherCustom = person && person !== JOURNAL_TOGETHER && person !== partnerName;
   const whoChips = `
     <div class="category-picker">
@@ -38745,7 +40466,7 @@ function renderJournalStats(){
     }).join('');
   }
 
-  const partnerLabel = (state.relationInfo && state.relationInfo.partnerName) ? state.relationInfo.partnerName : tr('journal_col_other');
+  const partnerLabel = journalPartnerName() || tr('journal_col_other');
 
   const meRows = categoryTotalsFor('me');
   const togetherRows = categoryTotalsFor('together');
@@ -38846,16 +40567,16 @@ function renderJournalEntryEditor(){
           <button type="button" class="category-chip ${!e.person?'active':''}" style="--chip-color:var(--teal)" onclick="setJournalEntryPerson('')">
             <span class="category-dot"></span>${tr('journal_who_me')}
           </button>
-          ${state.relationInfo && state.relationInfo.partnerName ? `
-            <button type="button" class="category-chip ${e.person===state.relationInfo.partnerName?'active':''}" style="--chip-color:var(--teal)" onclick="setJournalEntryPerson('${escapeAttr(state.relationInfo.partnerName).replace(/'/g,"\\'")}')">
-              <span class="category-dot"></span>${escapeHtml(state.relationInfo.partnerName)}
+          ${journalPartnerName() ? `
+            <button type="button" class="category-chip ${e.person===journalPartnerName()?'active':''}" style="--chip-color:var(--teal)" onclick="setJournalEntryPerson('${escapeAttr(journalPartnerName()).replace(/'/g,"\\'")}')">
+              <span class="category-dot"></span>${escapeHtml(journalPartnerName())}
             </button>
           ` : ''}
           <button type="button" class="category-chip ${e.person===JOURNAL_TOGETHER?'active':''}" style="--chip-color:var(--teal)" onclick="setJournalEntryPerson('${JOURNAL_TOGETHER}')">
             <span class="category-dot"></span>${tr('journal_who_together')}
           </button>
-          <button type="button" class="category-chip ${e.person && e.person!==JOURNAL_TOGETHER && e.person!==(state.relationInfo&&state.relationInfo.partnerName)?'active':''}" style="--chip-color:var(--teal)" onclick="promptJournalEntryOtherPerson()">
-            <span class="category-dot"></span>${(e.person && e.person!==JOURNAL_TOGETHER && e.person!==(state.relationInfo&&state.relationInfo.partnerName)) ? escapeHtml(e.person) : tr('journal_who_other_placeholder')}
+          <button type="button" class="category-chip ${e.person && e.person!==JOURNAL_TOGETHER && e.person!==journalPartnerName()?'active':''}" style="--chip-color:var(--teal)" onclick="promptJournalEntryOtherPerson()">
+            <span class="category-dot"></span>${(e.person && e.person!==JOURNAL_TOGETHER && e.person!==journalPartnerName()) ? escapeHtml(e.person) : tr('journal_who_other_placeholder')}
           </button>
         </div>
         ${!e.unknown ? `
@@ -38983,11 +40704,7 @@ function renderEditor(){
       ${n.type !== 'list' ? renderNoteFormattingToolbar() : ''}
       ${renderSaveBar('backFromEditor()')}
     </div>
-    ${state.viewingPhoto ? `
-      <div class="lightbox" onclick="closeLightbox()">
-        <img src="${state.viewingPhoto}">
-      </div>
-    ` : ''}
+    ${renderLightbox()}
   `;
 }
 
@@ -39192,7 +40909,7 @@ function renderBottomNav(){
   return `
     <div class="bottom-nav">
       ${categories.map(cat => `
-        <button class="nav-item ${state.currentCategoryId===cat.id?'active':''}" onclick="openCategoryDetail('${cat.id}')">
+        <button class="nav-item ${(cat.id==='settings' ? state.screen==='settings' : state.currentCategoryId===cat.id)?'active':''}" onclick="openCategoryOrSettings('${cat.id}')">
           ${svgIcon(cat.icon)}
           <span>${cat.title}</span>
         </button>
@@ -39449,6 +41166,54 @@ function noteViewItemText(n, idx, fallback){
   return fallback;
 }
 
+async function toggleListItemInView(itemId){
+  const n = state.notes.find(x => x.id === state.viewingNoteId);
+  if(!n) return;
+  const item = (n.items || []).find(i => i.id === itemId);
+  if(!item) return;
+  item.checked = !item.checked;
+  // Checked-state only: deliberately NOT bumping n.updated here, since
+  // noteHasFreshTranslation() compares n.translatedEn.sourceUpdated to n.updated,
+  // and a pure checkbox toggle doesn't change any translatable text.
+  await storageSet('notes', state.notes);
+  triggerAutoSync();
+  render();
+}
+
+async function addListItemInView(){
+  const n = state.notes.find(x => x.id === state.viewingNoteId);
+  if(!n) return;
+  const input = document.getElementById('listItemViewInput');
+  if(!input || !input.value.trim()) return;
+  if(!n.items) n.items = [];
+  n.items.push({ id: 'li' + Date.now() + Math.random().toString(36).slice(2,5), text: input.value.trim(), checked: false });
+  input.value = '';
+  // Unlike a checkbox toggle, this changes list TEXT content, so bump `updated`
+  // the same way saveCurrentNote() does — this is what makes noteHasFreshTranslation()
+  // correctly treat any cached translation as stale (same mechanism the editor
+  // relies on via saveCurrentNote(), since addListItem()/deleteListItem() alone
+  // don't bump `updated` either; saving does).
+  n.updated = Date.now();
+  await storageSet('notes', state.notes);
+  triggerAutoSync();
+  render();
+  const newInput = document.getElementById('listItemViewInput');
+  if(newInput) newInput.focus();
+}
+
+async function deleteListItemInView(itemId){
+  const n = state.notes.find(x => x.id === state.viewingNoteId);
+  if(!n) return;
+  n.items = (n.items || []).filter(i => i.id !== itemId);
+  n.items.forEach(i => { if(i.parentId === itemId) i.parentId = null; });
+  // Content change (an item disappears) — bump `updated` so a cached
+  // translation is correctly treated as stale, mirroring addListItemInView().
+  n.updated = Date.now();
+  await storageSet('notes', state.notes);
+  triggerAutoSync();
+  render();
+}
+
 function renderNoteContentView(n){
   if(noteHasFreshTranslation(n)){
     if(n.translatedEn.contentIsHtml){
@@ -39508,20 +41273,25 @@ function renderNoteView(){
     </div>
   `).join('');
 
-  const listView = items.length ? `
-    <div class="list-progress">${tr('list_progress', doneCount, items.length)}</div>
+  const listView = `
+    <div class="list-progress">${items.length ? tr('list_progress', doneCount, items.length) : ''}</div>
     <div class="list-items">
       ${items.map((i, idx) => `
         <div class="list-item">
-          <span class="list-check ${i.checked?'checked':''}" aria-hidden="true">${i.checked ? '✓' : ''}</span>
+          <button class="list-check ${i.checked?'checked':''}" onclick="toggleListItemInView('${i.id}')">${i.checked ? '✓' : ''}</button>
           <div class="list-item-main">
-            <span class="list-item-text ${i.checked?'checked':''}">${escapeHtml(noteViewItemText(n, idx, i.text))}</span>
+            <span class="list-item-text ${i.checked?'checked':''}" onclick="toggleListItemInView('${i.id}')">${escapeHtml(noteViewItemText(n, idx, i.text))}</span>
             ${renderListItemLinkChip(i)}
           </div>
+          <button class="row-delete-btn" onclick="deleteListItemInView('${i.id}')">×</button>
         </div>
-      `).join('')}
+      `).join('') || `<div class="translate-disclaimer">${tr('list_empty')}</div>`}
     </div>
-  ` : `<div class="translate-disclaimer">${tr('list_empty')}</div>`;
+    <div class="list-add-row">
+      <input type="text" id="listItemViewInput" class="list-add-input" placeholder="${tr('list_item_placeholder')}" onkeydown="if(event.key==='Enter'){event.preventDefault(); addListItemInView();}">
+      <button class="list-add-btn" onclick="addListItemInView()">+</button>
+    </div>
+  `;
 
   const origLang = noteOriginalLang(n);
   const translated = noteHasFreshTranslation(n);
@@ -39563,16 +41333,35 @@ function renderNoteView(){
         ${translated ? `<div class="translate-disclaimer">${tr('notes_translated_disclaimer')}</div>` : ''}
       </div>
     </div>
-    ${state.viewingPhoto ? `
-      <div class="lightbox" onclick="closeLightbox()">
-        <img src="${state.viewingPhoto}">
-      </div>
-    ` : ''}
+    ${renderLightbox()}
   `;
 }
 
 let lastRenderedScreen = null;
+// --- Device/gesture back-button navigation (History API) ---------------
+// Pure bookkeeping layered on top of the existing state.screen/render()
+// flow: every ACTUAL screen change (not a re-render of the same screen)
+// pushes the screen we're leaving onto an in-memory stack and creates a
+// browser history entry, so the hardware/gesture back button can pop it.
+// See the popstate listener near init() for the other half.
+const navStack = [];
+let isHandlingPopstate = false;
+let lastExitPressAt = 0;
+// Lock/unlock screens are never pushed as "back targets": returning to one
+// of them via the device back button would be a confusing no-op at best
+// (the app is already unlocked in memory) and we'd rather the back button
+// simply skip past them than risk any ambiguity around re-entering a
+// screen that looks like a lock screen.
+const BACK_NAV_EXCLUDED_SCREENS = new Set(['setpin','unlock','setuppass','unlockpass']);
 function render(){
+  if(lastRenderedScreen !== null && state.screen !== lastRenderedScreen){
+    if(isHandlingPopstate){
+      isHandlingPopstate = false;
+    } else if(!BACK_NAV_EXCLUDED_SCREENS.has(lastRenderedScreen)){
+      navStack.push(lastRenderedScreen);
+      try{ history.pushState({navDepth: navStack.length}, '', ''); }catch(e){}
+    }
+  }
   const activeId = document.activeElement ? document.activeElement.id : null;
   const prevRulesCard = document.querySelector('.rules-modal-card');
   const prevRulesScrollTop = prevRulesCard ? prevRulesCard.scrollTop : null;
@@ -39595,6 +41384,13 @@ function render(){
   else if(state.screen === 'passwords') html = renderPasswords();
   else if(state.screen === 'passwordEntry') html = renderPasswordEntry();
   else if(state.screen === 'passwordView') html = renderPasswordView();
+  else if(state.screen === 'learningLanguages') html = renderLearningDomainHome('languages');
+  else if(state.screen === 'learningGardening') html = renderLearningDomainHome('gardening');
+  else if(state.screen === 'learningDiy') html = renderLearningDomainHome('diy');
+  else if(state.screen === 'learningCooking') html = renderLearningDomainHome('cooking');
+  else if(state.screen === 'learningNoteEntry') html = renderLearningNoteEntry();
+  else if(state.screen === 'learningFlashcardEntry') html = renderLearningFlashcardEntry();
+  else if(state.screen === 'learningReview') html = renderLearningReview();
   else if(state.screen === 'assistant') html = renderAssistant();
   else if(state.screen === 'doctor') html = renderDoctor();
   else if(state.screen === 'psychologist') html = renderPsychologist();
@@ -39804,6 +41600,12 @@ function render(){
     updateMoodNoteScallop();
   }
   lastRenderedScreen = state.screen;
+  // Re-attempt any badge-toast/level-up-ceremony showing that was deferred (see
+  // processBadgeToastQueue/processLevelUpCeremonyQueue) because a game's own win/lose modal
+  // was still on screen — e.g. this very render() just removed it after the player tapped
+  // past it. A no-op whenever nothing is queued or something's already showing.
+  processBadgeToastQueue();
+  processLevelUpCeremonyQueue();
 }
 
 function scallopQuarterBezier(cx, cy, r, a0deg, stepDeg){
@@ -40057,6 +41859,17 @@ window.startItemDrag = startItemDrag;
 window.deletePhoto = deletePhoto;
 window.viewPhoto = viewPhoto;
 window.closeLightbox = closeLightbox;
+window.lightboxBackdropClick = lightboxBackdropClick;
+window.lightboxPointerDown = lightboxPointerDown;
+window.lightboxDoubleClick = lightboxDoubleClick;
+window.lightboxWheel = lightboxWheel;
+window.openPhotoCropModal = openPhotoCropModal;
+window.closePhotoCropModal = closePhotoCropModal;
+window.confirmPhotoCropModal = confirmPhotoCropModal;
+window.photoCropPointerDown = photoCropPointerDown;
+window.photoCropWheel = photoCropWheel;
+window.photoCropZoomBy = photoCropZoomBy;
+window.photoCropSetScale = photoCropSetScale;
 window.handleVideoInput = handleVideoInput;
 window.deleteVideo = deleteVideo;
 window.playVideo = playVideo;
@@ -40066,6 +41879,7 @@ window.toggleCategory = toggleCategory;
 window.goToSubcategory = goToSubcategory;
 window.goToCategoryHome = goToCategoryHome;
 window.openCategoryDetail = openCategoryDetail;
+window.openCategoryOrSettings = openCategoryOrSettings;
 window.exportData = exportData;
 window.handleImportFile = handleImportFile;
 window.setLang = setLang;
@@ -40168,12 +41982,15 @@ window.addHydrationBottle = addHydrationBottle;
 window.cycleHydrationBottle = cycleHydrationBottle;
 window.removeHydrationBottle = removeHydrationBottle;
 window.setPartnerName = setPartnerName;
+window.setJournalPartnerName = setJournalPartnerName;
 window.setMyCountry = setMyCountry;
 window.setPartnerCountry = setPartnerCountry;
 window.setRelationStartDate = setRelationStartDate;
 window.setPersonalInfoField = setPersonalInfoField;
 window.openContactEntry = openContactEntry;
 window.setDirectoryFilter = setDirectoryFilter;
+window.toggleDirectoryFavoritesOnly = toggleDirectoryFavoritesOnly;
+window.toggleCurrentContactFavorite = toggleCurrentContactFavorite;
 window.setAssistantApiKey = setAssistantApiKey;
 window.setTmdbApiKey = setTmdbApiKey;
 window.setAssistantModel = setAssistantModel;
@@ -40536,6 +42353,18 @@ window.deletePasswordEntry = deletePasswordEntry;
 window.setPasswordLoginMethod = setPasswordLoginMethod;
 window.setPasswordIdentifierType = setPasswordIdentifierType;
 window.togglePasswordVisibility = togglePasswordVisibility;
+window.setLearningView = setLearningView;
+window.openLearningNoteEntry = openLearningNoteEntry;
+window.backFromLearningNoteEntry = backFromLearningNoteEntry;
+window.deleteLearningNoteEntry = deleteLearningNoteEntry;
+window.openLearningFlashcardEntry = openLearningFlashcardEntry;
+window.backFromLearningFlashcardEntry = backFromLearningFlashcardEntry;
+window.deleteLearningFlashcardEntry = deleteLearningFlashcardEntry;
+window.startLearningReview = startLearningReview;
+window.toggleLearningReviewFlip = toggleLearningReviewFlip;
+window.learningReviewPrev = learningReviewPrev;
+window.learningReviewNext = learningReviewNext;
+window.exitLearningReview = exitLearningReview;
 window.copyToClipboard = copyToClipboard;
 window.goToEmergencyView = goToEmergencyView;
 window.setEmergencyCardField = setEmergencyCardField;
