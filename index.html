@@ -8258,6 +8258,17 @@
   .ma-ctl button svg{ width:28px; height:28px; }
   .ma-ctl .ma-play{ width:84px; height:84px; border-radius:42px; background:#C9A04A; color:#1A1408; border:none; } .ma-ctl .ma-play svg{ width:36px; height:36px; }
   .ma-hint{ position:absolute; bottom:18px; left:20px; right:20px; font-size:.72rem; color:rgba(230,220,196,.45); }
+  .mg-back{ position:fixed; inset:0; z-index:9000; background:rgba(30,20,10,.55); display:flex; align-items:flex-end; justify-content:center; }
+  .mg-sheet{ width:100%; max-width:560px; max-height:86vh; box-sizing:border-box; display:flex; flex-direction:column; gap:10px; padding:18px 16px 16px; background:#FBF5E6; color:#3A2A18; border-radius:16px 16px 0 0; border-top:2px solid #C9A04A; }
+  .mg-h{ display:flex; justify-content:space-between; gap:10px; align-items:baseline; } .mg-h b{ font-family:'Lora', Georgia, serif; font-size:1.05rem; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .mg-h span{ font-size:.8rem; color:#8A6A3A; flex:none; }
+  .mg-sub{ font-size:.82rem; color:#6A4A28; }
+  .mg-list{ display:flex; flex-wrap:wrap; gap:8px; overflow-y:auto; padding:2px; min-height:80px; }
+  .mg-chip{ all:unset; cursor:pointer; box-sizing:border-box; min-height:44px; padding:0 16px; display:flex; align-items:center; border-radius:22px; border:1px solid rgba(138,106,58,.45); background:#F1E4C8; font-size:.9rem; font-weight:600; color:#5A3A1E; }
+  .mg-chip.on{ background:#2A4A6A; border-color:#2A4A6A; color:#FBF5E6; } .mg-chip.on::before{ content:'✓'; margin-right:6px; color:#E9C66A; }
+  .mg-add{ display:flex; gap:8px; } .mg-add input{ flex:1; min-width:0; min-height:44px; box-sizing:border-box; padding:0 14px; border-radius:22px; border:1px solid rgba(138,106,58,.5); background:#fff; font:inherit; color:#3A2A18; }
+  .mg-add button{ all:unset; cursor:pointer; min-height:44px; padding:0 18px; box-sizing:border-box; display:flex; align-items:center; border-radius:22px; border:1px solid #C9A04A; font-weight:600; color:#5A3A1E; }
+  .mg-act{ display:flex; gap:10px; } .mg-act button{ all:unset; cursor:pointer; flex:1; min-height:48px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; border-radius:4px; font-family:'Lora', Georgia, serif; font-weight:700; }
+  .mg-cancel{ border:1px solid #C9A04A; color:#5A3A1E; } .mg-ok{ background:#A0322A; color:#FBF5E6; }
   .tk-at-row b{ font-size:.86rem; color:#FFF4E2; } .tk-at-row small{ font-size:.72rem; color:#CFC7E6; }
   /* ---- Album : plus d'air entre les blocs ---- */
   .tv .tc-search{ margin:18px 0 0; }
@@ -9241,7 +9252,7 @@ const STRINGS = {
     
     mu_hero_pick: 'Choisis un morceau, un artiste ou une playlist', mu_hero_empty: 'Ajoute tes premiers morceaux', nature_hero_title: 'Écouter la nature', music_sort_into: 'Ranger (dossiers et playlists)',
     music_tab_library: 'Ma musique', nature_tab: 'Sons de nature',
-    music_view_tracks: 'Morceaux', music_view_artists: 'Artistes', music_view_albums: 'Albums', music_view_playlists: 'Playlist',
+    music_view_tracks: 'Morceaux', music_view_artists: 'Artistes', music_view_albums: 'Albums', music_view_playlists: 'Playlist', music_view_genres: 'Genres', music_unknown_genre: 'Sans genre', music_rename_genre_prompt: 'Genre (optionnel) : rock, pop, classique…', music_genre_scanning: 'Lecture des genres dans tes fichiers…',
     games_lang_refreshed: 'Langue changée : nouvelle partie avec des mots en français.', music_pl_new: '+ Nouvelle playlist', music_pl_none: 'Aucune playlist pour l’instant. Crée-en une, donne-lui un nom et choisis tes morceaux.', music_pl_name_prompt: 'Nom de la playlist :', music_pl_rename_prompt: 'Nouveau nom de la playlist :', music_pl_delete_confirm: 'Supprimer cette playlist ? Tes morceaux ne sont pas supprimés.', music_pl_edit: 'Choisir les morceaux', music_pl_pick_hint: 'Coche les morceaux à mettre dans la playlist.', music_pl_empty: 'Cette playlist est vide. Touche « Choisir les morceaux » pour en ajouter.', music_pl_none_available: 'Aucune playlist pour l’instant. Crée-en une dans l’onglet « Playlist ».',
     music_unknown_artist: 'Artiste inconnu', music_unknown_album: 'Sans album', music_n_tracks: n => `${n} morceau${n > 1 ? 'x' : ''}`, music_play: 'Écouter', music_filter_clear: 'Retirer le filtre',
     music_album_scanning: 'Lecture des albums dans tes fichiers…',
@@ -13042,7 +13053,7 @@ const STRINGS = {
     
     mu_hero_pick: 'Pick a track, an artist or a playlist', mu_hero_empty: 'Add your first tracks', nature_hero_title: 'Listen to nature', music_sort_into: 'Organise (folders and playlists)',
     music_tab_library: 'My music', nature_tab: 'Nature sounds',
-    music_view_tracks: 'Tracks', music_view_artists: 'Artists', music_view_albums: 'Albums', music_view_playlists: 'Playlists',
+    music_view_tracks: 'Tracks', music_view_artists: 'Artists', music_view_albums: 'Albums', music_view_playlists: 'Playlists', music_view_genres: 'Genres', music_unknown_genre: 'No genre', music_rename_genre_prompt: 'Genre (optional): rock, pop, classical…', music_genre_scanning: 'Reading genres from your files…',
     games_lang_refreshed: 'Language changed: new round with English words.', music_pl_new: '+ New playlist', music_pl_none: 'No playlists yet. Create one, name it and pick your tracks.', music_pl_name_prompt: 'Playlist name:', music_pl_rename_prompt: 'New playlist name:', music_pl_delete_confirm: 'Delete this playlist? Your tracks are not deleted.', music_pl_edit: 'Choose tracks', music_pl_pick_hint: 'Tick the tracks to put in the playlist.', music_pl_empty: 'This playlist is empty. Tap “Choose tracks” to add some.', music_pl_none_available: 'No playlists yet. Create one in the “Playlists” tab.',
     music_unknown_artist: 'Unknown artist', music_unknown_album: 'No album', music_n_tracks: n => `${n} track${n === 1 ? '' : 's'}`, music_play: 'Play', music_filter_clear: 'Clear filter',
     music_album_scanning: 'Reading albums from your files…',
@@ -21111,9 +21122,103 @@ function saveMusicSettingsSoon(){
 // ---- tabs, views, group filters ----
 function setMusicTab(tab){ state.musicTab = tab === 'nature' ? 'nature' : 'library'; render(); }
 function setMusicView(view){
-  state.musicView = ['tracks', 'artists', 'albums', 'playlists'].includes(view) ? view : 'tracks';
+  state.musicView = ['tracks', 'artists', 'albums', 'genres', 'playlists'].includes(view) ? view : 'tracks';
   if(state.musicView === 'albums') musicScanAlbums();
+  if(state.musicView === 'genres') musicScanGenres();
   render();
+}
+const MUSIC_ID3_GENRES = ['Blues','Classic Rock','Country','Dance','Disco','Funk','Grunge','Hip-Hop','Jazz','Metal','New Age','Oldies','Other','Pop','R&B','Rap','Reggae','Rock','Techno','Industrial','Alternative','Ska','Death Metal','Pranks','Soundtrack','Euro-Techno','Ambient','Trip-Hop','Vocal','Jazz+Funk','Fusion','Trance','Classical','Instrumental','Acid','House','Game','Sound Clip','Gospel','Noise','Alternative Rock','Bass','Soul','Punk','Space','Meditative','Instrumental Pop','Instrumental Rock','Ethnic','Gothic','Darkwave','Techno-Industrial','Electronic','Pop-Folk','Eurodance','Dream','Southern Rock','Comedy','Cult','Gangsta','Top 40','Christian Rap','Pop/Funk','Jungle','Native American','Cabaret','New Wave','Psychedelic','Rave','Showtunes','Trailer','Lo-Fi','Tribal','Acid Punk','Acid Jazz','Polka','Retro','Musical','Rock & Roll','Hard Rock','Folk','Folk-Rock','National Folk','Swing','Fast Fusion','Bebop','Latin','Revival','Celtic','Bluegrass','Avantgarde','Gothic Rock','Progressive Rock','Psychedelic Rock','Symphonic Rock','Slow Rock','Big Band','Chorus','Easy Listening','Acoustic','Humour','Speech','Chanson','Opera','Chamber Music','Sonata','Symphony','Booty Bass','Primus','Porn Groove','Satire','Slow Jam','Club','Tango','Samba','Folklore','Ballad','Power Ballad','Rhythmic Soul','Freestyle','Duet','Punk Rock','Drum Solo','A Cappella','Euro-House','Dance Hall'];
+const MUSIC_GENRE_PRESETS = ['Pop','Rock','Rap / Hip-hop','R&B / Soul','Électro','Jazz','Classique','Chanson française','Variété','Reggae','Metal','Punk','Indie','Folk','Blues','Country','Latino','Funk / Disco','K-pop','J-pop','Bande originale','Lo-fi','Ambiance / Relax','Musique du monde','Gospel','Enfants'];
+// A tag's genre can be "Rock", "(17)", "(17)Rock", "17" or several separated by ; or /.
+function musicCleanGenres(s){
+  const out = [];
+  String(s || '').replace(/\u0000/g, ';').split(/\s*[;]\s*|\s+\/\s+|\s*\/\s*(?=[A-Za-zÀ-ÿ])/).forEach(part => {
+    let g = part.trim();
+    const m = g.match(/^\((\d{1,3})\)\s*(.*)$/) || g.match(/^(\d{1,3})$/);
+    if(m){ const name = m[2] ? m[2].trim() : ''; g = name || MUSIC_ID3_GENRES[Number(m[1])] || ''; }
+    g = musicCanonGenre(g.slice(0, 40));
+    if(g && !out.some(x => x.toLowerCase() === g.toLowerCase())) out.push(g);
+  });
+  return out;
+}
+function musicKnownGenres(){
+  const seen = new Map();
+  MUSIC_GENRE_PRESETS.forEach(g => seen.set(g.toLowerCase(), g));
+  (state.musicTracks || []).forEach(tk => musicGenresOf(tk).forEach(g => { if(!seen.has(g.toLowerCase())) seen.set(g.toLowerCase(), g); }));
+  return [...seen.values()];
+}
+// Same genre written differently ("rock", "ROCK") → one name.
+function musicCanonGenre(g){
+  g = String(g || '').trim(); if(!g) return '';
+  const low = g.toLowerCase();
+  const hit = musicKnownGenres().find(x => x.toLowerCase() === low);
+  return hit || g.charAt(0).toUpperCase() + g.slice(1);
+}
+// Several genres per track: t.genres. Older tracks may only have the single text t.genre.
+function musicGenresOf(t){ return Array.isArray(t.genres) && t.genres.length ? t.genres : ((t.genre || '').trim() ? [t.genre.trim()] : []); }
+let musicGenreScanRunning = false;
+async function musicScanGenres(){
+  if(musicGenreScanRunning) return;
+  const todo = state.musicTracks.filter(t => !t.genreScanned);
+  if(!todo.length) return;
+  musicGenreScanRunning = true;
+  for(const t of todo){
+    try{
+      const blob = await audioGet(t.id);
+      if(blob){
+        const id3 = parseId3Tags(await blob.slice(0, 1024 * 1024).arrayBuffer());
+        if(id3 && id3.genres && id3.genres.length && !musicGenresOf(t).length) t.genres = id3.genres;
+      }
+    }catch(e){ console.error('music genre scan', e); }
+    t.genreScanned = true;
+  }
+  musicGenreScanRunning = false;
+  await storageSet('musicTracks', state.musicTracks);
+  triggerAutoSync();
+  render();
+}
+// ---- genre picker (a list to tick, several allowed) ----
+function musicOpenGenrePicker(id){
+  const tk = state.musicTracks.find(x => x.id === id); if(!tk) return;
+  state.musicRowMenu = null;
+  state.musicGenrePick = { id, sel: [...musicGenresOf(tk)], opts: musicKnownGenres() };
+  render();
+}
+function musicGenreListScroll(){ const el = document.getElementById('mgList'); return el ? el.scrollTop : 0; }
+function musicToggleGenre(btn, i){
+  const P = state.musicGenrePick; if(!P) return;
+  const g = P.opts[i], k = P.sel.findIndex(x => x.toLowerCase() === g.toLowerCase());
+  if(k >= 0) P.sel.splice(k, 1); else P.sel.push(g);
+  const on = k < 0;
+  btn.classList.toggle('on', on); btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  const c = document.getElementById('mgCount'); if(c) c.textContent = P.sel.length ? tcT(`${P.sel.length} choisi${P.sel.length > 1 ? 's' : ''}`, `${P.sel.length} selected`) : tcT('Aucun genre', 'No genre');
+}
+function musicAddCustomGenre(){
+  const P = state.musicGenrePick, inp = document.getElementById('mgNew'); if(!P || !inp) return;
+  const g = musicCanonGenre(inp.value.replace(/[;]/g, ' ')); if(!g) return;
+  if(!P.opts.some(x => x.toLowerCase() === g.toLowerCase())) P.opts.push(g);
+  if(!P.sel.some(x => x.toLowerCase() === g.toLowerCase())) P.sel.push(g);
+  const sc = musicGenreListScroll(); render();
+  const el = document.getElementById('mgList'); if(el) el.scrollTop = sc;
+}
+async function musicSaveGenres(){
+  const P = state.musicGenrePick; if(!P) return;
+  const tk = state.musicTracks.find(x => x.id === P.id);
+  if(tk){ tk.genres = [...P.sel]; delete tk.genre; tk.genreScanned = true; await storageSet('musicTracks', state.musicTracks); triggerAutoSync(); }
+  state.musicGenrePick = null; render();
+}
+function musicCloseGenrePicker(){ state.musicGenrePick = null; render(); }
+function musicGenrePickerHtml(){
+  const P = state.musicGenrePick; if(!P) return '';
+  const tk = state.musicTracks.find(x => x.id === P.id); if(!tk) return '';
+  const chips = P.opts.map((g, i) => { const on = P.sel.some(x => x.toLowerCase() === g.toLowerCase()); return `<button type="button" class="mg-chip${on ? ' on' : ''}" aria-pressed="${on}" onclick="musicToggleGenre(this, ${i})">${escapeHtml(g)}</button>`; }).join('');
+  return `<div class="mg-back" onclick="if(event.target===this) musicCloseGenrePicker()"><div class="mg-sheet" role="dialog" aria-modal="true" aria-label="${escapeAttr(tcT('Genres du morceau', 'Track genres'))}">
+    <div class="mg-h"><b>${escapeHtml(tk.title)}</b><span id="mgCount">${P.sel.length ? tcT(`${P.sel.length} choisi${P.sel.length > 1 ? 's' : ''}`, `${P.sel.length} selected`) : tcT('Aucun genre', 'No genre')}</span></div>
+    <div class="mg-sub">${tcT('Touche les genres qui conviennent (plusieurs possibles).', 'Tap the genres that fit (several allowed).')}</div>
+    <div class="mg-list" id="mgList">${chips}</div>
+    <div class="mg-add"><input id="mgNew" type="text" maxlength="40" placeholder="${escapeAttr(tcT('Autre genre…', 'Other genre…'))}" onkeydown="if(event.key==='Enter'){event.preventDefault(); musicAddCustomGenre();}"><button type="button" onclick="musicAddCustomGenre()">${tcT('Ajouter', 'Add')}</button></div>
+    <div class="mg-act"><button type="button" class="mg-cancel" onclick="musicCloseGenrePicker()">${tcT('Annuler', 'Cancel')}</button><button type="button" class="mg-ok" onclick="musicSaveGenres()">${tcT('Enregistrer', 'Save')}</button></div>
+  </div></div>`;
 }
 function musicArtistKey(t){ return (t.artist || '').trim(); }
 // A track can have several artists (featurings): t.artists is the list, t.artist its text for display and search.
@@ -21125,11 +21230,12 @@ function musicParseArtists(s){
 function musicAlbumKey(t){ return (t.album || '').trim(); }
 function musicGroupLabel(type, value){
   if(type === 'playlist'){ const pl = musicPlaylistById(value); return '▶ ' + (pl ? pl.name : ''); }
-  if(!value) return tr(type === 'artist' ? 'music_unknown_artist' : 'music_unknown_album');
+  if(!value) return tr(type === 'artist' ? 'music_unknown_artist' : type === 'genre' ? 'music_unknown_genre' : 'music_unknown_album');
   return value;
 }
 function musicTrackInGroup(t, gf){
   if(gf.type === 'artist'){ const as = musicArtistsOf(t); return as.length ? as.includes(gf.value) : gf.value === ''; }
+  if(gf.type === 'genre'){ const gs = musicGenresOf(t); return gs.length ? gs.includes(gf.value) : gf.value === ''; }
   return gf.type === 'album' && musicAlbumKey(t) === gf.value;
 }
 function setMusicGroupFilter(type, value){
@@ -21142,7 +21248,7 @@ function setMusicGroupFilter(type, value){
 function musicGroups(type){
   const map = new Map();
   state.musicTracks.forEach(t => {
-    const keys = type === 'artist' ? (musicArtistsOf(t).length ? musicArtistsOf(t) : ['']) : [musicAlbumKey(t)];
+    const keys = type === 'artist' ? (musicArtistsOf(t).length ? musicArtistsOf(t) : ['']) : type === 'genre' ? (musicGenresOf(t).length ? musicGenresOf(t) : ['']) : [musicAlbumKey(t)];
     keys.forEach(k => { if(!map.has(k)) map.set(k, []); map.get(k).push(t); });
   });
   return [...map.entries()].sort((a, b) => (a[0] === '' ? 1 : 0) - (b[0] === '' ? 1 : 0) || a[0].localeCompare(b[0], undefined, { sensitivity: 'base' }));
@@ -21420,14 +21526,15 @@ function renderMusicGroupList(type){
         return `<div class="mu-group" onclick="setMusicGroupFilter('playlist','${pl.id}')"><span class="mu-group-ic">▶</span><div class="mu-group-txt"><b>${escapeHtml(pl.name)}</b><small>${escapeHtml(tr('music_n_tracks', n))}</small></div>${n ? `<button type="button" class="mu-group-play" aria-label="${escapeHtml(tr('music_play'))}" onclick="event.stopPropagation(); playMusicGroup('playlist','${pl.id}')">▶</button>` : ''}</div>`;
       }).join('')}</div>` : `<div class="translate-disclaimer" style="margin-top:8px">${escapeHtml(tr('music_pl_none'))}</div>`}`;
   }
-  const kind = type === 'artists' ? 'artist' : 'album';
+  const kind = type === 'artists' ? 'artist' : type === 'genres' ? 'genre' : 'album';
   const groups = musicGroups(kind);
   if(!groups.length) return `<div class="translate-disclaimer">${tr('music_empty')}</div>`;
+  if(kind === 'genre' && musicGenreScanRunning) return `<div class="translate-disclaimer">${escapeHtml(tr('music_genre_scanning'))}</div>`;
   if(kind === 'album' && musicAlbumScanRunning) return `<div class="translate-disclaimer">${escapeHtml(tr('music_album_scanning'))}</div>`;
   return `<div class="mu-groups">${groups.map(([k, list]) => {
     const sub = kind === 'album' ? [...new Set(list.map(musicArtistKey).filter(Boolean))].slice(0, 2).join(', ') : '';
     const v = escapeAttr(JSON.stringify(k));
-    return `<div class="mu-group" onclick='setMusicGroupFilter("${kind}", ${v})'><span class="mu-group-ic">${kind === 'artist' ? '♪' : '◉'}</span><div class="mu-group-txt"><b>${escapeHtml(musicGroupLabel(kind, k))}</b><small>${escapeHtml(tr('music_n_tracks', list.length))}${sub ? ' · ' + escapeHtml(sub) : ''}</small></div><button type="button" class="mu-group-play" aria-label="${escapeHtml(tr('music_play'))}" onclick='event.stopPropagation(); playMusicGroup("${kind}", ${v})'>▶</button></div>`;
+    return `<div class="mu-group" onclick='setMusicGroupFilter("${kind}", ${v})'><span class="mu-group-ic">${kind === 'artist' ? '♪' : kind === 'genre' ? '♫' : '◉'}</span><div class="mu-group-txt"><b>${escapeHtml(musicGroupLabel(kind, k))}</b><small>${escapeHtml(tr('music_n_tracks', list.length))}${sub ? ' · ' + escapeHtml(sub) : ''}</small></div><button type="button" class="mu-group-play" aria-label="${escapeHtml(tr('music_play'))}" onclick='event.stopPropagation(); playMusicGroup("${kind}", ${v})'>▶</button></div>`;
   }).join('')}</div>`;
 }
 
@@ -21631,6 +21738,7 @@ function msTrackRowHtml(t, i){
     ${open ? `<div class="ms-row-menu">
       <button type="button" onclick="openMusicMoveModal('${t.id}')">${tr('music_sort_into')}</button>
       <button type="button" onclick="renameMusicTrack('${t.id}')">${tr('music_rename')}</button>
+      <button type="button" onclick="musicOpenGenrePicker('${t.id}')">${tcT('Choisir les genres', 'Choose genres')}</button>
       <button type="button" onclick="musicPickCover('${t.id}')">${tcT('Choisir une pochette', 'Choose a cover')}</button>
       ${t.hasCover ? `<button type="button" onclick="musicRemoveCover('${t.id}')">${tcT('Retirer la pochette', 'Remove the cover')}</button>` : ''}
       <button type="button" class="del" onclick="deleteMusicTrack('${t.id}')">${tr('health_entry_delete')}</button>
@@ -34118,9 +34226,10 @@ function parseId3Tags(arrayBuffer){
       if(frameId === 'TIT2') result.title = decodeId3FrameText(bytes.slice(frameStart, frameEnd));
       else if(frameId === 'TPE1') result.artist = decodeId3FrameText(bytes.slice(frameStart, frameEnd));
       else if(frameId === 'TALB') result.album = decodeId3FrameText(bytes.slice(frameStart, frameEnd));
+      else if(frameId === 'TCON') result.genres = musicCleanGenres(decodeId3FrameText(bytes.slice(frameStart, frameEnd)));
       offset = frameEnd;
     }
-    if(!result.title && !result.artist && !result.album) return null;
+    if(!result.title && !result.artist && !result.album && !(result.genres && result.genres.length)) return null;
     return result;
   }catch(e){
     console.error('id3 parse error', e);
@@ -34149,6 +34258,8 @@ async function handleMusicFileInput(input){
         artist: (id3 && id3.artist) || '',
         album: (id3 && id3.album) || '',
         albumScanned: true,
+        genres: (id3 && id3.genres) || [],
+        genreScanned: true,
         fileName: file.name,
         mimeType: file.type || 'audio/mpeg',
         addedAt: Date.now(),
@@ -85104,7 +85215,7 @@ function renderMusicHome(){
       <input type="file" id="musicCoverInput" accept="image/*" class="visually-hidden" onchange="musicCoverChosen(this)">
       ${state.musicTracks.length ? `<div class="games-stats-link" onclick="openMusicStats()"><span class="photo-section-label" style="margin-bottom:0">${tr('music_stats_link')}</span>${svgIcon('chevronRight')}</div>` : ''}
       ${state.musicTracks.length ? `<div class="ms-rep">${escapeHtml(tr('mu_repertoire'))}</div>` : ''}
-      ${state.musicTracks.length ? `<div class="category-picker mu-views" style="margin-bottom:10px">${['tracks', 'artists', 'albums', 'playlists'].map(v => `<button type="button" class="category-chip ${(state.musicView || 'tracks') === v ? 'active' : ''}" style="--chip-color:var(--crown-red)" onclick="setMusicView('${v}')"><span class="category-dot"></span>${tr('music_view_' + v)}</button>`).join('')}</div>` : ''}
+      ${state.musicTracks.length ? `<div class="category-picker mu-views" style="margin-bottom:10px">${['tracks', 'artists', 'albums', 'genres', 'playlists'].map(v => `<button type="button" class="category-chip ${(state.musicView || 'tracks') === v ? 'active' : ''}" style="--chip-color:var(--crown-red)" onclick="setMusicView('${v}')"><span class="category-dot"></span>${tr('music_view_' + v)}</button>`).join('')}</div>` : ''}
       ${(state.musicView || 'tracks') !== 'tracks' && state.musicTracks.length ? renderMusicGroupList(state.musicView) : `
       ${state.musicGroupFilter ? `<div class="mu-filter">${escapeHtml(musicGroupLabel(state.musicGroupFilter.type, state.musicGroupFilter.value))}<button type="button" aria-label="${tr('music_filter_clear')}" onclick="setMusicGroupFilter(null)">✕</button></div>` : ''}
       ${renderMusicPlaylistActions()}
@@ -85121,6 +85232,7 @@ function renderMusicHome(){
     ${renderMusicPlaylistModal()}
     ${renderBottomNav()}
     ${state.musicAmbient ? musicAmbientHtml() : ''}
+    ${state.musicGenrePick ? musicGenrePickerHtml() : ''}
     ${(!musicCoverScanRunning && state.musicTracks.some(t => !t.coverScanned && !t.hasCover) && setTimeout(musicScanCovers, 1500)) ? '' : ''}
   `;
 }
