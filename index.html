@@ -8239,6 +8239,25 @@
   .tk-st-b{ flex:1; height:9px; border-radius:5px; background:rgba(255,255,255,.1); overflow:hidden; } .tk-st-b i{ display:block; height:100%; border-radius:5px; }
   .tk-st-fs{ gap:0; padding:4px 16px; border-color:rgba(233,199,123,.3); }
   .tk-st-f{ display:flex; justify-content:space-between; gap:12px; align-items:center; min-height:46px; border-bottom:1px solid rgba(255,255,255,.08); font-size:.8rem; } .tk-st-f:last-child{ border-bottom:0; } .tk-st-f span{ color:#CFC7E6; } .tk-st-f b{ text-align:right; color:#FFF4E2; }
+  .ms-cover{ width:160px; height:160px; margin:0 auto 14px; padding:4px; box-sizing:border-box; background:var(--ms-card); border:1.2px solid var(--ms-gold); box-shadow:0 8px 18px rgba(70,45,20,.22); position:relative; }
+  .ms-cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .ms-th{ width:38px; height:38px; flex:none; object-fit:cover; border-radius:3px; border:1px solid var(--ms-line); }
+  .mm-th{ width:40px; height:40px; flex:none; object-fit:cover; border-radius:6px; }
+  .ma-open{ all:unset; cursor:pointer; box-sizing:border-box; display:flex; align-items:center; justify-content:center; width:100%; min-height:44px; margin-top:12px; border-radius:22px; border:1px solid var(--ms-gold); color:var(--ms-ink2); font-size:.85rem; font-weight:600; }
+  .ma{ position:fixed; inset:0; z-index:9999; background:#0A0A0F; color:#E6DCC4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:56px 28px 28px; box-sizing:border-box; text-align:center; }
+  .ma-x{ all:unset; cursor:pointer; position:absolute; top:14px; right:14px; min-height:44px; padding:0 14px; display:flex; align-items:center; border-radius:22px; border:1px solid rgba(201,160,74,.5); color:#C9A04A; font-size:.82rem; }
+  .ma-clock{ position:absolute; top:18px; left:22px; font-family:'Lora', Georgia, serif; font-size:1.5rem; color:rgba(230,220,196,.55); letter-spacing:.06em; }
+  .ma-art{ width:min(62vw, 260px); aspect-ratio:1; display:flex; align-items:center; justify-content:center; border:1.2px solid rgba(201,160,74,.55); padding:6px; box-sizing:border-box; background:rgba(255,255,255,.03); }
+  .ma-art img{ width:100%; height:100%; object-fit:cover; display:block; opacity:.92; }
+  .ma-t{ font-family:'Lora', Georgia, serif; font-size:1.5rem; font-weight:700; line-height:1.2; color:#F1E8D2; }
+  .ma-a{ font-size:1rem; color:rgba(230,220,196,.7); margin-top:-6px; }
+  .ma-bar{ width:min(80vw, 340px); height:4px; border-radius:2px; background:rgba(255,255,255,.14); overflow:hidden; } .ma-bar i{ display:block; height:100%; background:#C9A04A; }
+  .ma-time{ width:min(80vw, 340px); display:flex; justify-content:space-between; font-size:.78rem; color:rgba(230,220,196,.6); margin-top:-8px; }
+  .ma-ctl{ display:flex; align-items:center; gap:26px; margin-top:6px; }
+  .ma-ctl button{ all:unset; cursor:pointer; width:64px; height:64px; border-radius:32px; display:flex; align-items:center; justify-content:center; color:#E6DCC4; border:1px solid rgba(201,160,74,.4); }
+  .ma-ctl button svg{ width:28px; height:28px; }
+  .ma-ctl .ma-play{ width:84px; height:84px; border-radius:42px; background:#C9A04A; color:#1A1408; border:none; } .ma-ctl .ma-play svg{ width:36px; height:36px; }
+  .ma-hint{ position:absolute; bottom:18px; left:20px; right:20px; font-size:.72rem; color:rgba(230,220,196,.45); }
   .tk-at-row b{ font-size:.86rem; color:#FFF4E2; } .tk-at-row small{ font-size:.72rem; color:#CFC7E6; }
   /* ---- Album : plus d'air entre les blocs ---- */
   .tv .tc-search{ margin:18px 0 0; }
@@ -20011,7 +20030,9 @@ async function encryptBackupPayload(payload){
   const inner = await encryptString(JSON.stringify(payload));
   return 'enc2:' + saltB64 + ':' + inner;
 }
+let backupFailWhy = '';
 async function decryptBackupPayload(text){
+  backupFailWhy = '';
   try{
     const trimmed = text.trim();
     if(trimmed.startsWith('enc2:')){
@@ -20022,12 +20043,22 @@ async function decryptBackupPayload(text){
       const localSaltB64 = window.localStorage.getItem('carnet:encSalt') || '';
       let keyToUse = cryptoKey;
       if(saltB64 && saltB64 !== localSaltB64){
-        const passphrase = window.prompt(tr('backup_passphrase_prompt'));
-        if(!passphrase) return null;
-        keyToUse = await deriveKeyFromPassphrase(passphrase, base64ToBytes(saltB64));
+        let json = null;
+        for(let tryN = 0; tryN < 3 && json === null; tryN++){
+          const passphrase = window.prompt(tryN ? tcT('Phrase secrète incorrecte, réessaie :', 'Wrong passphrase, try again:') : tr('backup_passphrase_prompt'));
+          if(!passphrase){ backupFailWhy = 'cancel'; return null; }
+          try{
+            keyToUse = await deriveKeyFromPassphrase(passphrase, base64ToBytes(saltB64));
+            json = await decryptPayloadWithKey(innerEnc, keyToUse);
+          }catch(e){ json = null; }
+        }
+        if(json === null){ backupFailWhy = 'pass'; return null; }
+        driveLastKey = keyToUse; driveLastSalt = saltB64;
+        return JSON.parse(json);
       }
       driveLastKey = keyToUse; driveLastSalt = saltB64 || localSaltB64;
-      const json = await decryptPayloadWithKey(innerEnc, keyToUse);
+      let json;
+      try{ json = await decryptPayloadWithKey(innerEnc, keyToUse); }catch(e){ backupFailWhy = 'key'; throw e; }
       return JSON.parse(json);
     }
     if(trimmed.startsWith('enc:')){
@@ -20518,11 +20549,174 @@ function updateMusicMediaSessionMetadata(track){
       title: track.title || '',
       artist: track.artist || '',
       album: track.album || '',
-      artwork: [],
+      artwork: (track.hasCover && musicCoverUrls[track.id]) ? [{ src: musicCoverUrls[track.id], sizes: '600x600', type: 'image/jpeg' }] : [],
     });
   }catch(e){
     console.error('mediaSession metadata error', e);
   }
+}
+
+/* -- pochettes des morceaux (stockées à part, dans la base des médias) -- */
+const musicCoverUrls = {}, musicCoverPending = {};
+let musicCoverRenderT = null, musicCoverScanRunning = false;
+function musicCoverKey(id){ return 'cover:' + id; }
+function musicCoverUrl(id){
+  if(id in musicCoverUrls) return musicCoverUrls[id];
+  if(!musicCoverPending[id]){
+    musicCoverPending[id] = 1;
+    audioGet(musicCoverKey(id)).then(b => {
+      if(b) musicCoverUrls[id] = URL.createObjectURL(b);
+      else { musicCoverUrls[id] = ''; const tr0 = state.musicTracks.find(x => x.id === id); if(tr0){ tr0.hasCover = false; tr0.coverScanned = false; } }
+    }).catch(() => { musicCoverUrls[id] = ''; }).finally(() => {
+      delete musicCoverPending[id];
+      if(musicCoverUrls[id]){
+        const cur = state.musicTracks.find(x => x.id === state.currentMusicTrackId);
+        if(cur && cur.id === id){ try{ updateMusicMediaSessionMetadata(cur); }catch(_){} }
+        clearTimeout(musicCoverRenderT); musicCoverRenderT = setTimeout(() => render(), 200);
+      }
+    });
+  }
+  return '';
+}
+function musicTrackCover(t){ return t && t.hasCover ? musicCoverUrl(t.id) : ''; }
+function musicThumbHtml(t, cls){ const u = musicTrackCover(t); return u ? `<img class="${cls}" src="${escapeAttr(u)}" alt="">` : ''; }
+function musicMakeCover(blob){
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob), img = new Image();
+    img.onload = () => {
+      try{
+        const k = Math.min(1, 600 / Math.max(img.naturalWidth, img.naturalHeight, 1));
+        const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.naturalWidth * k)); c.height = Math.max(1, Math.round(img.naturalHeight * k));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(b => { URL.revokeObjectURL(url); b ? resolve(b) : reject(new Error('cover')); }, 'image/jpeg', .85);
+      }catch(e){ URL.revokeObjectURL(url); reject(e); }
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('cover')); };
+    img.src = url;
+  });
+}
+async function musicSetCover(id, blob){
+  try{
+    const jb = await musicMakeCover(blob);
+    await audioPut(musicCoverKey(id), jb);
+    if(musicCoverUrls[id]) URL.revokeObjectURL(musicCoverUrls[id]);
+    musicCoverUrls[id] = URL.createObjectURL(jb);
+    return true;
+  }catch(e){ console.error('cover error', e); return false; }
+}
+// The picture embedded in an MP3 (APIC frame of an ID3v2.3 / v2.4 tag).
+function parseId3Cover(arrayBuffer){
+  try{
+    const b = new Uint8Array(arrayBuffer);
+    if(b.length < 10 || b[0] !== 0x49 || b[1] !== 0x44 || b[2] !== 0x33) return null;
+    const ver = b[3];
+    if(ver < 3 || (b[5] & 0x40)) return null;
+    const tagEnd = Math.min(b.length, 10 + readId3SynchsafeSize(b, 6));
+    let o = 10;
+    while(o + 10 <= tagEnd){
+      const fid = String.fromCharCode(b[o], b[o + 1], b[o + 2], b[o + 3]);
+      if(fid === '\u0000\u0000\u0000\u0000') break;
+      const size = ver >= 4 ? readId3SynchsafeSize(b, o + 4) : readId3RegularSize(b, o + 4);
+      const s = o + 10, e = s + size;
+      if(size <= 0 || e > tagEnd) break;
+      if(fid === 'APIC'){
+        const enc = b[s]; let q = s + 1, mime = '';
+        while(q < e && b[q] !== 0){ mime += String.fromCharCode(b[q]); q++; }
+        q += 2;
+        if(enc === 1 || enc === 2){ while(q + 1 < e && !(b[q] === 0 && b[q + 1] === 0)) q += 2; q += 2; }
+        else { while(q < e && b[q] !== 0) q++; q++; }
+        if(q >= e) return null;
+        return new Blob([b.slice(q, e)], { type: /^image\//.test(mime) ? mime : 'image/jpeg' });
+      }
+      o = e;
+    }
+  }catch(e){ console.error('id3 cover error', e); }
+  return null;
+}
+// Tracks imported before this feature: read each file's own picture once.
+async function musicScanCovers(){
+  if(musicCoverScanRunning) return;
+  const todo = state.musicTracks.filter(t => !t.coverScanned && !t.hasCover);
+  if(!todo.length) return;
+  musicCoverScanRunning = true;
+  let found = 0;
+  try{
+    for(const t of todo){
+      try{
+        const blob = await audioGet(t.id);
+        if(blob){
+          const cv = parseId3Cover(await blob.slice(0, 6 * 1024 * 1024).arrayBuffer());
+          if(cv && await musicSetCover(t.id, cv)){ t.hasCover = true; found++; }
+        }
+      }catch(e){ console.error('cover scan error', e); }
+      t.coverScanned = true;
+    }
+    await storageSet('musicTracks', state.musicTracks);
+    triggerAutoSync();
+  } finally { musicCoverScanRunning = false; }
+  if(found){ showToast(tcT(`${found} pochette${found > 1 ? 's' : ''} retrouvée${found > 1 ? 's' : ''}`, `${found} cover${found > 1 ? 's' : ''} found`)); render(); }
+}
+function musicPickCover(id){ state._coverFor = id; state.musicRowMenu = null; const el = document.getElementById('musicCoverInput'); if(el) el.click(); }
+async function musicCoverChosen(input){
+  const file = input.files && input.files[0], id = state._coverFor;
+  input.value = '';
+  const t = state.musicTracks.find(x => x.id === id);
+  if(!file || !t) return;
+  if(await musicSetCover(id, file)){
+    t.hasCover = true; t.coverScanned = true;
+    await storageSet('musicTracks', state.musicTracks); triggerAutoSync();
+    showToast(tcT('Pochette ajoutée', 'Cover added'));
+  } else showToast(tcT('Image impossible à lire', 'Could not read that image'));
+  render();
+}
+async function musicRemoveCover(id){
+  const t = state.musicTracks.find(x => x.id === id); if(!t) return;
+  try{ await audioDelete(musicCoverKey(id)); }catch(e){}
+  if(musicCoverUrls[id]) URL.revokeObjectURL(musicCoverUrls[id]);
+  musicCoverUrls[id] = ''; t.hasCover = false; t.coverScanned = true; state.musicRowMenu = null;
+  await storageSet('musicTracks', state.musicTracks); triggerAutoSync(); render();
+}
+
+/* -- mode ambiance : grand affichage sombre, écran gardé allumé -- */
+let musicAmbientTimer = null, musicWakeLock = null;
+function musicClockText(){ const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+async function musicWakeAcquire(){ try{ if(navigator.wakeLock && state.musicAmbient && !musicWakeLock){ musicWakeLock = await navigator.wakeLock.request('screen'); musicWakeLock.addEventListener('release', () => { musicWakeLock = null; }); } }catch(e){} }
+async function musicAmbientOpen(){
+  state.musicAmbient = true;
+  try{ const d = document.documentElement; if(d.requestFullscreen && !document.fullscreenElement) await d.requestFullscreen(); }catch(e){}
+  render();
+  musicWakeAcquire();
+  clearInterval(musicAmbientTimer);
+  musicAmbientTimer = setInterval(() => { const c = document.getElementById('maClock'); if(c) c.textContent = musicClockText(); else if(!state.musicAmbient) clearInterval(musicAmbientTimer); }, 1000);
+}
+function musicAmbientClose(){
+  state.musicAmbient = false;
+  clearInterval(musicAmbientTimer); musicAmbientTimer = null;
+  try{ if(musicWakeLock){ musicWakeLock.release(); musicWakeLock = null; } }catch(e){}
+  try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+  render();
+}
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') musicWakeAcquire(); });
+function musicAmbientHtml(){
+  const t = state.musicTracks.find(x => x.id === state.currentMusicTrackId);
+  const cov = t ? musicTrackCover(t) : '';
+  const dur = state.musicDuration || (t && t.durationSeconds) || 0, pct = dur ? Math.min(100, (state.musicCurrentTime || 0) / dur * 100) : 0;
+  const note = `<svg viewBox="0 0 24 24" width="38%" fill="none" stroke="#C9A04A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>`;
+  return `<div class="ma" role="dialog" aria-modal="true" aria-label="${escapeAttr(tcT('Mode ambiance', 'Ambient mode'))}">
+    <button type="button" class="ma-x" onclick="musicAmbientClose()">✕ ${tcT('Quitter', 'Exit')}</button>
+    <div class="ma-clock" id="maClock">${musicClockText()}</div>
+    ${t ? `<div class="ma-art">${cov ? `<img src="${escapeAttr(cov)}" alt="">` : note}</div>
+      <div class="ma-t">${escapeHtml(t.title)}</div>${t.artist ? `<div class="ma-a">${escapeHtml(t.artist)}</div>` : ''}
+      <div class="ma-bar"><i id="maBar" style="width:${pct.toFixed(1)}%"></i></div>
+      <div class="ma-time"><span id="maCur">${formatAudioDuration(state.musicCurrentTime)}</span><span>${formatAudioDuration(dur)}</span></div>`
+      : `<div class="ma-t">${tcT('Lance un morceau pour commencer', 'Start a track to begin')}</div>`}
+    <div class="ma-ctl">
+      <button type="button" aria-label="${escapeAttr(tr('mu_prev_label'))}" onclick="musicPlayPrev()">${svgIcon('musicPrev')}</button>
+      <button type="button" class="ma-play" aria-label="${escapeAttr(tr(state.musicIsPlaying ? 'mu_pause_label' : 'mu_play_label'))}" onclick="toggleMusicPlayPause()">${svgIcon(state.musicIsPlaying ? 'musicPause' : 'musicPlay')}</button>
+      <button type="button" aria-label="${escapeAttr(tr('mu_next_label'))}" onclick="musicPlayNext()">${svgIcon('musicNext')}</button>
+    </div>
+    <div class="ma-hint">${tcT('L’écran reste allumé, en sombre. Touche « Quitter » pour revenir.', 'The screen stays on, dimmed. Tap “Exit” to go back.')}</div>
+  </div>`;
 }
 
 function updateMusicSeekDom(){
@@ -20530,6 +20724,8 @@ function updateMusicSeekDom(){
   if(range && document.activeElement !== range) range.value = String(state.musicCurrentTime);
   const cur = document.getElementById('musicCurrentTimeLabel');
   if(cur) cur.textContent = formatAudioDuration(state.musicCurrentTime);
+  const mb = document.getElementById('maBar');
+  if(mb){ const tk = state.musicTracks.find(x => x.id === state.currentMusicTrackId), du = state.musicDuration || (tk && tk.durationSeconds) || 0; mb.style.width = (du ? Math.min(100, (state.musicCurrentTime || 0) / du * 100) : 0).toFixed(1) + '%'; const mc = document.getElementById('maCur'); if(mc) mc.textContent = formatAudioDuration(state.musicCurrentTime); }
   try{ msUpdateStaff(); }catch(_){}
 }
 
@@ -21395,6 +21591,7 @@ function renderMusicNowPlaying(){
   const sub = [track.artist, track.album].filter(Boolean).map(escapeHtml).join(' · ');
   return `
     <div class="music-now-playing ms-now">
+      ${musicTrackCover(track) ? `<div class="ms-cover"><img src="${escapeAttr(musicTrackCover(track))}" alt=""></div>` : ''}
       ${msInitialBlock(track.title, sub, tr('mu_now_label'))}
       <div class="ms-staff-wrap">
         ${msStaffSvg(dur ? (state.musicCurrentTime || 0) / dur : 0)}
@@ -21412,6 +21609,7 @@ function renderMusicNowPlaying(){
         <button type="button" class="icon-btn music-toggle-btn ${state.musicRepeat ? 'active' : ''}" aria-label="${tr('mu_repeat_label')}" aria-pressed="${!!state.musicRepeat}" onclick="toggleMusicRepeat()">${svgIcon('musicRepeat')}</button>
       </div>
       ${renderMusicExtrasForTrack(track)}
+      <button type="button" class="ma-open" onclick="musicAmbientOpen()">${tcT('Mode ambiance', 'Ambient mode')}</button>
       ${state.musicQueue && state.musicQueue.length && state.screen !== 'musicQueueView' ? `
         <div class="games-stats-link" onclick="openMusicQueueView()"><span class="photo-section-label" style="margin-bottom:0">${tr('music_queue_link')}</span>${svgIcon('chevronRight')}</div>
       ` : ''}
@@ -21424,6 +21622,7 @@ function msTrackRowHtml(t, i){
   return `
     <div class="ms-row ${t.id === state.currentMusicTrackId ? 'playing' : ''}" onclick="playMusicTrack('${t.id}')">
       <span class="ms-num">${toRoman(i + 1)}</span>
+      ${musicThumbHtml(t, 'ms-th')}
       <div class="ms-row-txt"><div class="ms-row-title">${escapeHtml(t.title)}</div>${t.artist ? `<div class="ms-row-artist">${escapeHtml(t.artist)}</div>` : ''}</div>
       <span class="ms-dur">${formatAudioDuration(t.durationSeconds)}</span>
       <button type="button" class="ms-act ${t.favorite ? 'on' : ''}" aria-label="${tr('music_favorite_toggle')}" onclick="event.stopPropagation(); toggleMusicTrackFavorite('${t.id}')">${t.favorite ? '♥' : '♡'}</button>
@@ -21432,6 +21631,8 @@ function msTrackRowHtml(t, i){
     ${open ? `<div class="ms-row-menu">
       <button type="button" onclick="openMusicMoveModal('${t.id}')">${tr('music_sort_into')}</button>
       <button type="button" onclick="renameMusicTrack('${t.id}')">${tr('music_rename')}</button>
+      <button type="button" onclick="musicPickCover('${t.id}')">${tcT('Choisir une pochette', 'Choose a cover')}</button>
+      ${t.hasCover ? `<button type="button" onclick="musicRemoveCover('${t.id}')">${tcT('Retirer la pochette', 'Remove the cover')}</button>` : ''}
       <button type="button" class="del" onclick="deleteMusicTrack('${t.id}')">${tr('health_entry_delete')}</button>
     </div>` : ''}`;
 }
@@ -33957,6 +34158,11 @@ async function handleMusicFileInput(input){
         playCount: 0,
         lastPlayedAt: null,
       };
+      try{
+        const cv = parseId3Cover(await file.slice(0, 6 * 1024 * 1024).arrayBuffer());
+        if(cv && await musicSetCover(id, cv)) track.hasCover = true;
+        track.coverScanned = true;
+      }catch(e){ console.error('music cover read error', e); }
       state.musicTracks.push(track);
       state._musicShuffledKey = null;
       await storageSet('musicTracks', state.musicTracks);
@@ -34015,6 +34221,8 @@ async function deleteMusicTrack(id){
     state.musicDuration = 0;
   }
   try{ await audioDelete(id); }catch(e){ console.error('audio delete error', e); }
+  try{ await audioDelete(musicCoverKey(id)); }catch(e){}
+  if(musicCoverUrls[id]){ URL.revokeObjectURL(musicCoverUrls[id]); delete musicCoverUrls[id]; }
   state.musicTracks = state.musicTracks.filter(x => x.id !== id);
   state._musicShuffledKey = null;
   await storageSet('musicTracks', state.musicTracks);
@@ -47871,10 +48079,14 @@ async function importBackupDataFile(file){
   try{
     const text = await fileToText(file);
     const data = await decryptBackupPayload(text);
-    if(!data || !Array.isArray(data.notes)){
-      showToast(tr('toast_backup_invalid'));
+    if(!data || typeof data !== 'object'){
+      showToast(backupFailWhy === 'cancel' ? tcT('Import annulé (phrase secrète non saisie)', 'Import cancelled (no passphrase entered)')
+        : backupFailWhy === 'pass' ? tcT('Phrase secrète incorrecte : ce fichier a été créé avec une autre phrase', 'Wrong passphrase: this file was made with a different one')
+        : backupFailWhy === 'key' ? tcT('Ce fichier a été créé avec un autre code de cet appareil. Utilise la phrase secrète de la sauvegarde.', 'This file was made with another key. Use the backup passphrase.')
+        : tr('toast_backup_invalid'));
       return false;
     }
+    if(!Array.isArray(data.notes)) data.notes = [];
     const ok = window.confirm(tr('confirm_import', state.notes.length, data.notes.length));
     if(!ok) return false;
     state.notes = data.notes;
@@ -84889,6 +85101,7 @@ function renderMusicHome(){
       ${renderMusicHero()}
       ${state.musicTab === 'nature' ? renderNatureTab() : `
       <input type="file" id="musicFileInput" accept="audio/*" multiple class="visually-hidden" onchange="handleMusicFileInput(this)">
+      <input type="file" id="musicCoverInput" accept="image/*" class="visually-hidden" onchange="musicCoverChosen(this)">
       ${state.musicTracks.length ? `<div class="games-stats-link" onclick="openMusicStats()"><span class="photo-section-label" style="margin-bottom:0">${tr('music_stats_link')}</span>${svgIcon('chevronRight')}</div>` : ''}
       ${state.musicTracks.length ? `<div class="ms-rep">${escapeHtml(tr('mu_repertoire'))}</div>` : ''}
       ${state.musicTracks.length ? `<div class="category-picker mu-views" style="margin-bottom:10px">${['tracks', 'artists', 'albums', 'playlists'].map(v => `<button type="button" class="category-chip ${(state.musicView || 'tracks') === v ? 'active' : ''}" style="--chip-color:var(--crown-red)" onclick="setMusicView('${v}')"><span class="category-dot"></span>${tr('music_view_' + v)}</button>`).join('')}</div>` : ''}
@@ -84907,6 +85120,8 @@ function renderMusicHome(){
     ${renderMusicMoveModal()}
     ${renderMusicPlaylistModal()}
     ${renderBottomNav()}
+    ${state.musicAmbient ? musicAmbientHtml() : ''}
+    ${(!musicCoverScanRunning && state.musicTracks.some(t => !t.coverScanned && !t.hasCover) && setTimeout(musicScanCovers, 1500)) ? '' : ''}
   `;
 }
 
@@ -86765,6 +86980,7 @@ function renderMusicMiniPlayer(){
   if(!track) return '';
   return `
     <div class="music-mini-player" onclick="goToSubcategory('entertainment','music')">
+      ${musicThumbHtml(track, 'mm-th')}
       <div class="music-mini-info">
         <div class="music-mini-title">${escapeHtml(track.title)}</div>
         ${track.artist ? `<div class="music-mini-artist">${escapeHtml(track.artist)}</div>` : ''}
