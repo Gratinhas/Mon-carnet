@@ -39593,7 +39593,9 @@ const DP_FLOWER = { spring: ['#F2A7BE', '#F5D36E'], summer: ['#FFFFFF', '#F5C84E
 function dayMoment(){
   // the moment follows the clock, also in dark mode (her choice: dark mode only darkens the rest of the app)
   const h = new Date().getHours();
-  return h >= 5 && h < 12 ? 'morning' : h < 17 ? 'afternoon' : h < 21 ? 'evening' : 'night';
+  // before 5 a.m. it is still the night (the old test sent 0 h–5 h to « afternoon »)
+  if(h < 5 || h >= 21) return 'night';
+  return h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
 }
 // Home: the season of the month shown. A page: the season of its date. Letters: today.
 function diaryThemeSeason(){
