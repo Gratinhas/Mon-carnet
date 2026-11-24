@@ -51141,6 +51141,8 @@ async function toggleJournalEntryCategory(id){
 }
 
 function setJournalEntryPerson(person){
+  // choisir « Qui » range l'activité chez le partenaire affiché dans le Journal (« Avec … »)
+  delete state.currentJournalEntry.partnerId;
   state.currentJournalEntry.person = person;
   rechainJournalEntryStartTime(person);
   render();
@@ -51985,7 +51987,19 @@ async function pcSyncApply(doc){
 }
 // Tracks and covers added on the computer: their files are already in the Drive media folder,
 // they come down in the background like after a restore (driveMediaRestorePump).
+// réparation : une pochette dont l'image est bien sur ce téléphone, mais qu'une ancienne synchro avec l'ordinateur avait « oubliée »
+async function pcsRepairCovers(){
+  let n = 0;
+  for(const t of (state.musicTracks || [])){
+    if(t.hasCover) continue;
+    let b = null; try{ b = await audioGet(musicCoverKey(t.id)); }catch(e){}
+    if(b){ t.hasCover = true; delete musicCoverUrls[t.id]; n++; }
+  }
+  if(n){ await storageSet('musicTracks', state.musicTracks); }
+  return n;
+}
 async function pcsQueueMusicMedia(){
+  try{ await pcsRepairCovers(); }catch(e){}
   if(!driveV3.media) return 0;
   const tag = driveSaltTag();
   const remote = await driveList(`'${driveV3.media}' in parents and trashed=false`, 'id,name');
