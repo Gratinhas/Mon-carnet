@@ -51935,7 +51935,9 @@ async function pcSyncApply(doc){
         const i = c.findIndex(x => x && String(x.id) === String(u.id));
         if(i >= 0){
           if(u.before && pcsHash(c[i]) !== u.before){ kept++; continue; }
-          pcsAssign(c[i], u.v);
+          // the partner of a « together » / partner activity is chosen on this phone: the computer never moves it to another partner
+          const v = (ch.path === 'journal' && c[i].person && c[i].partnerId && u.v.person) ? Object.assign({}, u.v, { partnerId: c[i].partnerId }) : u.v;
+          pcsAssign(c[i], v);
           if(Array.isArray(c[i].categories) && 'category' in u.v) c[i].category = c[i].categories[0] || null;
         }else{
           if(u.before){ kept++; continue; }        // deleted here in the meantime
