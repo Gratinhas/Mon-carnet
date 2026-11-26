@@ -10735,6 +10735,92 @@
 .jps-sep{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#999;margin:12px 4px 4px}
 .jps-add{margin-top:10px;width:100%;padding:12px;border-radius:14px;border:1.5px dashed rgba(138,124,240,.4);background:none;color:#6b5bd6;font:inherit;font-weight:600;cursor:pointer}
 </style>
+<style id="cnStyle">
+/* ===================== Coloriage par numéros — « Atelier aquarelle » (téléphone) ===================== */
+.cnp{position:fixed;left:0;right:0;top:0;height:100dvh;z-index:20;display:flex;flex-direction:column;overflow:hidden;font-family:'DM Sans','Quicksand',sans-serif;color:#4a3a30;background:#fbf6ee}
+.cnp *{box-sizing:border-box}
+.cnp button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;color:inherit}
+.cnp-wc{position:absolute;width:240px;height:220px;border-radius:48% 52% 45% 55%;filter:blur(26px);opacity:.5;pointer-events:none;z-index:0}
+.cnp-wc.a{left:-80px;top:-60px;background:#f3c9b5}.cnp-wc.b{right:-90px;top:260px;background:#c9dbcf}.cnp-wc.c{left:-60px;bottom:40px;background:#e9d7a6}
+.cnp.play .cnp-wc{opacity:.28}
+.cnp>*:not(.cnp-wc):not(.cnp-sheet):not(.cnp-sbg):not(#cnp-toast){position:relative;z-index:1}
+.cnp-hd{flex:none;display:flex;align-items:center;gap:6px;padding:calc(env(safe-area-inset-top) + 10px) 12px 8px 6px}
+.cnp-hd h1{flex:1;margin:0;font:600 24px Lora,Georgia,serif;color:#4a3a30}
+.cnp-ib{flex:none;min-width:38px;height:38px;border:0;background:none;border-radius:12px;font-size:19px;color:#6a5646;display:grid;place-items:center;padding:0 4px;touch-action:none}.cnp-ib:active{background:rgba(196,106,74,.12)}.cnp-ib.dis{opacity:.3;pointer-events:none}
+.cnp-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:4px 16px 0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.cnp-pad{height:40px}
+.cnp-b{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid #eadfce;background:#fffdf8;border-radius:99px;padding:10px 18px;font-size:14px;font-weight:500;white-space:nowrap}
+.cnp-b.p{background:#c46a4a;border-color:#c46a4a;color:#fff}.cnp-b.wide{width:100%;padding:14px;font:600 16px Lora,serif;border-radius:16px}
+.cnp-help{font-size:12px;color:#a08c78;margin:6px 2px 0;line-height:1.4}.cnp-help.c{text-align:center}
+/* accueil */
+.cnp-new{margin:6px 0 18px;padding:22px 16px 20px;text-align:center;background:#fffdf8;border:1px solid #eadfce;border-radius:18px;box-shadow:0 16px 30px -26px rgba(120,80,50,.6)}
+.cnp-plus{width:54px;height:54px;margin:0 auto 10px;border-radius:52% 48% 55% 45%/48% 55% 45% 52%;background:#c46a4a;color:#fff;display:grid;place-items:center;font-size:30px;box-shadow:inset -4px -5px 0 rgba(0,0,0,.1)}
+.cnp-new h3{margin:0;font:600 19px Lora,serif}.cnp-new p{margin:6px 0 0;font-size:13px;color:#9a8676}
+.cnp-btns{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.cnp-tabs{display:flex;gap:20px;margin:0 6px 12px}.cnp-tabs button{border:0;background:none;padding:0 0 4px;font:600 15px Lora,serif;color:#a8927e}.cnp-tabs button.on{color:#4a3a30;border-bottom:2px solid #c46a4a}.cnp-tabs em{font:500 11px 'DM Sans';font-style:normal;color:#b9a593}
+.cnp-gal{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cnp-card{position:relative;background:#fffdf8;border:1px solid #eadfce;border-radius:16px;padding:8px 8px 10px;box-shadow:0 12px 24px -22px rgba(120,80,50,.6)}
+.cnp-th{aspect-ratio:1;display:grid;place-items:center;background:#f8f1e6;border-radius:10px;overflow:hidden}.cnp-th img{max-width:100%;max-height:100%;image-rendering:pixelated;display:block}
+.cnp-cn{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-top:7px}.cnp-cn b{font:600 14px Lora,serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cnp-cn small{color:#c46a4a;font-weight:700;font-size:12px}
+.cnp-bar{height:4px;border-radius:9px;background:#f0e6d8;margin-top:6px;overflow:hidden}.cnp-bar i{display:block;height:100%;background:#c46a4a}
+.cnp-dots{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(255,253,248,.92);font-weight:700;color:#7a6656;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.cnp-empty{text-align:center;color:#a8927e;font-style:italic;margin:26px 10px}
+/* créer */
+.cnp-name{flex:1;min-width:0;border:0;border-bottom:1.5px dashed #e3d2bc;background:transparent;font:600 19px Lora,serif;color:#4a3a30;padding:4px 2px;outline:none}
+.cnp-cropbox{height:min(46vh,360px);display:grid;place-items:center;background:#f3ebdf;border-radius:16px;overflow:hidden;border:1px solid #eadfce}
+.cnp-cropbox canvas{box-shadow:0 0 0 2px #fff,0 0 0 3.5px #c46a4a;touch-action:none}
+.cnp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.cnp-chips button{border:1px solid #eadfce;background:#fffdf8;border-radius:99px;padding:8px 13px;font-size:13px}.cnp-chips button.on{background:#c46a4a;border-color:#c46a4a;color:#fff}
+.cnp-res{display:flex;align-items:center;gap:14px;margin:14px 0 4px;padding:10px;background:#fffdf8;border:1px solid #eadfce;border-radius:16px}
+.cnp-prevbox{flex:none;width:118px;height:118px;display:grid;place-items:center}.cnp-prevbox canvas{image-rendering:pixelated;box-shadow:0 8px 18px -10px rgba(0,0,0,.45)}
+.cnp-res b{display:block;font:600 15px Lora,serif}.cnp-res span{font-size:12.5px;color:#9a8676}
+.cnp-body h4{font:600 14px Lora,serif;margin:16px 0 0;color:#4a3a30}.cnp-body h4 em{font:500 12px 'DM Sans';font-style:normal;color:#c46a4a;margin-left:6px}
+.cnp-pal{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 10px;background:#fffdf8;border:1px solid #eadfce;border-radius:14px}.cnp-pal button{border:0;background:none;font-size:20px;color:#9a8676;padding:0 6px}.cnp-pald{flex:1;display:flex;height:20px}.cnp-pald i{flex:1}.cnp-pald i:first-child{border-radius:6px 0 0 6px}.cnp-pald i:last-child{border-radius:0 6px 6px 0}
+.cnp-sl{display:flex;align-items:center;gap:10px;font-size:12px;color:#9a8676;margin-top:6px}.cnp-sl input{flex:1;accent-color:#c46a4a}
+.cnp-foot{flex:none;padding:10px 16px calc(env(safe-area-inset-bottom) + 12px);background:linear-gradient(rgba(251,246,238,0),#fbf6ee 30%)}
+/* colorier */
+.cnp-hd.ph{gap:2px;padding-right:6px}
+.cnp-pname{flex:0 1 auto;min-width:0;font:600 17px Lora,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cnp-pct{font-size:13px;font-weight:700;color:#c46a4a;margin-left:6px;white-space:nowrap}.cnp-sp{flex:1}
+.cnp-pbar{flex:none;height:4px;margin:0 12px 6px;border-radius:9px;background:#eadfce;overflow:hidden}.cnp-pbar i{display:block;height:100%;background:#c46a4a;transition:width .3s}
+.cnp-stage{flex:1;min-height:0;margin:0 8px;border-radius:16px;border:1px solid #eadfce;background:rgba(243,235,223,.7);overflow:hidden;position:relative}
+.cnp-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.cnp-zoom{position:absolute;right:8px;bottom:8px;font-size:11px;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.88);color:#7a6656;pointer-events:none}
+.cnp-peekimg{position:absolute;inset:0;display:none;place-items:center;background:rgba(251,246,238,.96);pointer-events:none}.cnp-peekimg.on{display:grid}.cnp-peekimg canvas{max-width:92%;max-height:92%;image-rendering:pixelated;box-shadow:0 14px 30px -16px rgba(0,0,0,.45)}
+.cnp-tools{flex:none;display:flex;gap:6px;padding:8px 10px 2px}
+.cnp-tl{flex:1;height:46px;border:1px solid #eadfce;background:#fffdf8;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0}.cnp-tl b{font-size:17px;font-weight:400;line-height:1.1}.cnp-tl small{font-size:9px;color:#9a8676}
+.cnp-tl.on{background:#c46a4a;border-color:#c46a4a}.cnp-tl.on small{color:#fff}.cnp-tl.off{opacity:.42}
+.cnp-szs{flex:none;display:flex;align-items:center;gap:4px;padding:4px 12px 0;font-size:12px;color:#9a8676}.cnp-szs>span:first-child{margin-right:4px}
+.cnp-szs button[data-v]{width:28px;height:28px;border:0;background:none;display:grid;place-items:center;padding:0}.cnp-szs button i{display:block;border-radius:50%;background:#bba896}.cnp-szs button.on i{background:#c46a4a;box-shadow:0 0 0 3px #f6dccd}
+.cnp-finb{border:1px solid #eadfce;background:#fffdf8;border-radius:99px;padding:6px 12px;font-size:12.5px}
+.cnp-pals{flex:none;display:flex;gap:8px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;scroll-snap-type:x proximity}.cnp-pals::-webkit-scrollbar{display:none}
+.cnp-sw{flex:none;border:0;background:none;padding:2px;scroll-snap-align:center}
+.cnp-sw b{width:42px;height:42px;display:grid;place-items:center;border-radius:52% 48% 55% 45%/48% 55% 45% 52%;font:700 14px 'DM Sans';box-shadow:inset -3px -4px 0 rgba(0,0,0,.1);transition:transform .12s}
+.cnp-sw.on b{transform:scale(1.14);box-shadow:0 0 0 3px #fbf6ee,0 0 0 5px #c46a4a}.cnp-sw.done b{opacity:.5}
+.cnp-pals .cnp-sw:first-child{margin-left:4px}.cnp-pals .cnp-sw:last-child{margin-right:6px}
+.cnp-info{flex:none;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 16px calc(env(safe-area-inset-bottom) + 10px);font-size:12.5px;color:#9a8676}.cnp-info b{color:#4a3a30}
+.cnp-warn{border:1px solid #efc4b8;background:#fff6f2;color:#b03a2e;border-radius:99px;padding:3px 10px;font-size:12px}
+.cnp.full .cnp-hd.ph .cnp-pname,.cnp.full .cnp-pbar{display:none}.cnp.full .cnp-stage{margin:0;border-radius:0;border-left:0;border-right:0}
+/* feuilles */
+.cnp-sbg{position:absolute;inset:0;z-index:30;background:rgba(60,40,30,.28)}
+.cnp-sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;max-height:82%;overflow-y:auto;background:#fffdf8;border-radius:22px 22px 0 0;padding:8px 18px calc(env(safe-area-inset-bottom) + 18px);box-shadow:0 -14px 40px -18px rgba(60,40,30,.5);animation:cnpup .22s ease-out}
+.cnp-sheet.tall{max-height:94%}
+@keyframes cnpup{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.cnp-grab{display:block;width:40px;height:4px;border-radius:9px;background:#e3d2bc;margin:2px auto 10px}
+.cnp-sheet h3{margin:4px 0 6px;font:600 18px Lora,serif;text-align:center}.cnp-sheet h4{font:600 14px Lora,serif;margin:14px 0 0}
+.cnp-acts{display:flex;flex-direction:column;gap:2px;margin-top:10px}.cnp-acts button{border:0;background:none;text-align:left;padding:12px 8px;border-radius:12px;font-size:15px}.cnp-acts button:active{background:#f8ece2}.cnp-acts .dg{color:#b03a2e}
+.cnp-fins{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.cnp-fins button{border:1.5px solid transparent;background:none;border-radius:12px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:3px}.cnp-fins button.on{border-color:#c46a4a;background:#fff6ef}
+.cnp-fins img{width:44px;height:44px}.cnp-fins small{font-size:11px;line-height:1.15;text-align:center}
+.cnp-done h3{color:#a2482a;font-size:22px}
+.cnp-finalbox{position:relative;display:grid;place-items:center;min-height:180px;background:#f3ebdf;border-radius:14px;padding:12px;margin-top:8px}
+.cnp-finalbox canvas{max-width:100%;max-height:38vh;box-shadow:0 12px 26px -14px rgba(0,0,0,.45)}
+.cnp-finalbox canvas.rv{animation:cnprv 1.6s ease-out}
+@keyframes cnprv{0%{clip-path:circle(0% at 50% 50%);filter:saturate(0) brightness(1.3)}60%{filter:saturate(.7)}100%{clip-path:circle(75% at 50% 50%);filter:none}}
+#cnp-wait{position:absolute;left:0;right:0;bottom:4px;text-align:center;font-size:11.5px;color:#9a8676}
+.cnp-ck{display:flex;align-items:center;gap:8px;font-size:14px;margin-top:12px}
+.cnp-row{display:flex;gap:10px;margin-top:14px}.cnp-row .cnp-b{flex:1;padding:12px}
+#cnp-toast{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 120px);transform:translate(-50%,20px);z-index:40;background:rgba(74,58,48,.92);color:#fff;padding:9px 16px;border-radius:99px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;max-width:86%;text-align:center}
+#cnp-toast.show{opacity:1;transform:translate(-50%,0)}
+
+</style>
 <style id="pmStyle">
 /* ===================== Poème & écriture — Carnet de poète (téléphone) ===================== */
 .pm{position:fixed;left:0;right:0;top:0;height:100dvh;z-index:20;display:flex;flex-direction:column;overflow:hidden;font-family:'Quicksand',sans-serif;color:#3b2a20;
@@ -20635,6 +20721,7 @@ const state = {
   musicPlaylists: [],
   musicPlaylistEditId: null,
   coloringWorks: {},
+  coloringNum: null,
   drawings: [], drawColors: [], drawViewId: null,
   outWishes: [], outMemories: [], outUpcoming: [],
   coloringAlbumId: null,
@@ -22557,7 +22644,7 @@ const SENSITIVE_KEYS = ['poems','gamesPrefs','filmEntries','filmWatchlist','film
   'activityLog','foodLog','relationInfo','personalInfo','contacts','recipes','recipeMeta','mealPlan','foodFavorites','foodHabitTracker','fitnessLevel','trainingGoal',
   'assistantApiKey','tmdbApiKey','assistantModel','assistantHistory','assistantWindowDays','doctorHistory','doctors','doctorQuestions','psychologistHistory','psyConversations','dayStories',
   'coachConstraints','coachProgram','coachPrefs','aiSpendTotalUsd','passwordEntries','identityDocuments','usefulNumbers','dismissedReminders','shoppingList','learningNotes','learningFlashcards',
-  'religionBookmarks','religionNotes','religionReadingPlan','religionPrayers','tcgOwned','tcgState','religionLastRead','religionRead','religionHighlights','musicTracks','musicFolders','musicPlaylists','coloringWorks','drawings','drawColors','outWishes','outMemories','outUpcoming','musicSortBy','musicListenLog','musicSettings','asmrTracks','asmrLog','asmrSettings','learningLang','teacherHistory','gardenPlants','gardenSowings','gardenBalcony','gardenEncPhotos','gardenChat','gardenIdent','gardenSettings','gardenDone','diyProgress','diyToolbox','diyHome','diyChat','diyIdent','cookProgress','cookWorld','cookChat','cookIdent','cookLexSeen'];
+  'religionBookmarks','religionNotes','religionReadingPlan','religionPrayers','tcgOwned','tcgState','religionLastRead','religionRead','religionHighlights','musicTracks','musicFolders','musicPlaylists','coloringWorks','coloringNum','drawings','drawColors','outWishes','outMemories','outUpcoming','musicSortBy','musicListenLog','musicSettings','asmrTracks','asmrLog','asmrSettings','learningLang','teacherHistory','gardenPlants','gardenSowings','gardenBalcony','gardenEncPhotos','gardenChat','gardenIdent','gardenSettings','gardenDone','diyProgress','diyToolbox','diyHome','diyChat','diyIdent','cookProgress','cookWorld','cookChat','cookIdent','cookLexSeen'];
 let cryptoKey = null;
 
 function bytesToBase64(bytes){
@@ -40992,6 +41079,7 @@ const INITIAL_LOCATION_HASH = window.location.hash;
 // a pending PIN prompt…). Returning to them from the back button after that context was
 // closed would render a broken/empty screen, so such stale entries are skipped.
 function navScreenIsRestorable(screen){
+  if(screen === 'cnPlay' || screen === 'cnCreate') return CN.restorable(screen);
   if(screen === 'editor' || screen === 'noteLinkPicker') return !!state.currentNote;
   if(screen === 'noteView') return !!state.viewingNoteId && state.notes.some(n => n.id === state.viewingNoteId);
   if(screen === 'noteLockPrompt') return !!state.pendingNoteLock;
@@ -41098,6 +41186,7 @@ window.addEventListener('popstate', async function(){
   // An enlarged photo closes first.
   if(state.viewingPhoto){ closeLightbox(); return; }
   if(typeof PM !== 'undefined' && PM.onBack()) return;
+  if(typeof CN !== 'undefined' && CN.onBack()) return;
   if(state.bjRules){ state.bjRules = false; render(); return; }
   if(state.pkRules){ state.pkRules = false; render(); return; }
   if(state.tcgOpen || state.tcgAdd || state.tcgCardView || state.tcgSet){ state.tcgOpen = null; state.tcgAdd = null; state.tcgCardView = null; state.tcgSet = false; render(); return; }
@@ -41152,7 +41241,7 @@ window.addEventListener('popstate', async function(){
 // Number of this version of the app. If a newer one has already been opened on this phone, this
 // copy is an old file (an old download, an old home-screen shortcut…): it is blocked so that its
 // older screens cannot write over the data the new version organises differently.
-const APP_BUILD = 277;
+const APP_BUILD = 278;
 function renderOutdatedApp(seen){
   document.getElementById('app').innerHTML = `
     <div class="outdated-app">
@@ -41291,6 +41380,7 @@ async function loadEncryptedAppData(){
   state.musicPlaylists = (await storageGet('musicPlaylists')) || [];
   state.musicAlbumCovers = (await storageGet('musicAlbumCovers')) || {};
   state.coloringWorks = (await storageGet('coloringWorks')) || {};
+  state.coloringNum = (await storageGet('coloringNum')) || null; try{ await CN.init(); }catch(e){ console.warn('CN.init', e); }
   state.drawings = (await storageGet('drawings')) || [];
   state.drawColors = (await storageGet('drawColors')) || [];
   state.outWishes = (await storageGet('outWishes')) || [];
@@ -51821,7 +51911,7 @@ async function buildBackupPayload(noAudio){
     coachConstraints: state.coachConstraints, coachPrefs: state.coachPrefs, coachProgram: state.coachProgram, coachProgramHistory: state.coachProgramHistory, aiSpendTotalUsd: state.aiSpendTotalUsd, passwordEntries: state.passwordEntries, identityDocuments: state.identityDocuments, usefulNumbers: state.usefulNumbers, emergencyCard: getEmergencyCard(), dismissedReminders: state.dismissedReminders, shoppingList: state.shoppingList, shoppingTemplates: state.shoppingTemplates, shoppingLists: state.shoppingLists, shoppingBudget: state.shoppingBudget,
     learningNotes: state.learningNotes, learningFlashcards: state.learningFlashcards,
     religionBookmarks: state.religionBookmarks, religionNotes: state.religionNotes, religionReadingPlan: state.religionReadingPlan, religionPrayers: state.religionPrayers, tcgOwned: state.tcgOwned, tcgState: state.tcgState, religionLastRead: state.religionLastRead, religionRead: state.religionRead, religionHighlights: state.religionHighlights,
-    musicTracks: noAudio ? state.musicTracks : await buildMusicTracksForExport(), musicFolders: state.musicFolders, musicPlaylists: state.musicPlaylists, coloringWorks: state.coloringWorks, drawings: state.drawings, drawColors: state.drawColors, outWishes: state.outWishes, outMemories: state.outMemories, outUpcoming: state.outUpcoming, musicListenLog: state.musicListenLog,
+    musicTracks: noAudio ? state.musicTracks : await buildMusicTracksForExport(), musicFolders: state.musicFolders, musicPlaylists: state.musicPlaylists, coloringWorks: state.coloringWorks, coloringNum: state.coloringNum, drawings: state.drawings, drawColors: state.drawColors, outWishes: state.outWishes, outMemories: state.outMemories, outUpcoming: state.outUpcoming, musicListenLog: state.musicListenLog,
     asmrTracks: noAudio ? (state.asmrTracks || []) : await buildAsmrTracksForExport(), asmrLog: state.asmrLog, asmrSettings: state.asmrSettings,
     learningLang: state.learningLang, teacherHistory: state.teacherHistory,
     gardenPlants: state.gardenPlants, gardenSowings: state.gardenSowings, gardenBalcony: state.gardenBalcony, gardenEncPhotos: state.gardenEncPhotos, gardenChat: state.gardenChat, gardenIdent: state.gardenIdent, gardenSettings: state.gardenSettings, gardenDone: state.gardenDone,
@@ -52585,6 +52675,7 @@ async function driveRestoreBackup(){
     state.musicFolders = data.musicFolders || [];
     state.musicPlaylists = Array.isArray(data.musicPlaylists) ? data.musicPlaylists : [];
     state.coloringWorks = (data.coloringWorks && typeof data.coloringWorks === 'object') ? data.coloringWorks : {};
+    state.coloringNum = (data.coloringNum && typeof data.coloringNum === 'object' && !Array.isArray(data.coloringNum)) ? data.coloringNum : null; try{ CN.init(); }catch(e){}
     state.drawings = Array.isArray(data.drawings) ? data.drawings : [];
     state.drawColors = Array.isArray(data.drawColors) ? data.drawColors : [];
     state.outWishes = Array.isArray(data.outWishes) ? data.outWishes : [];
@@ -52709,6 +52800,7 @@ async function driveRestoreBackup(){
     await storageSet('musicFolders', state.musicFolders);
     await storageSet('musicPlaylists', state.musicPlaylists);
     await storageSet('coloringWorks', state.coloringWorks);
+    await storageSet('coloringNum', state.coloringNum);
     await storageSet('drawings', state.drawings);
     await storageSet('drawColors', state.drawColors);
     await storageSet('outWishes', state.outWishes);
@@ -53312,7 +53404,7 @@ async function exportData(lite){
     coachConstraints: state.coachConstraints, coachPrefs: state.coachPrefs, coachProgram: state.coachProgram, coachProgramHistory: state.coachProgramHistory, aiSpendTotalUsd: state.aiSpendTotalUsd, passwordEntries: state.passwordEntries, identityDocuments: state.identityDocuments, usefulNumbers: state.usefulNumbers, emergencyCard: getEmergencyCard(), dismissedReminders: state.dismissedReminders, shoppingList: state.shoppingList, shoppingTemplates: state.shoppingTemplates, shoppingLists: state.shoppingLists, shoppingBudget: state.shoppingBudget,
     learningNotes: state.learningNotes, learningFlashcards: state.learningFlashcards,
     religionBookmarks: state.religionBookmarks, religionNotes: state.religionNotes, religionReadingPlan: state.religionReadingPlan, religionPrayers: state.religionPrayers, tcgOwned: state.tcgOwned, tcgState: state.tcgState, religionLastRead: state.religionLastRead, religionRead: state.religionRead, religionHighlights: state.religionHighlights,
-    musicTracks: state.musicTracks.map(t => ({ ...t, audioDataBase64: null })), musicFolders: state.musicFolders, musicPlaylists: state.musicPlaylists, coloringWorks: state.coloringWorks, drawings: state.drawings, drawColors: state.drawColors, outWishes: state.outWishes, outMemories: state.outMemories, outUpcoming: state.outUpcoming, musicListenLog: state.musicListenLog,
+    musicTracks: state.musicTracks.map(t => ({ ...t, audioDataBase64: null })), musicFolders: state.musicFolders, musicPlaylists: state.musicPlaylists, coloringWorks: state.coloringWorks, coloringNum: state.coloringNum, drawings: state.drawings, drawColors: state.drawColors, outWishes: state.outWishes, outMemories: state.outMemories, outUpcoming: state.outUpcoming, musicListenLog: state.musicListenLog,
     asmrTracks: (state.asmrTracks || []).map(t => ({ ...t, audioDataBase64: null })), asmrLog: state.asmrLog, asmrSettings: state.asmrSettings,
     learningLang: state.learningLang, teacherHistory: state.teacherHistory,
     gardenPlants: state.gardenPlants, gardenSowings: state.gardenSowings, gardenBalcony: state.gardenBalcony, gardenEncPhotos: state.gardenEncPhotos, gardenChat: state.gardenChat, gardenIdent: state.gardenIdent, gardenSettings: state.gardenSettings, gardenDone: state.gardenDone,
@@ -53810,6 +53902,10 @@ async function importBackupDataFile(file){
     if(data.coloringWorks && typeof data.coloringWorks === 'object'){
       state.coloringWorks = data.coloringWorks;
       await storageSet('coloringWorks', state.coloringWorks);
+    }
+    if(data.coloringNum && typeof data.coloringNum === 'object' && !Array.isArray(data.coloringNum)){
+      state.coloringNum = data.coloringNum; try{ CN.init(); }catch(e){}
+      await storageSet('coloringNum', state.coloringNum);
     }
     if(data.musicListenLog && typeof data.musicListenLog === 'object'){
       state.musicListenLog = data.musicListenLog;
@@ -87046,7 +87142,7 @@ function renderEntertainmentSkyDetail(cat, meta){
   const games = card('games', 'games', `<span class="ent-name">${title('games')}</span><span class="ent-prev">${preview('games')}</span>`);
   const music = card('music', 'music', `<span class="ent-name">${title('music')}</span><span class="ent-prev">${preview('music')}</span>`);
   const asmr = card('asmr', 'asmr', `<span class="ent-name">${title('asmr')}</span><span class="ent-prev">${escapeHtml(asmrHomePreview())}</span>`);
-  const coloring = card('coloring', 'coloring', `<span class="ent-name">${title('coloring')}</span><span class="ent-prev">${escapeHtml(tr('clr_hub_prev', Object.values(state.coloringWorks || {}).filter(w => w.ops && w.ops.length).length))}</span>`);
+  const coloring = card('coloring', 'coloring', `<span class="ent-name">${title('coloring')}</span><span class="ent-prev">${escapeHtml(CN.preview())}</span>`);
   const drawing = card('drawing', 'drawing', `<span class="ent-name">${title('drawing')}</span><span class="ent-prev">${escapeHtml(drawHomePreview())}</span>`);
   const outings = card('outings', 'outings', `<span class="ent-name">${title('outings')}</span><span class="ent-prev">${escapeHtml(sxHomePreview())}</span>`);
   const tcg = card('tcg', 'tcg', `<span class="ent-name">${title('tcg')}</span><span class="ent-prev">${escapeHtml(tcgTilePreview())}</span>`);
@@ -95365,7 +95461,7 @@ function render(){
   else if(state.screen === 'musicQueueView') html = renderMusicQueueView();
   else if(state.screen === 'asmr') html = renderAsmr();
   else if(state.screen === 'tcgHome') html = renderTcgHome();
-  else if(state.screen === 'coloringHome') html = renderColoringHome();
+  else if(CN.isMine(state.screen)) html = CN.render();
   else if(state.screen === 'drawHome') html = renderDrawHome();
   else if(state.screen === 'drawAtelier') html = renderDrawAtelier();
   else if(state.screen === 'drawCreation') html = renderDrawCreation();
@@ -95666,6 +95762,7 @@ function render(){
   app.innerHTML = html + (state.viewingPhoto && !html.includes('class="lightbox"') ? renderLightbox() : '') + '<div class="toast"></div>';
   try{ topBarAfterRender(app); }catch(e){ console.warn('topBarAfterRender', e); }
   if(state.screen.indexOf('poeme') === 0){ try{ PM.after(); }catch(e){ console.warn('PM.after', e); } }
+  try{ CN.after(); }catch(e){ console.warn('CN.after', e); }
   // Conservation: the little notch of the food row points at the chosen category
   try{ const ks = app.querySelector('.ck-ksub'), on = app.querySelector('.ck-chip.on'); if(ks && on){ const a = ks.getBoundingClientRect(), b = on.getBoundingClientRect(); ks.style.setProperty('--kx', Math.max(10, Math.min(a.width - 24, b.left - a.left + b.width / 2 - 7)) + 'px'); } }catch(e){}
   if(GAME_MENU_SCREENS[state.screen] || GAME_MENU_VARIANT_SCREENS[state.screen]) gamesMenuDecorate(app);
@@ -98470,6 +98567,780 @@ function peRwShift(t, nv) { // garder le passage suivi quand le texte change aut
     },
   };
   return api;
+})();
+
+
+/* Coloriage par numéros — le cœur commun à l'ordinateur et au téléphone
+   (le téléphone reçoit ce même fichier tel quel).
+   - conversion d'une image en grille numérotée (couleurs fidèles ou palette de saison, nettoyage)
+   - rendu (vue, vignette, image finale avec finition)
+   - moteur de coloriage (outils, annuler/rétablir, zoom, déplacement)
+   - recadrage de l'image
+   Une œuvre : { id, name, w, h, pal:[hex], cells:'…', paint:'…', mode:'guide'|'libre', fin, palName, detail, k, created, updatedAt, done }
+   cells : un caractère par case (0-9 puis a-z = numéro de la couleur) ; paint : pareil, « . » = pas encore coloriée. */
+
+const CN_CH = '0123456789abcdefghijklmnopqrstuvwxyz';
+const CN_FINISHES = [
+  ['plain', 'Uni', 'Plain', '●'], ['gradient', 'Dégradé', 'Gradient', '🌈'], ['metal', 'Métal', 'Metal', '✨'], ['grain', 'Grain du papier', 'Paper grain', '📄'],
+  ['felt', 'Feutre', 'Felt pen', '🖍️'], ['pencil', 'Crayon de couleur', 'Coloured pencil', '✏️'], ['glitter', 'Paillettes', 'Glitter', '💎'], ['water', 'Aquarelle', 'Watercolour', '💧'],
+  ['wash', 'Lavis', 'Wash', '🌊'], ['light', 'Lumière', 'Light', '🌟'], ['mist', 'Brume', 'Mist', '🌫️'], ['glass', 'Vitrail', 'Stained glass', '🪟'],
+];
+const CN_DETAILS = [['easy', 40, 'Facile', 'Easy'], ['medium', 70, 'Moyen', 'Medium'], ['detailed', 100, 'Détaillé', 'Detailed'], ['very', 150, 'Très détaillé', 'Very detailed']];
+const CN_COUNTS = [12, 18, 24, 36];
+const CN_RATIOS = [['square', 1, 'Carré', 'Square'], ['portrait', 3 / 4, 'Portrait', 'Portrait'], ['landscape', 4 / 3, 'Paysage', 'Landscape'], ['orig', 0, 'Original', 'Original']];
+const CN_SIZES = [0, 1, 2, 3, 5];
+const CN_CLEAN = [['Aucun', 'None'], ['Doux', 'Light'], ['Moyen', 'Medium'], ['Fort', 'Strong'], ['Très fort', 'Very strong']];
+// ambiance « Atelier aquarelle »
+const CN_THEME = { paper: '#fffaf2', line: 'rgba(120,90,60,.22)', num: '#a08c78', hi: '#fbe0cc', hiNum: '#9c3f22', font: '"DM Sans", system-ui, sans-serif', acc: '#c46a4a', mark: '#c0392b' };
+
+/* ---------- couleurs ---------- */
+const cnHex2Rgb = (h) => [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16));
+const cnRgb2Hex = (c) => '#' + c.map((v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+function cnLin(v) { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+function cnGam(v) { v = v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - 0.055; return Math.max(0, Math.min(255, v * 255)); }
+function cnRgb2Lab(r, g, b) {
+  r = cnLin(r); g = cnLin(g); b = cnLin(b);
+  let x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047, y = r * 0.2126 + g * 0.7152 + b * 0.0722, z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+  const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
+  x = f(x); y = f(y); z = f(z);
+  return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
+}
+function cnLab2Rgb(L, a, b) {
+  let y = (L + 16) / 116, x = a / 500 + y, z = y - b / 200;
+  const f = (t) => (t * t * t > 0.008856 ? t * t * t : (t - 16 / 116) / 7.787);
+  x = f(x) * 0.95047; y = f(y); z = f(z) * 1.08883;
+  return [cnGam(x * 3.2406 + y * -1.5372 + z * -0.4986), cnGam(x * -0.9689 + y * 1.8758 + z * 0.0415), cnGam(x * 0.0557 + y * -0.204 + z * 1.057)];
+}
+const cnHexLab = (h) => { const c = cnHex2Rgb(h); return cnRgb2Lab(c[0], c[1], c[2]); };
+function cnLum(h) { const c = cnHex2Rgb(h); return c[0] * 0.299 + c[1] * 0.587 + c[2] * 0.114; }
+function cnMix(a, b, t) { const A = cnHex2Rgb(a), B = cnHex2Rgb(b); return cnRgb2Hex(A.map((v, i) => v + (B[i] - v) * t)); }
+const cnTextOn = (h) => (cnLum(h) > 150 ? '#3a2e28' : '#ffffff');
+function cnRand(seed) { return function () { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const cnCanvas = (w, h) => { const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; };
+
+/* ---------- palettes de saison ---------- */
+function cnAllPals() { const out = []; (typeof CN_SEASONS !== 'undefined' ? CN_SEASONS : []).forEach((se) => se.pals.forEach((p) => out.push({ se, p }))); return out; }
+function cnSeasonNow(d) { d = d || new Date(); const m = d.getMonth() + 1, day = d.getDate(), k = m * 100 + day; return k >= 320 && k < 621 ? 'spring' : k >= 621 && k < 923 ? 'summer' : k >= 923 && k < 1221 ? 'autumn' : 'winter'; }
+function cnPalById(id) { return cnAllPals().find((x) => x.p.id === id) || null; }
+function cnPalLabel(x, en) { return x ? (en ? x.se.en + ' · ' + x.p.en : x.se.fr + ' · ' + x.p.fr) : ''; }
+// les couleurs proposées : les 10 de la palette, puis des nuances plus claires et plus foncées si on en demande plus
+function cnPalCandidates(colors, k) {
+  const base = colors.map(cnHexLab), out = base.map((l) => l.slice());
+  const steps = [14, -14, 27, -27, 38, -38];
+  for (const d of steps) { if (out.length >= Math.max(k + 6, colors.length * 3)) break; base.forEach((l) => { const L = Math.max(8, Math.min(97, l[0] + d)); if (Math.abs(L - l[0]) > 6) out.push([L, l[1] * (d > 0 ? 0.85 : 1.05), l[2] * (d > 0 ? 0.85 : 1.05)]); }); }
+  return out;
+}
+
+/* ---------- conversion image → grille ---------- */
+// src : une toile déjà recadrée. o : { n (cases sur le grand côté), k (couleurs), pal (null = fidèles, sinon tableau hex), clean (0-4) }
+function cnConvert(src, o) {
+  const n = o.n || 70, K = Math.max(2, Math.min(36, o.k || 18));
+  let w, h;
+  if (src.width >= src.height) { w = n; h = Math.max(4, Math.round(n * src.height / src.width)); } else { h = n; w = Math.max(4, Math.round(n * src.width / src.height)); }
+  // moyenne de chaque case (sur 4×4 points)
+  const S = 4, c = cnCanvas(w * S, h * S), g = c.getContext('2d');
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(src, 0, 0, c.width, c.height);
+  const d = g.getImageData(0, 0, c.width, c.height).data, N = w * h, lab = new Float32Array(N * 3);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let r = 0, gg = 0, b = 0;
+    for (let yy = 0; yy < S; yy++) for (let xx = 0; xx < S; xx++) { const p = ((y * S + yy) * c.width + x * S + xx) * 4; r += d[p]; gg += d[p + 1]; b += d[p + 2]; }
+    const L = cnRgb2Lab(r / 16, gg / 16, b / 16), i = (y * w + x) * 3; lab[i] = L[0]; lab[i + 1] = L[1]; lab[i + 2] = L[2];
+  }
+  // k-moyennes (départ k-means++ avec un hasard fixe : la même image donne toujours le même coloriage)
+  const rnd = cnRand(12345), cen = [], dist = new Float32Array(N).fill(1e9), lbl = new Uint8Array(N);
+  const d2 = (i, c3) => { const a = lab[i * 3] - c3[0], b = lab[i * 3 + 1] - c3[1], e = lab[i * 3 + 2] - c3[2]; return a * a + b * b + e * e; };
+  cen.push([lab[0], lab[1], lab[2]]);
+  { const f = Math.floor(rnd() * N); cen[0] = [lab[f * 3], lab[f * 3 + 1], lab[f * 3 + 2]]; }
+  while (cen.length < K) {
+    let sum = 0; const last = cen[cen.length - 1];
+    for (let i = 0; i < N; i++) { const v = d2(i, last); if (v < dist[i]) dist[i] = v; sum += dist[i]; }
+    if (sum <= 0) break;
+    let t = rnd() * sum, j = 0; for (; j < N - 1; j++) { t -= dist[j]; if (t <= 0) break; }
+    cen.push([lab[j * 3], lab[j * 3 + 1], lab[j * 3 + 2]]);
+  }
+  for (let it = 0; it < 16; it++) {
+    const acc = cen.map(() => [0, 0, 0, 0]); let moved = 0;
+    for (let i = 0; i < N; i++) {
+      let best = 0, bd = 1e12; for (let k = 0; k < cen.length; k++) { const v = d2(i, cen[k]); if (v < bd) { bd = v; best = k; } }
+      if (lbl[i] !== best) moved++; lbl[i] = best; const a = acc[best]; a[0] += lab[i * 3]; a[1] += lab[i * 3 + 1]; a[2] += lab[i * 3 + 2]; a[3]++;
+    }
+    acc.forEach((a, k) => { if (a[3]) cen[k] = [a[0] / a[3], a[1] / a[3], a[2] / a[3]]; });
+    if (it > 2 && moved < N * 0.002) break;
+  }
+  // couleurs : celles de l'image, ou les plus proches dans la palette (la clarté compte plus que la teinte : l'image reste lisible)
+  let colsLab;
+  if (o.pal && o.pal.length) {
+    const cand = cnPalCandidates(o.pal, cen.length), used = new Set(), size = cen.map(() => 0);
+    for (let i = 0; i < N; i++) size[lbl[i]]++;
+    colsLab = cen.map(() => null);
+    cen.map((c3, k) => k).sort((a, b) => size[b] - size[a]).forEach((k) => {
+      let best = -1, bd = 1e12;
+      cand.forEach((p, j) => { if (used.has(j) && used.size < cand.length) return; const a = (p[0] - cen[k][0]) * 1.6, b = p[1] - cen[k][1], e = p[2] - cen[k][2], v = a * a + b * b + e * e; if (v < bd) { bd = v; best = j; } });
+      used.add(best); colsLab[k] = cand[best];
+    });
+  } else colsLab = cen;
+  // nettoyage : cases isolées puis petites taches fondues dans leur voisinage
+  const cl = Math.max(0, Math.min(4, o.clean == null ? 2 : o.clean));
+  cnSmooth(lbl, w, h, [0, 1, 1, 2, 2][cl], [0, 1, 2, 2, 3][cl]);
+  cnMergeSmall(lbl, w, h, [1, 2, 3, 5, 8][cl]);
+  // numéros dans l'ordre des teintes, les gris à la fin
+  const usedK = [...new Set(lbl)];
+  const hexes = {}; usedK.forEach((k) => { hexes[k] = cnRgb2Hex(cnLab2Rgb(colsLab[k][0], colsLab[k][1], colsLab[k][2])); });
+  const hueKey = (k) => { const L = colsLab[k], ch = Math.hypot(L[1], L[2]); if (ch < 9) return 1000 + (100 - L[0]); let hu = Math.atan2(L[2], L[1]) * 180 / Math.PI; hu = (hu + 360 + 330) % 360; return hu + (100 - L[0]) / 200; };
+  usedK.sort((a, b) => hueKey(a) - hueKey(b));
+  // deux numéros de la même couleur (palette) : on les réunit
+  const order = [], map = {}, seen = {};
+  usedK.forEach((k) => { const hx = hexes[k]; if (seen[hx] == null) { seen[hx] = order.length; order.push(hx); } map[k] = seen[hx]; });
+  let cells = ''; for (let i = 0; i < N; i++) cells += CN_CH[map[lbl[i]]];
+  return { w, h, pal: order, cells };
+}
+// filtre majoritaire : une case presque seule de sa couleur prend celle de ses voisines
+function cnSmooth(lbl, w, h, passes, th) {
+  for (let p = 0; p < passes; p++) {
+    const out = lbl.slice();
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y * w + x, me = lbl[i], cnt = {}; let own = 0, best = me, bc = 0;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue; const X = x + dx, Y = y + dy; if (X < 0 || Y < 0 || X >= w || Y >= h) continue;
+        const l = lbl[Y * w + X]; if (l === me) own++; else { cnt[l] = (cnt[l] || 0) + 1; if (cnt[l] > bc) { bc = cnt[l]; best = l; } }
+      }
+      if (own <= th && bc >= 3) out[i] = best;
+    }
+    lbl.set(out);
+  }
+}
+// les taches plus petites que « min » cases rejoignent la couleur voisine la plus présente
+function cnMergeSmall(lbl, w, h, min) {
+  if (min <= 1) return;
+  for (let round = 0; round < 3; round++) {
+    const seen = new Int32Array(w * h).fill(-1); let changed = 0;
+    for (let s = 0; s < w * h; s++) {
+      if (seen[s] >= 0) continue;
+      const me = lbl[s], st = [s], comp = []; seen[s] = s; const nb = {};
+      while (st.length) {
+        const i = st.pop(); comp.push(i); const x = i % w, y = (i / w) | 0;
+        const go = (X, Y) => { if (X < 0 || Y < 0 || X >= w || Y >= h) return; const j = Y * w + X; if (lbl[j] === me) { if (seen[j] < 0) { seen[j] = s; st.push(j); } } else nb[lbl[j]] = (nb[lbl[j]] || 0) + 1; };
+        go(x + 1, y); go(x - 1, y); go(x, y + 1); go(x, y - 1);
+      }
+      if (comp.length < min) { let best = -1, bc = 0; for (const k in nb) if (nb[k] > bc) { bc = nb[k]; best = +k; } if (best >= 0) { comp.forEach((i) => { lbl[i] = best; }); changed++; } }
+    }
+    if (!changed) break;
+  }
+}
+
+/* ---------- état d'une œuvre ---------- */
+function cnNewWork(g, o) {
+  const now = Date.now();
+  return Object.assign({ id: 'cn' + now.toString(36) + Math.random().toString(36).slice(2, 6), name: '', w: g.w, h: g.h, pal: g.pal, cells: g.cells, paint: '.'.repeat(g.w * g.h), mode: 'guide', fin: 'plain', palName: '', detail: 'medium', k: g.pal.length, created: now, updatedAt: now, done: 0 }, o || {});
+}
+function cnValid(w) { return !!(w && typeof w.cells === 'string' && typeof w.paint === 'string' && w.cells.length === w.w * w.h && w.paint.length === w.cells.length && Array.isArray(w.pal) && w.pal.length); }
+function cnStats(w) {
+  const n = w.pal.length, tot = new Array(n).fill(0), ok = new Array(n).fill(0); let good = 0, wrong = 0;
+  for (let i = 0; i < w.cells.length; i++) { const c = CN_CH.indexOf(w.cells[i]), p = w.paint[i]; tot[c]++; if (p === w.cells[i]) { ok[c]++; good++; } else if (p !== '.') wrong++; }
+  return { tot, ok, good, wrong, all: w.cells.length, pct: w.cells.length ? Math.floor(good / w.cells.length * 100) : 0 };
+}
+// fusion de deux versions d'une même œuvre (synchro) : on garde les cases coloriées des deux côtés
+function cnMergePaint(win, lose) {
+  if (!cnValid(win) || !cnValid(lose) || win.cells !== lose.cells) return win;
+  let s = ''; for (let i = 0; i < win.paint.length; i++) s += win.paint[i] !== '.' ? win.paint[i] : lose.paint[i];
+  const x = Object.assign({}, win, { paint: s });
+  if (!x.done && s.split('').every((ch, i) => ch === x.cells[i])) x.done = Math.max(win.updatedAt || 0, lose.updatedAt || 0) || Date.now();
+  return x;
+}
+
+/* ---------- rendu ---------- */
+// vignette (cases coloriées, le reste en papier)
+function cnThumb(w, px, theme) {
+  theme = theme || CN_THEME; const s = Math.max(1, Math.floor((px || 240) / Math.max(w.w, w.h))), c = cnCanvas(w.w * s, w.h * s), g = c.getContext('2d');
+  g.fillStyle = theme.paper; g.fillRect(0, 0, c.width, c.height);
+  for (let i = 0; i < w.paint.length; i++) { const p = w.paint[i]; if (p === '.') continue; g.fillStyle = w.pal[CN_CH.indexOf(p)] || '#ccc'; g.fillRect((i % w.w) * s, ((i / w.w) | 0) * s, s, s); }
+  if (s >= 3) { g.strokeStyle = theme.line; g.lineWidth = 0.5; g.globalAlpha = 0.6; g.beginPath(); for (let x = 0; x <= w.w; x++) { g.moveTo(x * s + 0.25, 0); g.lineTo(x * s + 0.25, c.height); } for (let y = 0; y <= w.h; y++) { g.moveTo(0, y * s + 0.25); g.lineTo(c.width, y * s + 0.25); } g.stroke(); }
+  return c;
+}
+// l'image entière telle qu'elle sera une fois finie (aperçu 👁)
+function cnSolution(w, px) { const s = Math.max(1, Math.floor((px || 600) / Math.max(w.w, w.h))), c = cnCanvas(w.w * s, w.h * s), g = c.getContext('2d'); for (let i = 0; i < w.cells.length; i++) { g.fillStyle = w.pal[CN_CH.indexOf(w.cells[i])]; g.fillRect((i % w.w) * s, ((i / w.w) | 0) * s, s, s); } return c; }
+// l'image finale avec la finition : chaque couleur est rendue d'un seul tenant (masque de ses cases).
+// cnRenderFinal : d'un coup ; cnRenderFinalAsync : une couleur à la fois, sans figer l'écran (progress(0..1), stop() → true pour abandonner)
+function cnFinalSteps(w, o) {
+  o = o || {}; const theme = o.theme || CN_THEME, fin = o.fin || w.fin || 'plain';
+  const cell = o.cell || Math.max(2, Math.floor((o.max || 1800) / Math.max(w.w, w.h))), W = w.w * cell, H = w.h * cell;
+  const c = cnCanvas(W, H), g = c.getContext('2d');
+  g.fillStyle = theme.paper; g.fillRect(0, 0, W, H);
+  const used = {}; for (let i = 0; i < w.paint.length; i++) if (w.paint[i] !== '.') (used[w.paint[i]] = used[w.paint[i]] || []).push(i);
+  const steps = Object.keys(used).map((ch) => () => {
+    const col = w.pal[CN_CH.indexOf(ch)] || '#cccccc', list = used[ch];
+    g.fillStyle = col; list.forEach((i) => g.fillRect((i % w.w) * cell, ((i / w.w) | 0) * cell, cell, cell));
+    if (fin === 'plain' || typeof RFX === 'undefined') return;
+    const m = cnCanvas(W, H), mg = m.getContext('2d'); mg.fillStyle = '#000'; list.forEach((i) => mg.fillRect((i % w.w) * cell, ((i / w.w) | 0) * cell, cell, cell));
+    try { g.drawImage(RFX.render(fin, col, m), 0, 0); } catch (e) { /* la couleur unie reste */ }
+  });
+  const end = () => { if (o.grid) { g.strokeStyle = theme.line; g.lineWidth = Math.max(0.5, cell / 24); g.beginPath(); for (let x = 0; x <= w.w; x++) { g.moveTo(x * cell, 0); g.lineTo(x * cell, H); } for (let y = 0; y <= w.h; y++) { g.moveTo(0, y * cell); g.lineTo(W, y * cell); } g.stroke(); } return c; };
+  return { steps, end, fin };
+}
+function cnRenderFinal(w, o) { const r = cnFinalSteps(w, o); r.steps.forEach((f) => f()); return r.end(); }
+async function cnRenderFinalAsync(w, o, progress, stop) {
+  const r = cnFinalSteps(w, o);
+  for (let k = 0; k < r.steps.length; k++) { if (stop && stop()) return null; r.steps[k](); progress && progress((k + 1) / r.steps.length); if (r.fin !== 'plain') await new Promise((res) => setTimeout(res, 0)); }
+  return r.end();
+}
+
+/* ---------- le moteur de coloriage ----------
+   cv : la toile affichée. ops : { work, theme, tool(), sel(), size(), onChange(what), onDone(), toast(msg), save(), state }
+   ops.state : un objet gardé par l'écran entre deux affichages (historique, zoom, finition déjà rendue) */
+function CNPlay(cv, ops) {
+  const P = this, theme = ops.theme || CN_THEME;
+  let w = ops.work, dpr = 1, VW = 0, VH = 0, s = 10, ox = 0, oy = 0, raf = 0, img = null, fx = null, fxPaint = null, fxTimer = 0, pulse = null, destroyed = false;
+  const st0 = ops.state || {}; if (st0.id !== w.id) { st0.id = w.id; st0.undo = []; st0.redo = []; st0.view = null; st0.fx = null; st0.fxPaint = null; st0.fxFin = null; }
+  const undo = st0.undo, redo = st0.redo, ptrs = new Map();
+  if (st0.fx && st0.fxFin === w.fin) { fx = st0.fx; fxPaint = st0.fxPaint; }
+  let stroke = null, pend = null, pinch = null, pan = null, spaceDown = false;
+  P.view = () => ({ s, ox, oy });
+  const g = cv.getContext('2d');
+  const ch = (i) => w.paint[i];
+  function selCh() { const n = ops.sel(); return n == null || n < 0 ? null : CN_CH[n]; }
+  // image d'une case par pixel : rapide à agrandir
+  function pix(i) {
+    const p = w.paint[i];
+    if (p === '.') return w.cells[i] === selCh() ? theme.hi : theme.paper;
+    if (fx && fxPaint && fxPaint[i] === p) return null; // la finition s'affiche dessous
+    return w.pal[CN_CH.indexOf(p)];
+  }
+  function buildImg() {
+    img = img && img.width === w.w && img.height === w.h ? img : cnCanvas(w.w, w.h);
+    const ig = img.getContext('2d'), d = ig.createImageData(w.w, w.h), cache = {};
+    for (let i = 0; i < w.cells.length; i++) { const c = pix(i); if (!c) continue; const rgb = cache[c] || (cache[c] = cnHex2Rgb(c)); d.data[i * 4] = rgb[0]; d.data[i * 4 + 1] = rgb[1]; d.data[i * 4 + 2] = rgb[2]; d.data[i * 4 + 3] = 255; }
+    ig.putImageData(d, 0, 0);
+  }
+  function setPix(i) { const ig = img.getContext('2d'), c = pix(i), x = i % w.w, y = (i / w.w) | 0; ig.clearRect(x, y, 1, 1); if (c) { ig.fillStyle = c; ig.fillRect(x, y, 1, 1); } }
+  // la finition : rendue en une fois sur toute l'image (après une pause dans le coloriage)
+  function fxSchedule(now) { clearTimeout(fxTimer); if (!w.fin || w.fin === 'plain' || typeof RFX === 'undefined') { if (fx) { fx = null; fxPaint = null; st0.fx = null; buildImg(); draw(); } return; } if (now === 'keep' && fx && fxPaint === w.paint) return; fxTimer = setTimeout(fxBuild, now ? 0 : 700); }
+  let fxRun = 0;
+  async function fxBuild() {
+    if (destroyed) return; const run = ++fxRun, snap = w.paint, cell = Math.max(3, Math.min(10, Math.floor(640 / Math.max(w.w, w.h))));
+    let c = null; try { c = await cnRenderFinalAsync(Object.assign({}, w, { paint: snap }), { cell, fin: w.fin, theme: Object.assign({}, theme, { paper: 'rgba(0,0,0,0)' }) }, null, () => destroyed || run !== fxRun); } catch (e) { c = null; }
+    if (destroyed || run !== fxRun) return;
+    fx = c; fxPaint = c ? snap : null; st0.fx = fx; st0.fxPaint = fxPaint; st0.fxFin = w.fin; buildImg(); draw();
+  }
+  P.setFin = (f) => { w.fin = f; fxRun++; fx = null; fxPaint = null; buildImg(); draw(); fxSchedule(true); };
+  P.refreshSel = () => { buildImg(); draw(); };
+  P.setWork = (nw) => { const same = nw.id === w.id; w = nw; if (!same) { undo.length = 0; redo.length = 0; st0.id = w.id; } fx = null; fxPaint = null; buildImg(); if (!same) fit(); else draw(); fxSchedule(true); };
+  function resize() {
+    const r = cv.getBoundingClientRect(); dpr = Math.min(3, window.devicePixelRatio || 1);
+    const nw = Math.max(50, r.width), nh = Math.max(50, r.height); if (nw === VW && nh === VH && cv.width === Math.round(nw * dpr)) return false;
+    const first = !VW; VW = nw; VH = nh; cv.width = Math.round(VW * dpr); cv.height = Math.round(VH * dpr);
+    if (first) { const v = st0.view; fit(); if (v) { s = v.s; ox = v.ox + (VW - v.VW) / 2; oy = v.oy + (VH - v.VH) / 2; clamp(); saveView(); } } else { P.minS = Math.min(VW / w.w, VH / w.h) * 0.96 * 0.9; clamp(); saveView(); }
+    return true;
+  }
+  function fit() { s = Math.min(VW / w.w, VH / w.h) * 0.96; ox = (VW - w.w * s) / 2; oy = (VH - w.h * s) / 2; P.minS = s * 0.9; saveView(); draw(); }
+  function saveView() { st0.view = { s, ox, oy, VW, VH }; }
+  P.fit = () => { fit(); ops.onChange && ops.onChange('zoom'); };
+  P.maxS = () => Math.max(56, P.minS * 2);
+  function clamp() {
+    s = Math.max(P.minS || 1, Math.min(P.maxS(), s));
+    const mw = w.w * s, mh = w.h * s, m = 40;
+    ox = mw + 2 * m < VW ? (VW - mw) / 2 : Math.min(m, Math.max(VW - mw - m, ox));
+    oy = mh + 2 * m < VH ? (VH - mh) / 2 : Math.min(m, Math.max(VH - mh - m, oy));
+  }
+  function zoomAt(f, cx, cy) { const ns = Math.max(P.minS || 1, Math.min(P.maxS(), s * f)), k = ns / s; ox = cx - (cx - ox) * k; oy = cy - (cy - oy) * k; s = ns; clamp(); draw(); ops.onChange && ops.onChange('zoom'); }
+  P.zoomBy = (f) => zoomAt(f, VW / 2, VH / 2);
+  P.zoomPct = () => Math.round(s / (P.minS / 0.9) * 100);
+  P.center = (i, toS) => { const x = i % w.w, y = (i / w.w) | 0; if (toS) s = Math.max(s, toS); ox = VW / 2 - (x + 0.5) * s; oy = VH / 2 - (y + 0.5) * s; clamp(); pulse = { i, t: performance.now() }; draw(); ops.onChange && ops.onChange('zoom'); };
+  // aller vers les cases restantes d'une couleur (une à la fois, en partant du centre de la vue)
+  P.find = (n) => {
+    const c = CN_CH[n], cx = (VW / 2 - ox) / s, cy = (VH / 2 - oy) / s; let best = -1, bd = 1e12;
+    // la case restante la plus proche du centre ; si on est déjà dessus, on passe à un autre groupe (à plus de 3 cases)
+    for (let i = 0; i < w.cells.length; i++) {
+      if (w.cells[i] !== c || w.paint[i] === c) continue;
+      const x = i % w.w + 0.5, y = ((i / w.w) | 0) + 0.5, d = (x - cx) ** 2 + (y - cy) ** 2;
+      if (P._lastFind === n && d < 10) continue;
+      if (d < bd) { bd = d; best = i; }
+    }
+    if (best < 0) { for (let i = 0; i < w.cells.length; i++) if (w.cells[i] === c && w.paint[i] !== c) { best = i; break; } }
+    if (best < 0) return false;
+    P._lastFind = n; P.center(best, Math.max(22, P.minS * 3)); return true;
+  };
+  P.findWrong = () => { for (let i = 0; i < w.cells.length; i++) if (w.paint[i] !== '.' && w.paint[i] !== w.cells[i]) { P.center(i, Math.max(22, P.minS * 3)); return true; } return false; };
+  function draw() { if (!raf && !destroyed) raf = requestAnimationFrame(paint); saveView(); }
+  P.draw = draw;
+  function paint() {
+    raf = 0; if (destroyed) return;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, VW, VH);
+    const W = w.w * s, H = w.h * s;
+    g.save(); g.shadowColor = 'rgba(80,50,30,.18)'; g.shadowBlur = 14; g.shadowOffsetY = 3; g.fillStyle = theme.paper; g.fillRect(ox, oy, W, H); g.restore();
+    if (fx) { g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(fx, ox, oy, W, H); }
+    g.imageSmoothingEnabled = false; g.drawImage(img, ox, oy, W, H); g.imageSmoothingEnabled = true;
+    const x0 = Math.max(0, Math.floor(-ox / s)), y0 = Math.max(0, Math.floor(-oy / s)), x1 = Math.min(w.w - 1, Math.floor((VW - ox) / s)), y1 = Math.min(w.h - 1, Math.floor((VH - oy) / s));
+    if (s >= 5) {
+      g.strokeStyle = theme.line; g.lineWidth = s >= 14 ? 0.7 : 0.45; g.globalAlpha = Math.min(1, (s - 4) / 8); g.beginPath();
+      for (let x = x0; x <= x1 + 1; x++) { const X = Math.round(ox + x * s) + 0.5; g.moveTo(X, Math.max(oy, 0)); g.lineTo(X, Math.min(oy + H, VH)); }
+      for (let y = y0; y <= y1 + 1; y++) { const Y = Math.round(oy + y * s) + 0.5; g.moveTo(Math.max(ox, 0), Y); g.lineTo(Math.min(ox + W, VW), Y); }
+      g.stroke(); g.globalAlpha = 1;
+    }
+    const sc = selCh();
+    if (s >= 14) {
+      const fs = Math.min(15, Math.max(7.5, s * 0.42)); g.textAlign = 'center'; g.textBaseline = 'middle';
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+        const i = y * w.w + x, p = w.paint[i], c = w.cells[i];
+        if (p === '.') { const on = c === sc; g.font = (on ? '700 ' : '500 ') + fs + 'px ' + theme.font; g.fillStyle = on ? theme.hiNum : theme.num; g.fillText(String(CN_CH.indexOf(c) + 1), ox + (x + 0.5) * s, oy + (y + 0.5) * s + 0.5); }
+        else if (p !== c) { g.fillStyle = cnTextOn(w.pal[CN_CH.indexOf(p)]); g.globalAlpha = 0.85; g.font = '600 ' + (fs * 0.8) + 'px ' + theme.font; g.fillText('×', ox + (x + 0.5) * s, oy + (y + 0.5) * s); g.globalAlpha = 1; }
+      }
+    } else if (w.mode === 'libre') {
+      g.fillStyle = theme.mark; for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) { const i = y * w.w + x, p = w.paint[i]; if (p !== '.' && p !== w.cells[i]) g.fillRect(ox + (x + 0.5) * s - 1, oy + (y + 0.5) * s - 1, 2, 2); }
+    }
+    if (pulse) {
+      const t = (performance.now() - pulse.t) / 1400; if (t >= 1) pulse = null;
+      else { const x = pulse.i % w.w, y = (pulse.i / w.w) | 0, r = s * (0.8 + t * 1.6); g.strokeStyle = theme.acc; g.globalAlpha = 1 - t; g.lineWidth = 2.5; g.beginPath(); g.arc(ox + (x + 0.5) * s, oy + (y + 0.5) * s, r, 0, 7); g.stroke(); g.globalAlpha = 1; draw(); }
+    }
+  }
+  /* --- peindre --- */
+  function cellAt(px, py) { const x = Math.floor((px - ox) / s), y = Math.floor((py - oy) / s); return x < 0 || y < 0 || x >= w.w || y >= w.h ? -1 : y * w.w + x; }
+  function setCell(i, v) { if (w.paint[i] === v) return; if (!stroke.ch.has(i)) stroke.ch.set(i, w.paint[i]); w.paint = w.paint.slice(0, i) + v + w.paint.slice(i + 1); stroke.n++; setPix(i); }
+  function applyAt(fx2, fy2) {
+    const tool = ops.tool(), c = selCh(), r = CN_SIZES[ops.size()] || 0, cx = Math.floor(fx2), cy = Math.floor(fy2);
+    if (tool !== 'erase' && !c) return;
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+      if (dx * dx + dy * dy > r * r + r) continue; const x = cx + dx, y = cy + dy; if (x < 0 || y < 0 || x >= w.w || y >= w.h) continue; const i = y * w.w + x;
+      if (tool === 'erase') setCell(i, '.');
+      else if (tool === 'free' && w.mode === 'libre') setCell(i, c);
+      else if (w.cells[i] === c) setCell(i, c);
+      else if (r === 0 && !stroke.miss && w.paint[i] !== w.cells[i]) stroke.miss = i;
+    }
+  }
+  function fillAt(i) {
+    const c = selCh(); if (!c) return; const me = w.cells[i];
+    if (me !== c && w.mode !== 'libre') { ops.toast && ops.toast(['Cette zone porte le n° ', 'This area is number '], CN_CH.indexOf(me) + 1); return; }
+    const seen = new Uint8Array(w.cells.length), st = [i]; seen[i] = 1;
+    while (st.length) { const j = st.pop(); setCell(j, c); const x = j % w.w, y = (j / w.w) | 0; [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]].forEach(([X, Y]) => { if (X < 0 || Y < 0 || X >= w.w || Y >= w.h) return; const k = Y * w.w + X; if (!seen[k] && w.cells[k] === me) { seen[k] = 1; st.push(k); } }); }
+  }
+  function lineTo(px, py) {
+    const fx2 = (px - ox) / s, fy2 = (py - oy) / s, L = stroke.last || [fx2, fy2], n = Math.max(1, Math.ceil(Math.hypot(fx2 - L[0], fy2 - L[1]) * 2));
+    for (let k = 1; k <= n; k++) applyAt(L[0] + (fx2 - L[0]) * k / n, L[1] + (fy2 - L[1]) * k / n);
+    stroke.last = [fx2, fy2]; draw();
+  }
+  function beginStroke() { stroke = { ch: new Map(), n: 0, last: null, miss: null }; }
+  function endStroke() {
+    if (!stroke) return; const st = stroke; stroke = null;
+    if (st.ch.size) {
+      const ch2 = []; st.ch.forEach((b, i) => { if (w.paint[i] !== b) ch2.push([i, b, w.paint[i]]); });
+      if (ch2.length) { undo.push(ch2); if (undo.length > 200) undo.shift(); redo.length = 0; committed(); }
+    } else if (st.miss != null && ops.tool() !== 'erase') {
+      const n = CN_CH.indexOf(w.cells[st.miss]) + 1; ops.toast && ops.toast(['Cette case porte le n° ', 'This square is number '], n);
+    }
+  }
+  function committed() {
+    w.updatedAt = Date.now(); const st = cnStats(w);
+    if (!w.done && st.good === st.all) { w.done = Date.now(); ops.save && ops.save(); ops.onChange && ops.onChange('paint', st); ops.onDone && ops.onDone(); }
+    else { if (w.done && st.good !== st.all) w.done = 0; ops.save && ops.save(); ops.onChange && ops.onChange('paint', st); }
+    fxSchedule();
+  }
+  function applyList(list, back) { list.forEach(([i, b, a]) => { const v = back ? b : a; w.paint = w.paint.slice(0, i) + v + w.paint.slice(i + 1); }); buildImg(); draw(); committed(); }
+  P.undo = () => { const l = undo.pop(); if (!l) return; redo.push(l); applyList(l, true); };
+  P.redo = () => { const l = redo.pop(); if (!l) return; undo.push(l); applyList(l, false); };
+  P.canUndo = () => undo.length > 0; P.canRedo = () => redo.length > 0;
+  P.reset = () => { const l = []; for (let i = 0; i < w.paint.length; i++) if (w.paint[i] !== '.') l.push([i, w.paint[i], '.']); if (!l.length) return; undo.push(l); redo.length = 0; applyList(l, false); };
+  /* --- doigts, souris, molette --- */
+  const pos = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  function wantsPan(e) { return ops.tool() === 'hand' || spaceDown || e.button === 1 || e.button === 2; }
+  function down(e) {
+    if (destroyed) return; try { cv.setPointerCapture(e.pointerId); } catch (_) { /* rien */ } e.preventDefault();
+    ptrs.set(e.pointerId, pos(e));
+    if (ptrs.size === 2) { // deux doigts : zoom et déplacement, le trait en attente est oublié
+      if (stroke && stroke.n) { endStroke(); } stroke = null; pend = null; pan = null;
+      const [a, b] = [...ptrs.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), mx: (a[0] + b[0]) / 2, my: (a[1] + b[1]) / 2 }; return;
+    }
+    if (ptrs.size > 2) return;
+    const p = pos(e);
+    if (wantsPan(e)) { pan = { x: p[0], y: p[1], ox, oy }; return; }
+    pend = { x: p[0], y: p[1], t: performance.now(), mouse: e.pointerType === 'mouse' };
+    if (pend.mouse && ops.tool() !== 'fill') { beginStroke(); lineTo(p[0], p[1]); pend = null; }
+  }
+  function move(e) {
+    if (!ptrs.has(e.pointerId)) { hover(e); return; }
+    ptrs.set(e.pointerId, pos(e)); const p = pos(e);
+    if (pinch && ptrs.size >= 2) {
+      const [a, b] = [...ptrs.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      ox += mx - pinch.mx; oy += my - pinch.my; zoomAt(d / (pinch.d || d), mx, my); pinch.d = d; pinch.mx = mx; pinch.my = my; return;
+    }
+    if (pan) { ox = pan.ox + p[0] - pan.x; oy = pan.oy + p[1] - pan.y; clamp(); draw(); return; }
+    if (pend && ops.tool() !== 'fill') { if (Math.hypot(p[0] - pend.x, p[1] - pend.y) > 4 || performance.now() - pend.t > 90) { beginStroke(); lineTo(pend.x, pend.y); lineTo(p[0], p[1]); pend = null; } return; }
+    if (stroke) lineTo(p[0], p[1]);
+  }
+  function up(e) {
+    const had = ptrs.has(e.pointerId); ptrs.delete(e.pointerId); if (!had) return;
+    if (pinch) { if (ptrs.size < 2) { pinch = null; const r = [...ptrs.values()][0]; if (r) pan = null; } return; }
+    if (pan) { pan = null; return; }
+    if (pend) { const p = [pend.x, pend.y]; pend = null; if (e.type === 'pointercancel') return; const i = cellAt(p[0], p[1]); if (i < 0) return; beginStroke(); if (ops.tool() === 'fill') fillAt(i); else lineTo(p[0], p[1]); draw(); endStroke(); return; }
+    endStroke();
+  }
+  function hover(e) { if (ops.onHover) { const p = pos(e), i = cellAt(p[0], p[1]); ops.onHover(i); } }
+  function wheel(e) { e.preventDefault(); const p = pos(e); if (e.ctrlKey || Math.abs(e.deltaY) >= Math.abs(e.deltaX)) zoomAt(Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0018)), p[0], p[1]); else { ox -= e.deltaX; clamp(); draw(); } }
+  const ctx = (e) => e.preventDefault();
+  cv.addEventListener('pointerdown', down); cv.addEventListener('pointermove', move); cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  cv.addEventListener('wheel', wheel, { passive: false }); cv.addEventListener('contextmenu', ctx);
+  cv.style.touchAction = 'none';
+  P.space = (on) => { spaceDown = on; cv.style.cursor = on ? 'grab' : ''; };
+  P.resize = () => { if (resize()) draw(); };
+  // la toile change de taille (fenêtre, feuille, plein écran) : on suit
+  let ro = null; try { ro = new ResizeObserver(() => { if (!destroyed && resize()) { draw(); ops.onChange && ops.onChange('zoom'); } }); ro.observe(cv); } catch (_) { ro = null; }
+  P.destroy = () => { destroyed = true; if (ro) ro.disconnect(); clearTimeout(fxTimer); cancelAnimationFrame(raf); cv.removeEventListener('pointerdown', down); cv.removeEventListener('pointermove', move); cv.removeEventListener('pointerup', up); cv.removeEventListener('pointercancel', up); cv.removeEventListener('wheel', wheel); cv.removeEventListener('contextmenu', ctx); };
+  P.work = () => w;
+  resize(); buildImg(); draw(); fxSchedule('keep');
+}
+
+/* ---------- recadrage ----------
+   cv : toile de la taille du cadre. img : l'image chargée. Le cadre reste fixe : on déplace et on zoome l'image dessous. */
+function CNCrop(cv, img, onChange) {
+  const P = this; let ratio = 1, sc = 1, tx = 0, ty = 0, VW = 0, VH = 0, dpr = 1, raf = 0; const ptrs = new Map(); let pinch = null, drag = null;
+  const g = cv.getContext('2d'), IW = img.naturalWidth || img.width, IH = img.naturalHeight || img.height;
+  P.ratio = () => ratio || IW / IH;
+  P.setRatio = (r) => { ratio = r; layout(true); };
+  function layout(reset) {
+    const box = cv.parentElement.getBoundingClientRect(), r = P.ratio(); let w = box.width, h = w / r; if (h > box.height) { h = box.height; w = h * r; }
+    cv.style.width = w + 'px'; cv.style.height = h + 'px'; dpr = Math.min(3, window.devicePixelRatio || 1); cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); VW = w; VH = h;
+    if (reset) { sc = Math.max(VW / IW, VH / IH); tx = (VW - IW * sc) / 2; ty = (VH - IH * sc) / 2; }
+    clamp(); draw(); onChange && onChange();
+  }
+  function clamp() { const mn = Math.max(VW / IW, VH / IH); sc = Math.max(mn, Math.min(mn * 8, sc)); tx = Math.min(0, Math.max(VW - IW * sc, tx)); ty = Math.min(0, Math.max(VH - IH * sc, ty)); }
+  function draw() { if (!raf) raf = requestAnimationFrame(() => { raf = 0; g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, VW, VH); g.imageSmoothingQuality = 'high'; g.drawImage(img, tx, ty, IW * sc, IH * sc); }); }
+  function zoomAt(f, cx, cy) { const ns = sc * f, mn = Math.max(VW / IW, VH / IH), cl = Math.max(mn, Math.min(mn * 8, ns)), k = cl / sc; tx = cx - (cx - tx) * k; ty = cy - (cy - ty) * k; sc = cl; clamp(); draw(); }
+  const pos = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  let tm = 0; const changed = () => { clearTimeout(tm); tm = setTimeout(() => onChange && onChange(), 220); };
+  cv.addEventListener('pointerdown', (e) => { try { cv.setPointerCapture(e.pointerId); } catch (_) { /* rien */ } ptrs.set(e.pointerId, pos(e)); if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), mx: (a[0] + b[0]) / 2, my: (a[1] + b[1]) / 2 }; drag = null; } else { const p = pos(e); drag = { x: p[0], y: p[1], tx, ty }; } });
+  cv.addEventListener('pointermove', (e) => {
+    if (!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId, pos(e));
+    if (pinch && ptrs.size >= 2) { const [a, b] = [...ptrs.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; tx += mx - pinch.mx; ty += my - pinch.my; zoomAt(d / pinch.d, mx, my); pinch = { d, mx, my }; changed(); return; }
+    if (drag) { const p = pos(e); tx = drag.tx + p[0] - drag.x; ty = drag.ty + p[1] - drag.y; clamp(); draw(); changed(); }
+  });
+  const up = (e) => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; if (!ptrs.size) drag = null; };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  cv.addEventListener('wheel', (e) => { e.preventDefault(); const p = pos(e); zoomAt(Math.exp(-e.deltaY * 0.0018), p[0], p[1]); changed(); }, { passive: false });
+  cv.style.touchAction = 'none';
+  // la partie choisie de l'image, en toile (au plus 1200 px)
+  P.output = (max) => { max = max || 1200; const sx = -tx / sc, sy = -ty / sc, sw = VW / sc, sh = VH / sc, k = Math.min(1, max / Math.max(sw, sh)), c = cnCanvas(sw * k, sh * k), cg = c.getContext('2d'); cg.imageSmoothingQuality = 'high'; cg.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height); return c; };
+  P.relayout = () => layout(false);
+  layout(true);
+}
+// charger un fichier image (photo du téléphone, fichier, collé…) en <img>
+function cnLoadImage(file) {
+  return new Promise((res, rej) => { const u = URL.createObjectURL(file), im = new Image(); im.onload = () => { res(im); }; im.onerror = () => { URL.revokeObjectURL(u); rej(new Error('image')); }; im.src = u; });
+}
+function cnNameFromFile(f, en) { let n = String((f && f.name) || '').replace(/\.[a-z0-9]{2,5}$/i, '').replace(/[_-]+/g, ' ').trim(); if (!n || /^(img|image|photo|pxl|dsc|screenshot|capture)?\s*\d[\d\s]*$/i.test(n) || /^(IMG|PXL|DSC)\s?\d/i.test(n)) { const d = new Date(); n = (en ? 'Colouring of ' : 'Coloriage du ') + d.toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'short' }); } return n.slice(0, 60); }
+
+
+/* ===================== COLORIAGE PAR NUMÉROS (téléphone) — « Atelier aquarelle » =====================
+   N'importe quelle photo devient un coloriage par numéros. Le cœur (conversion, rendu, moteur) est le même
+   fichier que sur l'ordinateur (coloriage-core.js). Données : state.coloringNum = { works: [...] },
+   synchronisées avec l'ordinateur. L'ancien coloriage (collections, modes) a été retiré. */
+const CN_SEASONS = CL_SEASONS;
+const CN = (function(){
+  const T = (fr, en) => (state.lang === 'en' ? en : fr);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  const en = () => state.lang === 'en';
+  const U = { tab: 'cours', id: null, sel: 0, tool: 'brush', size: 0, sheet: null, menu: null, full: false, c: null, play: null, pstate: {}, thumbs: new Map(), peek: false, fin: { grid: false } };
+  /* ---------- données ---------- */
+  function D(){ const c = state.coloringNum = state.coloringNum && typeof state.coloringNum === 'object' && !Array.isArray(state.coloringNum) ? state.coloringNum : {}; c.works = Array.isArray(c.works) ? c.works.filter(cnValid) : []; c.prefs = c.prefs && typeof c.prefs === 'object' ? c.prefs : {}; return c; }
+  const works = () => D().works;
+  const work = (id) => works().find((w) => w.id === (id || U.id)) || null;
+  function prefs(){
+    const p = D().prefs;
+    if(!CN_DETAILS.some((x) => x[0] === p.detail)) p.detail = 'medium';
+    if(!CN_COUNTS.includes(p.k)) p.k = 18;
+    if(!['img', 'pal'].includes(p.teinte)) p.teinte = 'img';
+    if(!cnPalById(p.palId)){ const se = cnSeasonNow(), x = cnAllPals().find((a) => a.se.id === se); p.palId = x ? x.p.id : 'spring-pastel'; }
+    if(typeof p.clean !== 'number') p.clean = 2;
+    if(!['guide', 'libre'].includes(p.mode)) p.mode = 'guide';
+    if(!CN_RATIOS.some((x) => x[0] === p.ratio)) p.ratio = 'square';
+    return p;
+  }
+  let saveT = null;
+  function save(){ clearTimeout(saveT); saveT = setTimeout(flush, 500); }
+  async function flush(){ clearTimeout(saveT); saveT = null; try{ await storageSet('coloringNum', state.coloringNum); triggerAutoSync(); }catch(e){ console.warn('coloringNum save', e); } }
+  window.addEventListener('pagehide', () => { if(saveT) flush(); });
+  document.addEventListener('visibilitychange', () => { if(document.hidden && saveT) flush(); });
+  // l'ancien coloriage est retiré : ses données sont effacées une fois
+  async function init(){
+    D();
+    try{ if(state.coloringWorks && Object.keys(state.coloringWorks).length){ state.coloringWorks = {}; await storageSet('coloringWorks', {}); } }catch(e){}
+  }
+  function toast(msg){
+    let t = document.getElementById('cnp-toast'); if(!t){ const root = document.querySelector('.cnp'); if(!root){ showToast(msg); return; } t = document.createElement('div'); t.id = 'cnp-toast'; root.appendChild(t); }
+    t.textContent = msg; t.className = 'show'; clearTimeout(toast.t); toast.t = setTimeout(() => { t.className = ''; }, 2400);
+  }
+  const finName = (id) => { const f = CN_FINISHES.find((x) => x[0] === id) || CN_FINISHES[0]; return T(f[1], f[2]); };
+  const finIco = (id) => (CN_FINISHES.find((x) => x[0] === id) || CN_FINISHES[0])[3];
+  function thumbUrl(w){ const k = w.id + '|' + w.updatedAt, c = U.thumbs.get(w.id); if(c && c.k === k) return c.u; const u = cnThumb(w, 240).toDataURL('image/png'); U.thumbs.set(w.id, { k, u }); return u; }
+  function go(screen){ state.screen = screen; render(); }
+  const deco = '<i class="cnp-wc a"></i><i class="cnp-wc b"></i><i class="cnp-wc c"></i>';
+
+  /* ---------- accueil ---------- */
+  function renderHome(){
+    const all = works(), cours = all.filter((w) => !w.done).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)), fini = all.filter((w) => w.done).sort((a, b) => (b.done || 0) - (a.done || 0));
+    const list = U.tab === 'done' ? fini : cours;
+    const card = (w) => { const st = cnStats(w), pct = w.done ? 100 : st.pct; return `<div class="cnp-card" onclick="CN.open('${w.id}')"><div class="cnp-th"><img src="${thumbUrl(w)}" alt=""></div><div class="cnp-cn"><b>${esc(w.name || T('Sans titre', 'Untitled'))}</b><small>${w.done ? '✓' : pct + '%'}</small></div><div class="cnp-bar"><i style="width:${pct}%"></i></div><button type="button" class="cnp-dots" onclick="event.stopPropagation();CN.menu('${w.id}')">⋯</button></div>`; };
+    return `<div class="cnp">${deco}<div class="cnp-hd"><button type="button" class="cnp-ib" onclick="CN.back()">‹</button><h1>${T('Coloriage', 'Colouring')}</h1></div>
+      <div class="cnp-body">
+        <div class="cnp-new"><div class="cnp-plus">＋</div><h3>${T('Nouvelle image', 'New picture')}</h3><p>${T('Transforme une photo en coloriage par numéros', 'Turn a photo into a colour-by-number')}</p>
+          <div class="cnp-btns"><label class="cnp-b p">📷 ${T('Photo', 'Camera')}<input type="file" accept="image/*" capture="environment" hidden onchange="CN.file(this)"></label><label class="cnp-b">🖼 ${T('Galerie', 'Gallery')}<input type="file" accept="image/*" hidden onchange="CN.file(this)"></label></div></div>
+        <div class="cnp-tabs"><button type="button" class="${U.tab === 'cours' ? 'on' : ''}" onclick="CN.tab('cours')">${T('En cours', 'In progress')} <em>${cours.length}</em></button><button type="button" class="${U.tab === 'done' ? 'on' : ''}" onclick="CN.tab('done')">${T('Terminées', 'Finished')} <em>${fini.length}</em></button></div>
+        ${list.length ? `<div class="cnp-gal">${list.map(card).join('')}</div>` : `<p class="cnp-empty">${U.tab === 'done' ? T('Tes coloriages terminés apparaîtront ici.', 'Your finished colourings will appear here.') : T('Aucun coloriage en cours. Prends une photo ou choisis une image pour commencer.', 'No colouring in progress. Take a photo or pick a picture to start.')}</p>`}
+        <div class="cnp-pad"></div>
+      </div>${sheetHtml()}</div>`;
+  }
+  function menuHtml(w){
+    return `<h3>${esc(w.name || '')}</h3><div class="cnp-acts"><button type="button" onclick="CN.open('${w.id}')">🖌 ${T('Colorier', 'Colour')}</button><button type="button" onclick="CN.rename('${w.id}')">✎ ${T('Renommer', 'Rename')}</button><button type="button" onclick="CN.exportPng('${w.id}')">⤓ ${T('Exporter en PNG', 'Export as PNG')}</button><button type="button" onclick="CN.restart('${w.id}')">↺ ${T('Recommencer', 'Start again')}</button><button type="button" class="dg" onclick="CN.del('${w.id}')">🗑 ${T('Supprimer', 'Delete')}</button></div>`;
+  }
+
+  /* ---------- créer ---------- */
+  async function file(input){
+    const f = input.files && input.files[0]; input.value = ''; if(!f) return;
+    let img; try{ img = await cnLoadImage(f); }catch(e){ toast(T('Impossible de lire cette image.', 'Could not read this picture.')); return; }
+    U.c = { img, name: cnNameFromFile(f, en()), crop: null, g: null, t: 0 }; go('cnCreate');
+  }
+  function chips(key, list, cur){ return `<div class="cnp-chips">${list.map((x) => `<button type="button" class="${String(x[0]) === String(cur) ? 'on' : ''}" onclick="CN.set('${key}','${x[0]}',this)">${x[1]}</button>`).join('')}</div>`; }
+  function renderCreate(){
+    const p = prefs();
+    return `<div class="cnp">${deco}<div class="cnp-hd"><button type="button" class="cnp-ib" onclick="CN.back()">‹</button><input class="cnp-name" value="${esc(U.c.name)}" oninput="CN.name(this.value)" maxlength="60" placeholder="${T('Nom du coloriage', 'Colouring name')}"></div>
+      <div class="cnp-body" id="cnp-cbody">
+        <div class="cnp-cropbox"><canvas id="cnp-crop"></canvas></div>
+        ${chips('ratio', CN_RATIOS.map((r) => [r[0], (r[0] === 'square' ? '■ ' : r[0] === 'portrait' ? '▯ ' : r[0] === 'landscape' ? '▭ ' : '⬚ ') + T(r[2], r[3])]), p.ratio)}
+        <p class="cnp-help c">${T('Glisse pour déplacer, pince pour zoomer', 'Drag to move, pinch to zoom')}</p>
+        <div class="cnp-res"><div class="cnp-prevbox"><canvas id="cnp-prev"></canvas></div><div><b>${T('Le coloriage terminé', 'The finished colouring')}</b><span id="cnp-prevcap"></span></div></div>
+        <div id="cnp-right">${rightHtml()}</div>
+        <div class="cnp-pad"></div>
+      </div>
+      <div class="cnp-foot"><button type="button" class="cnp-b wide p" onclick="CN.create()">${T('Créer le coloriage', 'Create the colouring')}</button></div></div>`;
+  }
+  function rightHtml(){
+    const p = prefs(), pal = cnPalById(p.palId);
+    return `<h4>${T('Détail', 'Detail')}</h4>${chips('detail', CN_DETAILS.map((d) => [d[0], T(d[2], d[3])]), p.detail)}
+      <h4>${T('Nombre de couleurs', 'Number of colours')}</h4>${chips('k', CN_COUNTS.map((n) => [n, String(n)]), p.k)}
+      <h4>${T('Teintes', 'Colours')}</h4>${chips('teinte', [['img', T('Fidèles à l’image', 'True to the picture')], ['pal', T('Palette de saison', 'Season palette')]], p.teinte)}
+      ${p.teinte === 'pal' ? `<div class="cnp-pal"><button type="button" onclick="CN.pal(-1)">‹</button><div class="cnp-pald">${pal.p.colors.map((c) => `<i style="background:${c}"></i>`).join('')}</div><button type="button" onclick="CN.pal(1)">›</button></div><p class="cnp-help">${esc(cnPalLabel(pal, en()))}${p.k > 10 ? ' · ' + T('avec des nuances', 'with shades') : ''}</p>` : ''}
+      <h4>${T('Nettoyage', 'Clean-up')} <em id="cnp-cleanl">${T(CN_CLEAN[p.clean][0], CN_CLEAN[p.clean][1])}</em></h4><div class="cnp-sl"><small>${T('doux', 'light')}</small><input type="range" min="0" max="4" step="1" value="${p.clean}" oninput="CN.clean(this.value)"><small>${T('fort', 'strong')}</small></div>
+      <p class="cnp-help">${T('Enlève les cases isolées et les petites taches de la photo.', 'Removes stray squares and tiny specks from the photo.')}</p>
+      <h4>${T('Mode', 'Mode')}</h4>${chips('mode', [['guide', T('Guidé', 'Guided')], ['libre', T('Libre', 'Free')]], p.mode)}
+      <p class="cnp-help">${p.mode === 'guide' ? T('Seules les bonnes cases acceptent la couleur.', 'Only the right squares take the colour.') : T('Tu peins où tu veux ; les erreurs sont signalées d’une petite croix.', 'Paint anywhere; mistakes get a small cross.')}</p>`;
+  }
+  function createMount(){
+    const cv = document.getElementById('cnp-crop'); if(!cv || !U.c) return;
+    const p = prefs(), r = CN_RATIOS.find((x) => x[0] === p.ratio), keep = U.c.cropSt;
+    U.c.crop = new CNCrop(cv, U.c.img, () => previewSoon());
+    U.c.crop.setRatio(r[1] || U.c.img.naturalWidth / U.c.img.naturalHeight);
+    previewSoon(true);
+  }
+  function previewSoon(now){ if(!U.c) return; clearTimeout(U.c.t); U.c.t = setTimeout(preview, now ? 0 : 150); }
+  function preview(){
+    const c = U.c, pc = document.getElementById('cnp-prev'); if(!c || !c.crop || !pc) return;
+    const p = prefs(), n = CN_DETAILS.find((d) => d[0] === p.detail)[1], pal = p.teinte === 'pal' ? cnPalById(p.palId).p.colors : null;
+    c.g = cnConvert(c.crop.output(800), { n, k: p.k, pal, clean: p.clean });
+    const box = pc.parentElement.getBoundingClientRect(), sol = cnSolution(c.g, 600), k = Math.min(box.width / sol.width, box.height / sol.height), dpr = window.devicePixelRatio || 1;
+    pc.width = Math.round(sol.width * k * dpr); pc.height = Math.round(sol.height * k * dpr); pc.style.width = sol.width * k + 'px'; pc.style.height = sol.height * k + 'px';
+    const g = pc.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(sol, 0, 0, pc.width, pc.height);
+    const cap = document.getElementById('cnp-prevcap'); if(cap) cap.textContent = c.g.w + '×' + c.g.h + ' ' + T('cases', 'squares') + ' · ' + c.g.pal.length + ' ' + T('couleurs', 'colours');
+  }
+  function set(k, v, el){
+    const p = prefs(); p[k] = k === 'k' ? +v : v; save();
+    if(el) el.parentElement.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b === el));
+    if(k === 'ratio'){ const r = CN_RATIOS.find((x) => x[0] === v); if(U.c && U.c.crop) U.c.crop.setRatio(r[1] || U.c.img.naturalWidth / U.c.img.naturalHeight); return; }
+    if(k === 'teinte' || k === 'mode'){ const r = document.getElementById('cnp-right'); if(r) r.innerHTML = rightHtml(); }
+    if(k !== 'mode') previewSoon(true);
+  }
+  function pal(d){ const p = prefs(), all = cnAllPals(), i = all.findIndex((x) => x.p.id === p.palId); p.palId = all[(i + d + all.length) % all.length].p.id; save(); const r = document.getElementById('cnp-right'); if(r) r.innerHTML = rightHtml(); previewSoon(true); }
+  function clean(v){ prefs().clean = +v; save(); const l = document.getElementById('cnp-cleanl'); if(l) l.textContent = T(CN_CLEAN[+v][0], CN_CLEAN[+v][1]); previewSoon(); }
+  function create(){
+    const c = U.c; if(!c) return; if(!c.g) preview(); if(!c.g) return;
+    const p = prefs(), pl = cnPalById(p.palId);
+    const w = cnNewWork(c.g, { name: (c.name || '').trim() || cnNameFromFile(null, en()), mode: p.mode, detail: p.detail, palName: p.teinte === 'pal' ? cnPalLabel(pl, false) : '' });
+    works().push(w); save(); U.c = null; // l'écran de création n'est plus « restaurable » : le geste retour le saute
+    openWork(w.id);
+  }
+
+  /* ---------- colorier ---------- */
+  function openWork(id){
+    const w = work(id); if(!w) return;
+    U.id = id; U.sheet = null; U.peek = false;
+    const st = cnStats(w); if(U.pstate.id !== id || st.tot[U.sel] == null) U.sel = Math.max(0, st.tot.findIndex((t, i) => st.ok[i] < t));
+    if(w.mode === 'guide' && U.tool === 'free') U.tool = 'brush';
+    go('cnPlay');
+  }
+  function renderPlay(){
+    const w = work(), st = cnStats(w);
+    const tools = [['brush', '🖌', T('Pinceau', 'Brush')], ['fill', '🪣', T('Remplir', 'Fill')], ['free', '✏️', T('Libre', 'Free')], ['erase', '⌫', T('Gomme', 'Eraser')], ['hand', '✋', T('Main', 'Hand')]];
+    return `<div class="cnp play${U.full ? ' full' : ''}">${deco}
+      <div class="cnp-hd ph"><button type="button" class="cnp-ib" onclick="CN.back()">‹</button><b class="cnp-pname">${esc(w.name || T('Sans titre', 'Untitled'))}</b><span class="cnp-pct" id="cnp-pct">${st.pct}%</span><span class="cnp-sp"></span>
+        <button type="button" class="cnp-ib" id="cnp-undo" onclick="CN.undo()">↶</button><button type="button" class="cnp-ib" id="cnp-redo" onclick="CN.redo()">↷</button><button type="button" class="cnp-ib" id="cnp-peek">👁</button><button type="button" class="cnp-ib" onclick="CN.full()">${U.full ? '⤡' : '⛶'}</button><button type="button" class="cnp-ib" onclick="CN.sheet('more')">⋯</button></div>
+      <div class="cnp-pbar"><i id="cnp-pbar" style="width:${st.pct}%"></i></div>
+      <div class="cnp-stage" id="cnp-stage" data-tool="${U.tool}"><canvas id="cnp-cv"></canvas><div class="cnp-peekimg" id="cnp-peekimg"></div><span class="cnp-zoom" id="cnp-zoom"></span></div>
+      <div class="cnp-tools">${tools.map((t) => `<button type="button" class="cnp-tl${U.tool === t[0] ? ' on' : ''}${t[0] === 'free' && w.mode !== 'libre' ? ' off' : ''}" data-v="${t[0]}" onclick="CN.tool('${t[0]}')"><b>${t[1]}</b><small>${t[2]}</small></button>`).join('')}<button type="button" class="cnp-tl" onclick="CN.find()"><b>🔍</b><small>${T('Trouver', 'Find')}</small></button></div>
+      <div class="cnp-szs"><span>${T('Taille', 'Size')}</span>${CN_SIZES.map((r, i) => `<button type="button" class="${U.size === i ? 'on' : ''}" data-v="${i}" onclick="CN.size(${i})"><i style="width:${5 + i * 4}px;height:${5 + i * 4}px"></i></button>`).join('')}<span class="cnp-sp"></span><button type="button" class="cnp-finb" onclick="CN.sheet('fins')">${finIco(w.fin)} ${esc(finName(w.fin))}</button></div>
+      <div class="cnp-pals" id="cnp-pals">${palsHtml(w, st)}</div>
+      <div class="cnp-info" id="cnp-info">${infoHtml(w, st)}</div>
+      ${sheetHtml()}</div>`;
+  }
+  function palsHtml(w, st){
+    return w.pal.map((c, i) => { const left = st.tot[i] - st.ok[i], done = !left; return `<button type="button" class="cnp-sw${i === U.sel ? ' on' : ''}${done ? ' done' : ''}" onclick="CN.sel(${i})"><b style="background:${c};color:${cnTextOn(c)}">${done ? '✓' : i + 1}</b></button>`; }).join('');
+  }
+  function infoHtml(w, st){ const left = st.tot[U.sel] - st.ok[U.sel]; return `<span>${T('Couleur', 'Colour')} <b>n° ${U.sel + 1}</b></span>${w.mode === 'libre' && st.wrong ? `<button type="button" class="cnp-warn" onclick="CN.wrong()">✕ ${st.wrong}</button>` : ''}<span>${left ? `<b>${left}</b> ${T('cases restantes', 'squares left')}` : T('terminée ✓', 'finished ✓')}</span>`; }
+  function playMount(){
+    const cv = document.getElementById('cnp-cv'), w = work(); if(!cv || !w) return;
+    if(U.play){ U.play.destroy(); U.play = null; }
+    U.play = new CNPlay(cv, {
+      work: w, theme: CN_THEME, state: U.pstate,
+      tool: () => U.tool, sel: () => U.sel, size: () => U.size, save,
+      toast: (m, n) => toast(T(m[0], m[1]) + n),
+      onChange: (what, st) => { if(what === 'paint') afterPaint(st); else zoomLabel(); },
+      onDone: () => setTimeout(() => { U.sheet = 'done'; U.fin = { grid: false }; refreshSheet(true); }, 350),
+    });
+    hist(); zoomLabel();
+    const pk = document.getElementById('cnp-peek');
+    if(pk){ const on = (e) => { e.preventDefault(); peek(true); }, off = () => peek(false); pk.addEventListener('pointerdown', on); pk.addEventListener('pointerup', off); pk.addEventListener('pointerleave', off); pk.addEventListener('pointercancel', off); }
+    const pals = document.getElementById('cnp-pals'), on = pals && pals.querySelector('.on'); if(on) pals.scrollLeft = on.offsetLeft - pals.clientWidth / 2 + on.offsetWidth / 2;
+    if(U.sheet === 'done') finalDraw(true);
+  }
+  let lockAuto = false;
+  function afterPaint(st){
+    const w = work(); if(!w) return; st = st || cnStats(w);
+    const pct = document.getElementById('cnp-pct'); if(pct) pct.textContent = st.pct + '%';
+    const b = document.getElementById('cnp-pbar'); if(b) b.style.width = st.pct + '%';
+    if(!lockAuto && st.tot[U.sel] - st.ok[U.sel] === 0 && st.good < st.all){
+      const n = st.tot.findIndex((t, i) => i > U.sel && st.ok[i] < t), m = n >= 0 ? n : st.tot.findIndex((t, i) => st.ok[i] < t);
+      if(m >= 0){ toast(T('n° ', 'No. ') + (U.sel + 1) + T(' terminé ✓', ' finished ✓')); U.sel = m; U.play && U.play.refreshSel(); }
+    }
+    refreshPals(w); hist();
+  }
+  function refreshPals(w){
+    const st = cnStats(w), pals = document.getElementById('cnp-pals'), info = document.getElementById('cnp-info');
+    if(pals){ const sl = pals.scrollLeft; pals.innerHTML = palsHtml(w, st); pals.scrollLeft = sl; const on = pals.querySelector('.on'); if(on && (on.offsetLeft < pals.scrollLeft || on.offsetLeft + on.offsetWidth > pals.scrollLeft + pals.clientWidth)) pals.scrollTo({ left: on.offsetLeft - pals.clientWidth / 2 + on.offsetWidth / 2, behavior: 'smooth' }); }
+    if(info) info.innerHTML = infoHtml(w, st);
+  }
+  function hist(){ const p = U.play; if(!p) return; const u = document.getElementById('cnp-undo'), r = document.getElementById('cnp-redo'); if(u) u.classList.toggle('dis', !p.canUndo()); if(r) r.classList.toggle('dis', !p.canRedo()); }
+  function zoomLabel(){ const z = document.getElementById('cnp-zoom'); if(z && U.play) z.textContent = '🔍 ' + U.play.zoomPct() + '%'; }
+  function peek(on){ const el = document.getElementById('cnp-peekimg'), w = work(); if(!el || !w) return; U.peek = on; if(on){ el.innerHTML = ''; el.appendChild(cnSolution(w, 800)); el.classList.add('on'); } else el.classList.remove('on'); }
+  function tool(t){
+    const w = work(); if(t === 'free' && w && w.mode !== 'libre'){ toast(T('Le pinceau libre déborde : passe en mode Libre (menu ⋯) pour l’utiliser.', 'The free brush paints anywhere: switch to Free mode (⋯ menu) to use it.')); return; }
+    U.tool = t; document.querySelectorAll('.cnp-tl[data-v]').forEach((b) => b.classList.toggle('on', b.dataset.v === t)); const s = document.getElementById('cnp-stage'); if(s) s.dataset.tool = t;
+  }
+  function size(i){ U.size = i; document.querySelectorAll('.cnp-szs button[data-v]').forEach((b) => b.classList.toggle('on', +b.dataset.v === i)); }
+  let lastSelTap = 0;
+  function sel(i){
+    const now = Date.now(); if(U.sel === i && now - lastSelTap < 400){ find(); return; } lastSelTap = now;
+    U.sel = i; if(U.tool === 'erase' || U.tool === 'hand') tool('brush');
+    if(U.play) U.play.refreshSel(); const w = work(); if(w) refreshPals(w);
+  }
+  function find(){ if(U.play && !U.play.find(U.sel)) toast(T('Cette couleur est terminée ✓', 'This colour is finished ✓')); }
+  function wrong(){ if(U.play) U.play.findWrong(); }
+  function undo(){ if(U.play){ lockAuto = true; U.play.undo(); lockAuto = false; } }
+  function redo(){ if(U.play){ lockAuto = true; U.play.redo(); lockAuto = false; } }
+  function full(){
+    U.full = !U.full;
+    try{ if(U.full && document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); else if(!U.full && document.fullscreenElement) document.exitFullscreen().catch(() => {}); }catch(e){}
+    render();
+  }
+  document.addEventListener('fullscreenchange', () => { if(!document.fullscreenElement && U.full && state.screen === 'cnPlay'){ U.full = false; render(); } });
+  function setMode(m){
+    const w = work(); if(!w || w.mode === m) return;
+    if(m === 'guide' && cnStats(w).wrong && !window.confirm(T('Passer en mode Guidé ? Les cases mal coloriées restent telles quelles ; tu pourras les gommer.', 'Switch to Guided mode? Wrongly coloured squares stay; you can erase them.'))) return;
+    w.mode = m; w.updatedAt = Date.now(); if(m === 'guide' && U.tool === 'free') U.tool = 'brush'; save(); U.sheet = null; render();
+  }
+
+  /* ---------- feuilles du bas : plus, finitions, fin ---------- */
+  const FXC = new Map();
+  function finDemo(id, col){
+    const k = id + col; if(FXC.has(k)) return FXC.get(k);
+    const m = cnCanvas(64, 64), g = m.getContext('2d'); g.beginPath(); g.roundRect(2, 2, 60, 60, 16); g.fill();
+    let u = ''; try{ const c = id === 'plain' ? (() => { const x = cnCanvas(64, 64), xg = x.getContext('2d'); xg.fillStyle = col; xg.beginPath(); xg.roundRect(2, 2, 60, 60, 16); xg.fill(); return x; })() : RFX.render(id, col, m); u = c.toDataURL('image/png'); }catch(e){}
+    FXC.set(k, u); return u;
+  }
+  function finsHtml(w){ const col = w.pal[U.sel] || w.pal[0]; return `<div class="cnp-fins">${CN_FINISHES.map((f) => `<button type="button" class="${f[0] === w.fin ? 'on' : ''}" onclick="CN.setFin('${f[0]}')"><img src="${finDemo(f[0], col)}" alt=""><small>${T(f[1], f[2])}</small></button>`).join('')}</div>`; }
+  function sheetHtml(){
+    if(!U.sheet) return '';
+    let inner = '';
+    if(U.sheet === 'menu'){ const w = work(U.menu); if(!w){ U.sheet = null; return ''; } inner = menuHtml(w); }
+    else if(U.sheet === 'more'){ const w = work(); if(!w) return ''; inner = `<h3>${esc(w.name || '')}</h3><h4>${T('Mode', 'Mode')}</h4><div class="cnp-chips">${[['guide', T('Guidé', 'Guided')], ['libre', T('Libre', 'Free')]].map((m) => `<button type="button" class="${w.mode === m[0] ? 'on' : ''}" onclick="CN.mode('${m[0]}')">${m[1]}</button>`).join('')}</div><p class="cnp-help">${w.mode === 'guide' ? T('Seules les bonnes cases acceptent la couleur.', 'Only the right squares take the colour.') : T('Tu peins où tu veux, et le pinceau ✏️ libre déborde.', 'Paint anywhere; the ✏️ free brush overflows.')}</p><div class="cnp-acts"><button type="button" onclick="CN.fit()">⤢ ${T('Voir toute l’image', 'Show the whole picture')}</button><button type="button" onclick="CN.rename('${w.id}')">✎ ${T('Renommer', 'Rename')}</button><button type="button" onclick="CN.exportPng('${w.id}')">⤓ ${T('Exporter en PNG', 'Export as PNG')}</button><button type="button" onclick="CN.restart('${w.id}')">↺ ${T('Recommencer', 'Start again')}</button></div>`; }
+    else if(U.sheet === 'fins'){ const w = work(); if(!w) return ''; inner = `<h3>✨ ${T('Finition', 'Finish')}</h3><p class="cnp-help">${T('Elle s’applique à toutes les couleurs, pendant le coloriage et dans l’image exportée.', 'It applies to every colour, while colouring and in the exported picture.')}</p>${finsHtml(w)}`; }
+    else if(U.sheet === 'done'){ const w = work(); if(!w) return ''; inner = `<div class="cnp-done"><h3>✨ ${T('Terminé !', 'Finished!')} ✨</h3><p class="cnp-help c">${esc(w.name || '')}</p><div class="cnp-finalbox"><canvas id="cnp-final"></canvas><span id="cnp-wait"></span></div><h4>${T('Finition', 'Finish')}</h4>${finsHtml(w)}<label class="cnp-ck"><input type="checkbox"${U.fin.grid ? ' checked' : ''} onchange="CN.grid(this.checked)"> ${T('Garder la grille', 'Keep the grid')}</label><div class="cnp-row"><button type="button" class="cnp-b" onclick="CN.doneOk()">OK</button><button type="button" class="cnp-b p" onclick="CN.exportPng('${w.id}')">⤓ ${T('Exporter en PNG', 'Export as PNG')}</button></div></div>`; }
+    return `<div class="cnp-sbg" onclick="CN.closeSheet()"></div><div class="cnp-sheet${U.sheet === 'done' ? ' tall' : ''}" id="cnp-sheet"><i class="cnp-grab"></i>${inner}</div>`;
+  }
+  function refreshSheet(reveal){
+    const root = document.querySelector('.cnp'); if(!root) return;
+    root.querySelectorAll('.cnp-sbg,.cnp-sheet').forEach((e) => e.remove());
+    const tmp = document.createElement('div'); tmp.innerHTML = sheetHtml(); while(tmp.firstChild) root.appendChild(tmp.firstChild);
+    if(U.sheet === 'done') finalDraw(reveal);
+  }
+  function openSheet(k){ U.sheet = k; refreshSheet(); }
+  function closeSheet(){ if(U.sheet === 'done'){ doneOk(); return; } U.sheet = null; U.menu = null; refreshSheet(); }
+  function menu(id){ U.menu = id; U.sheet = 'menu'; refreshSheet(); }
+  function setFin(f){
+    const w = work(); if(!w) return; w.fin = f; w.updatedAt = Date.now(); save();
+    document.querySelectorAll('.cnp-fins button').forEach((b) => b.classList.toggle('on', b.getAttribute('onclick').indexOf("'" + f + "'") > 0));
+    if(U.play) U.play.setFin(f);
+    const fb = document.querySelector('.cnp-finb'); if(fb) fb.textContent = finIco(f) + ' ' + finName(f);
+    if(U.sheet === 'done') finalDraw();
+  }
+  let finalRun = 0;
+  async function finalDraw(reveal){
+    const w = work(), cv = document.getElementById('cnp-final'); if(!w || !cv) return; const run = ++finalRun, wait = document.getElementById('cnp-wait');
+    const flat = cnRenderFinal(w, { max: 640, fin: 'plain', grid: U.fin.grid }); if(reveal || !cv.dataset.ok){ cv.width = flat.width; cv.height = flat.height; cv.getContext('2d').drawImage(flat, 0, 0); cv.dataset.ok = 1; if(reveal){ cv.classList.remove('rv'); void cv.offsetWidth; cv.classList.add('rv'); } }
+    if(w.fin === 'plain'){ cv.width = flat.width; cv.height = flat.height; cv.getContext('2d').drawImage(flat, 0, 0); if(wait) wait.textContent = ''; return; }
+    if(wait) wait.textContent = T('Préparation de la finition…', 'Preparing the finish…');
+    const img = await cnRenderFinalAsync(w, { max: 640, fin: w.fin, grid: U.fin.grid }, (f) => { if(wait && run === finalRun) wait.textContent = T('Préparation de la finition… ', 'Preparing the finish… ') + Math.round(f * 100) + '%'; }, () => run !== finalRun);
+    if(!img || run !== finalRun || !document.getElementById('cnp-final')) return;
+    cv.width = img.width; cv.height = img.height; cv.getContext('2d').drawImage(img, 0, 0); if(wait) wait.textContent = '';
+  }
+  function grid(on){ U.fin.grid = !!on; finalDraw(); }
+  function doneOk(){ U.sheet = null; U.tab = 'done'; if(U.play){ U.play.destroy(); U.play = null; } U.full = false; state.screen = 'coloringHome'; render(); while(navStack.length && isMine(navStack[navStack.length - 1])) navStack.pop(); }
+
+  /* ---------- actions sur une œuvre ---------- */
+  function rename(id){ const w = work(id); if(!w) return; const v = window.prompt(T('Nom du coloriage', 'Colouring name'), w.name || ''); if(v == null) return; const s = v.trim().slice(0, 60); if(!s) return; w.name = s; w.updatedAt = Date.now(); save(); U.sheet = null; render(); }
+  function restart(id){ const w = work(id); if(!w || !window.confirm(T('Recommencer ce coloriage ? Toutes les cases coloriées seront effacées.', 'Start this colouring again? All coloured squares will be cleared.'))) return; w.paint = '.'.repeat(w.cells.length); w.done = 0; w.updatedAt = Date.now(); if(U.pstate.id === w.id){ U.pstate.undo.length = 0; U.pstate.redo.length = 0; U.pstate.fx = null; } save(); U.sheet = null; render(); }
+  function del(id){ const w = work(id); if(!w || !window.confirm(T('Supprimer « ', 'Delete “') + (w.name || '') + T(' » ? Il sera aussi supprimé de l’ordinateur.', '”? It will also be deleted from the computer.'))) return; const a = works(), i = a.indexOf(w); if(i >= 0) a.splice(i, 1); U.thumbs.delete(id); save(); U.sheet = null; render(); }
+  async function exportPng(id){
+    const w = work(id); if(!w) return; toast(T('Préparation de l’image…', 'Preparing the picture…'));
+    try{
+      const img = await cnRenderFinalAsync(w, { max: 2000, fin: w.fin, grid: U.sheet === 'done' && U.fin.grid });
+      const blob = await new Promise((r) => img.toBlob(r, 'image/png')), name = (w.name || 'coloriage').replace(/[\\/:*?"<>|]+/g, ' ').trim() + '.png', f = new File([blob], name, { type: 'image/png' });
+      if(navigator.canShare && navigator.canShare({ files: [f] })){ try{ await navigator.share({ files: [f] }); return; }catch(e){ if(e && e.name === 'AbortError') return; } }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); toast(T('Image enregistrée ✓', 'Picture saved ✓'));
+    }catch(e){ console.error('cn export', e); toast(T('Export impossible', 'Export failed')); }
+  }
+
+  /* ---------- branchements ---------- */
+  function renderAny(){
+    D();
+    if(state.screen === 'cnPlay' && work()) return renderPlay();
+    if(state.screen === 'cnCreate' && U.c) return renderCreate();
+    if(state.screen !== 'coloringHome') state.screen = 'coloringHome';
+    return renderHome();
+  }
+  function vv(){ const v = window.visualViewport, el = document.querySelector('.cnp'); if(!el) return; if(v){ el.style.height = v.height + 'px'; el.style.top = v.offsetTop + 'px'; } }
+  if(window.visualViewport){ window.visualViewport.addEventListener('resize', () => { vv(); if(U.play) { U.play.resize(); zoomLabel(); } }); }
+  window.addEventListener('resize', () => { if(U.play && state.screen === 'cnPlay'){ U.play.resize(); zoomLabel(); } if(U.c && U.c.crop && document.getElementById('cnp-crop')) U.c.crop.relayout(); });
+  function after(){
+    vv();
+    if(state.screen === 'cnPlay') playMount(); else if(U.play){ U.play.destroy(); U.play = null; }
+    if(state.screen === 'cnCreate') createMount();
+  }
+  function isMine(s){ return s === 'coloringHome' || s === 'cnCreate' || s === 'cnPlay'; }
+  function onBack(){
+    if(!isMine(state.screen)) { if(U.play){ U.play.destroy(); U.play = null; } return false; }
+    if(U.sheet){ if(U.sheet === 'done'){ doneOk(); return true; } closeSheet(); return true; }
+    if(U.peek){ peek(false); return true; }
+    if(state.screen === 'cnPlay' && U.full){ full(); return true; }
+    if(state.screen === 'cnPlay'){ if(U.play){ U.play.destroy(); U.play = null; } }
+    if(state.screen === 'cnCreate') U.c = null;
+    return false;
+  }
+  function back(){ if(onBack()) return; try{ history.back(); }catch(e){ state.screen = 'categoryDetail'; render(); } }
+  function restorable(s){ if(s === 'cnPlay') return !!work(); if(s === 'cnCreate') return !!U.c; return true; }
+  function preview2(){ const a = works(), d = a.filter((w) => w.done).length, c = a.length - d; if(!a.length) return T('Transforme une photo en coloriage', 'Turn a photo into a colouring'); return (c ? c + ' ' + T('en cours', 'in progress') : '') + (c && d ? ' · ' : '') + (d ? d + ' ' + T(d > 1 ? 'terminés' : 'terminé', 'finished') : ''); }
+  return {
+    render: renderAny, after, onBack, back, restorable, isMine, init, preview: preview2,
+    file, set, pal, clean, create, name: (v) => { if(U.c) U.c.name = v; },
+    open: (id) => openWork(id), tab: (t) => { U.tab = t; render(); }, menu, sheet: openSheet, closeSheet,
+    tool, size, sel, find, wrong, undo, redo, full, mode: setMode, fit: () => { U.sheet = null; refreshSheet(); if(U.play) U.play.fit(); },
+    setFin, grid, doneOk, rename, restart, del, exportPng,
+    _U: U,
+  };
 })();
 
 </script>
